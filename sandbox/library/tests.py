@@ -33,6 +33,12 @@ class HashidTests(TestCase):
         self.assertEqual(len(h.hashid), 10)
         self.assertEqual(len(h), 10)
 
+    def test_hashable(self):
+        h = Hashid(987)
+        d = {h: "some value"}
+        self.assertEqual(d[h], "some value")
+
+
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
