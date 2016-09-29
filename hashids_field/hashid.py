@@ -46,3 +46,6 @@ class Hashid(object):
 
     def __len__(self):
         return len(self.hashid)
+
+    def __hash__(self):
+        return self.id
