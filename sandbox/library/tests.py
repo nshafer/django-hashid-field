@@ -83,12 +83,12 @@ class BookTests(TestCase):
         self.assertTrue(Book.objects.filter(reference_id=self.hashids.encode(123)).exists())
 
     def test_invalid_int(self):
-        with self.assertRaises(exceptions.ValidationError):
+        with self.assertRaises(TypeError):
             self.book.reference_id = -5
             self.book.save()
 
     def test_invalid_string(self):
-        with self.assertRaises(exceptions.ValidationError):
+        with self.assertRaises(TypeError):
             self.book.reference_id = "asdfqwer"
             self.book.save()
 
@@ -107,6 +107,10 @@ class BookTests(TestCase):
         instance = form.save()
         self.assertEqual(self.book, instance)
         self.assertEqual(str(self.book.reference_id), self.hashids.encode(987))
+
+    def test_invalid_id_in_form(self):
+        form = BookForm({'name': "A new name", 'reference_id': "asdfqwer"})
+        self.assertFalse(form.is_valid())
 
 
 class AuthorTests(TestCase):
