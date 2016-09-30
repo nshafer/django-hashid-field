@@ -25,10 +25,10 @@ class Hashid(object):
             return self.hashid
         try:
             id = int(id)
-            if not _is_uint(id):
-                raise ValueError
         except (TypeError, ValueError):
-            raise ValueError("id must be positive integer or valid Hashid value")
+            raise ValueError("id must be a positive integer or valid Hashid value")
+        if not _is_uint(id):
+            raise ValueError("id must be a positive integer")
         self.id = id
         self.hashid = self.encode(id)
         return self.hashid

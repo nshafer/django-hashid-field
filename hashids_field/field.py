@@ -14,7 +14,7 @@ class HashidsFieldMixin(object):
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
     }
 
-    def __init__(self, min_length=0, alphabet=Hashids.ALPHABET, *args, **kwargs):
+    def __init__(self, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
         self.min_length = min_length
         self.alphabet = alphabet
         super(HashidsFieldMixin, self).__init__(*args, **kwargs)
@@ -43,14 +43,7 @@ class HashidsFieldMixin(object):
         return []
 
     def encode_id(self, id):
-        try:
-            return Hashid(id, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet)
-        except ValueError:
-            raise exceptions.ValidationError(
-                self.error_messages['invalid'],
-                code='invalid',
-                params={'value': id},
-            )
+        return Hashid(id, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet)
 
     def from_db_value(self, value, expression, connection, context):
         if value is None:
@@ -58,24 +51,35 @@ class HashidsFieldMixin(object):
         return self.encode_id(value)
 
     def to_python(self, value):
-        if value is None:
-            return value
-        if isinstance(value, Hashid):
-            return value
-        return self.encode_id(value)
+        if value and not isinstance(value, Hashid):
+            try:
+                return self.encode_id(value)
+            except ValueError:
+                raise exceptions.ValidationError(
+                    self.error_messages['invalid'],
+                    code='invalid',
+                    params={'value': id},
+                )
+        return value
 
     def get_prep_value(self, value):
         if value is None:
             return None
-        if isinstance(value, Hashid):
-            return value.id
-        return self.encode_id(value).id
+        if not isinstance(value, Hashid):
+            try:
+                value = self.encode_id(value)
+            except ValueError:
+                raise TypeError(self.error_messages['invalid'] % {'value': value})
+        return value.id
 
     def pre_save(self, model_instance, add):
         value = getattr(model_instance, self.attname)
-        hashid = self.to_python(value)
-        setattr(model_instance, self.attname, hashid)
-        return hashid
+        try:
+            hashid = self.to_python(value)
+            setattr(model_instance, self.attname, hashid)
+            return hashid
+        except exceptions.ValidationError:
+            return value
 
 
 class HashidsField(HashidsFieldMixin, models.IntegerField):
