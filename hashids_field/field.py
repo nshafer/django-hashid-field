@@ -2,10 +2,10 @@ from django import forms
 from django.conf import settings
 from django.core import exceptions, checks
 from django.db import models
-from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
 from hashids import Hashids
 
+from .descriptor import HashidDescriptor
 from .hashid import Hashid
 
 
@@ -58,7 +58,7 @@ class HashidsFieldMixin(object):
                 raise exceptions.ValidationError(
                     self.error_messages['invalid'],
                     code='invalid',
-                    params={'value': id},
+                    params={'value': value},
                 )
         return value
 
@@ -72,14 +72,11 @@ class HashidsFieldMixin(object):
                 raise TypeError(self.error_messages['invalid'] % {'value': value})
         return value.id
 
-    def pre_save(self, model_instance, add):
-        value = getattr(model_instance, self.attname)
-        try:
-            hashid = self.to_python(value)
-            setattr(model_instance, self.attname, hashid)
-            return hashid
-        except exceptions.ValidationError:
-            return value
+    def contribute_to_class(self, cls, name, **kwargs):
+        print("contribute_to_class", cls, name)
+        super(HashidsFieldMixin, self).contribute_to_class(cls, name, **kwargs)
+        # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
+        setattr(cls, self.attname, HashidDescriptor(self.attname, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet))
 
 
 class HashidsField(HashidsFieldMixin, models.IntegerField):

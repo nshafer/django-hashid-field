@@ -73,11 +73,14 @@ class HashidsTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('reference_id', form.errors)
 
+    def test_invalid_int_in_form(self):
+        form = RecordForm({'name': "A new name", 'reference_id': -5})
+        self.assertFalse(form.is_valid())
+        self.assertIn('reference_id', form.errors)
+
     def test_autofield(self):
         a = Artist.objects.create(name="John Doe")
         b = Artist.objects.create(name="Jane Doe")
-        a.refresh_from_db()
-        b.refresh_from_db()
         self.assertIsInstance(a.id, Hashid)
         self.assertIsInstance(b.id, Hashid)
         self.assertListEqual(list(Artist.objects.order_by('id')), [a, b])

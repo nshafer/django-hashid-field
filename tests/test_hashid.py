@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils.encoding import force_text
 
 from hashids_field import Hashid
 
@@ -34,3 +35,8 @@ class HashidTests(TestCase):
         h = Hashid(987)
         d = {h: "some value"}
         self.assertEqual(d[h], "some value")
+
+    def test_force_text(self):
+        h = Hashid(2923)
+        t = force_text(h)
+        self.assertEqual(t, h.hashid)
