@@ -14,7 +14,8 @@ class HashidFieldMixin(object):
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
     }
 
-    def __init__(self, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
+    def __init__(self, salt=settings.SECRET_KEY, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
+        self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
         super(HashidFieldMixin, self).__init__(*args, **kwargs)
@@ -43,7 +44,7 @@ class HashidFieldMixin(object):
         return []
 
     def encode_id(self, id):
-        return Hashid(id, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet)
+        return Hashid(id, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
 
     def from_db_value(self, value, expression, connection, context):
         if value is None:
@@ -75,7 +76,7 @@ class HashidFieldMixin(object):
     def contribute_to_class(self, cls, name, **kwargs):
         super(HashidFieldMixin, self).contribute_to_class(cls, name, **kwargs)
         # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
-        setattr(cls, self.attname, HashidDescriptor(self.attname, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet))
+        setattr(cls, self.attname, HashidDescriptor(self.attname, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet))
 
 
 class HashidField(HashidFieldMixin, models.IntegerField):

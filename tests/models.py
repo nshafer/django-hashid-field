@@ -6,6 +6,7 @@ from hashid_field import HashidAutoField, HashidField
 class Record(models.Model):
     name = models.CharField(max_length=40)
     reference_id = HashidField()
+    alternate_id = HashidField(salt="a different salt", null=True, blank=True)
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz123789", null=True, blank=True)
 
     def __str__(self):

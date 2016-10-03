@@ -14,6 +14,6 @@ class Book(models.Model):
 
 
 class Author(models.Model):
-    id = HashidAutoField(primary_key=True, min_length=20)
+    id = HashidAutoField(primary_key=True)
     name = models.CharField(max_length=40)
     uid = models.UUIDField(null=True, blank=True)

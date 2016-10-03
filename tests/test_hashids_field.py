@@ -52,6 +52,12 @@ class HashidsTests(TestCase):
             self.record.reference_id = "asdfqwer"
             self.record.save()
 
+    def test_custom_salt(self):
+        r = Record.objects.create(reference_id=845, alternate_id=845)
+        self.assertEqual(r.reference_id.id, r.alternate_id.id)
+        self.assertNotEqual(r.reference_id, r.alternate_id)
+        self.assertNotEqual(r.reference_id.hashid, r.alternate_id.hashid)
+
     def test_min_length(self):
         self.assertGreaterEqual(len(self.record.key), 10)
 
