@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from hashids_field import Hashid
+from hashid_field import Hashid
 from tests.forms import RecordForm
 from tests.models import Record, Artist
 

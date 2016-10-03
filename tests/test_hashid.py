@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.utils.encoding import force_text
 
-from hashids_field import Hashid
+from hashid_field import Hashid
 
 
 class HashidTests(TestCase):

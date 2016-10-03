@@ -9,7 +9,7 @@ from .descriptor import HashidDescriptor
 from .hashid import Hashid
 
 
-class HashidsFieldMixin(object):
+class HashidFieldMixin(object):
     default_error_messages = {
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
     }
@@ -17,16 +17,16 @@ class HashidsFieldMixin(object):
     def __init__(self, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
         self.min_length = min_length
         self.alphabet = alphabet
-        super(HashidsFieldMixin, self).__init__(*args, **kwargs)
+        super(HashidFieldMixin, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(HashidsFieldMixin, self).deconstruct()
+        name, path, args, kwargs = super(HashidFieldMixin, self).deconstruct()
         kwargs['min_length'] = self.min_length
         kwargs['alphabet'] = self.alphabet
         return name, path, args, kwargs
 
     def check(self, **kwargs):
-        errors = super(HashidsFieldMixin, self).check(**kwargs)
+        errors = super(HashidFieldMixin, self).check(**kwargs)
         errors.extend(self._check_alphabet_min_length())
         return errors
 
@@ -37,7 +37,7 @@ class HashidsFieldMixin(object):
                     "'alphabet' must contain a minimum of 16 characters",
                     hint="Add more characters to custom 'alphabet'",
                     obj=self,
-                    id='HashidsField.E001',
+                    id='HashidField.E001',
                 )
             ]
         return []
@@ -73,19 +73,19 @@ class HashidsFieldMixin(object):
         return value.id
 
     def contribute_to_class(self, cls, name, **kwargs):
-        super(HashidsFieldMixin, self).contribute_to_class(cls, name, **kwargs)
+        super(HashidFieldMixin, self).contribute_to_class(cls, name, **kwargs)
         # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
         setattr(cls, self.attname, HashidDescriptor(self.attname, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet))
 
 
-class HashidsField(HashidsFieldMixin, models.IntegerField):
+class HashidField(HashidFieldMixin, models.IntegerField):
     description = "A Hashids obscured IntegerField"
 
     def formfield(self, **kwargs):
         defaults = {'form_class': forms.CharField}
         defaults.update(kwargs)
-        return super(HashidsField, self).formfield(**defaults)
+        return super(HashidField, self).formfield(**defaults)
 
 
-class HashidsAutoField(HashidsFieldMixin, models.AutoField):
+class HashidAutoField(HashidFieldMixin, models.AutoField):
     description = "A Hashids obscured AutoField"

@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from hashids_field.field import Hashid
-from hashids_field.descriptor import HashidDescriptor
+from hashid_field.field import Hashid
+from hashid_field.descriptor import HashidDescriptor
 
 
 class TestClass(object):

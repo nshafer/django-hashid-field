@@ -1,4 +1,4 @@
-Django Hashids Field
+Django Hashid Field
 ====================
 
 A custom Model Field that uses the `Hashids <http://hashids.org/>`_ library

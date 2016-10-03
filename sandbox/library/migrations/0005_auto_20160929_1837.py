@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
-import hashids_field.field
+import hashid_field.field
 
 
 class Migration(migrations.Migration):
@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='book',
             name='key',
-            field=hashids_field.field.HashidsField(alphabet='abcdlmnotuvwxyz0123789', min_length=10),
+            field=hashid_field.field.HashidField(alphabet='abcdlmnotuvwxyz0123789', min_length=10),
         ),
     ]

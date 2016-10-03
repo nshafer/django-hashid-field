@@ -2,7 +2,7 @@ from django import forms
 from django.core import exceptions
 from django.test import TestCase
 
-from hashids_field import Hashid
+from hashid_field import Hashid
 from library.models import Book, Author
 
 
