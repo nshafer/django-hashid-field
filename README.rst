@@ -141,12 +141,12 @@ Settings
 Besides the standard field options, there are 3 settings you can tweak that are specific to HashidField and
 AutoHashidField:
 
-    salt
-    ~~~~
+salt
+~~~~
 
-    Value: Any string
-    Default: settings.SECRET_KEY
-    Note: You can change this and since the data is stored as an IntegerField in your database, your data won't need to
-          be modified, but any usage of old hashid strings will most likely stop working, such as those in URLs and
-          links on the web, so it's not suggested that you change this after you set it. The default should be fine in
-          99% of cases.
+Value: Any string
+Default: settings.SECRET_KEY
+Note: You can change this and since the data is stored as an IntegerField in your database, your data won't need to
+      be modified, but any usage of old hashid strings will most likely stop working, such as those in URLs and
+      links on the web, so it's not suggested that you change this after you set it. The default should be fine in
+      99% of cases.
