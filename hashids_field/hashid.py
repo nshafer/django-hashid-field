@@ -1,6 +1,9 @@
+from functools import total_ordering
+
 from hashids import Hashids, _is_uint
 
 
+@total_ordering
 class Hashid(object):
     def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
         self.hashids = Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
@@ -42,6 +45,13 @@ class Hashid(object):
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.id == other.id and self.hashid == other.hashid
+        return NotImplemented
+
+    def __lt__(self, other):
+        if isinstance(other, self.__class__):
+            return self.id < other.id
+        if isinstance(other, type(self.id)):
+            return self.id < other
         return NotImplemented
 
     def __len__(self):

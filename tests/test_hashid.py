@@ -40,3 +40,11 @@ class HashidTests(TestCase):
         h = Hashid(2923)
         t = force_text(h)
         self.assertEqual(t, h.hashid)
+
+    def test_sorting(self):
+        a = Hashid(1)
+        b = Hashid(2)
+        c = Hashid(3)
+        arr = [b, a, c]
+        self.assertEqual(sorted(arr), [a, b, c])
+
