@@ -73,7 +73,6 @@ class HashidsFieldMixin(object):
         return value.id
 
     def contribute_to_class(self, cls, name, **kwargs):
-        print("contribute_to_class", cls, name)
         super(HashidsFieldMixin, self).contribute_to_class(cls, name, **kwargs)
         # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
         setattr(cls, self.attname, HashidDescriptor(self.attname, salt=settings.SECRET_KEY, min_length=self.min_length, alphabet=self.alphabet))
