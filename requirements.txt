@@ -1,2 +1,2 @@
-Django>=1.8.15
+Django>1.8,<1.11
 hashids>=1.1.0
