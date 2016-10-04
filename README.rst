@@ -1,10 +1,9 @@
 Django Hashid Field
 ====================
 
-A custom Model Field that uses the `Hashids <http://hashids.org/>`_ library
-to obfuscate an IntegerField or AutoField. It can be used in new models or
-dropped in place of an existing IntegerField, explicit AutoField, or an
-automatically generated AutoField.
+A custom Model Field that uses the `Hashids <http://hashids.org/>`_ `library <https://pypi.python.org/pypi/hashids/>`_
+to obfuscate an IntegerField or AutoField. It can be used in new models or dropped in place of an existing IntegerField,
+explicit AutoField, or an automatically generated AutoField.
 
 Features
 --------

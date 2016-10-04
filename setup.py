@@ -6,16 +6,28 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+import os
+import sys
+
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
-from os import path
 
-here = path.abspath(path.dirname(__file__))
+here = os.path.abspath(os.path.dirname(__file__))
+version = '0.1.6'
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py bdist_wheel')
+    os.system('python setup.py sdist')
+    os.system('twine upload dist/*')
+    print("You probably want to also tag the version now:")
+    print("  git tag -a %s -m 'version %s'" % (version, version))
+    print("  git push --tags")
+    sys.exit()
 
 setup(
     name='django-hashid-field',
@@ -23,7 +35,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.6',
+    version=version,
 
     description='A Hashids obfuscated Django Model Field',
     long_description=long_description,
@@ -58,6 +70,12 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+
+        # Django
+        'Framework :: Django',
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
     ],
 
     # What does your project relate to?
@@ -65,7 +83,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    packages=find_packages(exclude=['contrib', 'docs', 'tests', 'sandbox']),
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:
@@ -75,7 +93,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['Django>=1.8.15', 'hashids>=1.1.0'],
+    install_requires=['Django>1.8,<1.11', 'hashids>=1.1.0'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
