@@ -173,6 +173,8 @@ min_length
 
 :Type:     int
 :Default:  7
+:Note:     This defaults to 7 for the field since the maximum IntegerField value can be encoded in 7 characters with
+           the default *alphabet* setting of 62 characters.
 :Example:
     .. code-block:: python
 
@@ -202,10 +204,10 @@ Methods
 \__init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:id: Integer you wish to *encode*
-:salt: Salt to use
-:min_length: Minimum length of encoded hashid string
-:alphabet: The characters to use in the encoded hashid string
+:id: **REQUIRED** Integer you wish to *encode*
+:salt: Salt to use. **Default**: ''
+:min_length: Minimum length of encoded hashid string. **Default**: 0
+:alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
 
 set(id)
 ^^^^^^^
