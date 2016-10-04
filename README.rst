@@ -196,7 +196,7 @@ Hashid Class
 ------------
 
 Operations with a HashidField or HashidAutoField return a ``Hashid`` object. This simple class does the heavy lifting of
-converting integers and hashid strings back and forth.
+converting integers and hashid strings back and forth. There shouldn't be any need to instantiate these manually.
 
 Methods
 ~~~~~~~
