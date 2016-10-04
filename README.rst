@@ -151,7 +151,10 @@ salt
 
 :Type:    string
 :Default: settings.SECRET_KEY
-:Example: `reference_id = HashidField(salt="Some salt value")`
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(salt="Some salt value")
 
 min_length
 ~~~~~~~~~~
@@ -168,6 +171,9 @@ alphabet
 
 :Type:    string of characters (16 minimum)
 :Default: Hashids.ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-:Example: `reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")`
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
 
