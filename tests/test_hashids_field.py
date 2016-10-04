@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from hashid_field import Hashid
-from tests.forms import RecordForm
+from tests.forms import RecordForm, AlternateRecordForm
 from tests.models import Record, Artist
 
 
@@ -83,6 +83,18 @@ class HashidsTests(TestCase):
         form = RecordForm({'name': "A new name", 'reference_id': -5})
         self.assertFalse(form.is_valid())
         self.assertIn('reference_id', form.errors)
+
+    def test_blank_for_nullable_field(self):
+        name = "Blue Album"
+        reference_id = 42
+        form = AlternateRecordForm({'name': name, 'reference_id': reference_id})
+        self.assertTrue(form.is_valid())
+        instance = form.save()
+        self.assertEqual(instance.name, name)
+        self.assertEqual(instance.reference_id.id, reference_id)
+        self.assertEqual(instance.alternate_id, '')
+        instance.refresh_from_db()
+        self.assertIsNone(instance.alternate_id)
 
     def test_autofield(self):
         a = Artist.objects.create(name="John Doe")

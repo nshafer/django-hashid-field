@@ -64,7 +64,7 @@ class HashidFieldMixin(object):
         return value
 
     def get_prep_value(self, value):
-        if value is None:
+        if value is None or value == '':
             return None
         if not isinstance(value, Hashid):
             try:
