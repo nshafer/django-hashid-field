@@ -107,7 +107,7 @@ database, just as an AutoField would do:
     >>> b = Book()
     >>> b.save()
     >>> b.serial_id
-    Hashid(1): 0985Y8x
+    Hashid(1): AJEM7LK
 
 It can be dropped into an existing model that has an auto-created AutoField (all models do by default) as long as you
 give it `primary_key=True`. So if you have this model:
