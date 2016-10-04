@@ -53,7 +53,7 @@ Use your field like you would any other, for the most part. You can assign integ
     >>> b = Book()
     >>> b.reference_id = 123
     >>> b.reference_id
-    Hashid(123): 2L49bGK
+    Hashid(123): OwLxW8D
 
 You can assign valid hashids. It's valid only if it can be decoded into an integer based on your salt (SECRET_KEY):
 
@@ -68,11 +68,11 @@ You can access your field with either integers or hashids:
 .. code-block:: python
 
     >>> Book.objects.filter(reference_id=123)
-    <QuerySet [<Book:  (2L49bGK)>]>
-    >>> Book.objects.filter(reference_id='2L49bGK')
-    <QuerySet [<Book:  (2L49bGK)>]>
-    >>> Book.objects.get(reference_id='2L49bGK')
-    <Book:  (2L49bGK)>
+    <QuerySet [<Book:  (OwLxW8D)>]>
+    >>> Book.objects.filter(reference_id='OwLxW8D')
+    <QuerySet [<Book:  (OwLxW8D)>]>
+    >>> Book.objects.get(reference_id='OwLxW8D')
+    <Book:  (OwLxW8D)>
 
 The objects returned from a HashidField are Called Hashid, and allow basic access to the original integer or the hashid:
 
