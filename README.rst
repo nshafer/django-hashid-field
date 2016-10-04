@@ -158,7 +158,10 @@ min_length
 
 :Type:     int
 :Default:  7
-:Example:: reference_id = HashidField(min_length=15)
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(min_length=15)
 
 alphabet
 ~~~~~~~~
