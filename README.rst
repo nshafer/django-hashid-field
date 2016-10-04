@@ -10,10 +10,11 @@ Features
 --------
 
 * Stores IDs as integers in the database
-* Allows lookups and filtering by either integer or hashid string
+* Allows lookups and filtering by either integer, hashid string or Hashid object
+* Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
-* Uses your settings.SECRET_KEY as the salt for the Hashids library
-* Supports custom *salt*, *min_length* and *alphabet* characters
+* Uses your settings.SECRET_KEY as the salt
+* Supports custom *salt*, *min_length* and *alphabet* settings
 
 Installation
 ------------
@@ -127,7 +128,8 @@ give it `primary_key=True`. So if you have this model:
     class Author(models.Model):
         name = models.CharField(max_length=40)
 
-Then Django has created a field for you called 'id' automatically. We just need to override that:
+Then Django has created a field for you called 'id' automatically. We just need to override that by specifying our own
+field with *primary_key* set to True.
 
 .. code-block:: python
 
@@ -188,3 +190,15 @@ alphabet
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
 
+Hashid Class
+------------
+
+Operations with a HashidField or HashidAutoField return a ``Hashid`` object. This simple class does the heavy lifting of
+converting integers and hashid strings back and forth.
+
+.. py:function:: __init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET)
+
+    :param id: Integer you wish to *encode*
+    :param salt: Salt to use
+    :param min_length: Minimum length of encoded hashid string
+    :param alphabet: The characters to use in the encoded hashid string
