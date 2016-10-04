@@ -161,10 +161,7 @@ salt
 
 :Type:    string
 :Default: settings.SECRET_KEY
-:Example:
-    .. code-block:: python
-
-        reference_id = HashidField(salt="Some salt value")
+:Example: ``reference_id = HashidField(salt="Some salt value")``
 
 min_length
 ~~~~~~~~~~
