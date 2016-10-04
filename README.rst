@@ -4,15 +4,16 @@ Django Hashid Field
 A custom Model Field that uses the `Hashids <http://hashids.org/>`_ library
 to obfuscate an IntegerField or AutoField. It can be used in new models or
 dropped in place of an existing IntegerField, explicit AutoField, or an
-automatically generated AutoField in a model that defines no PrimaryKey.
+automatically generated AutoField.
 
 Features
 --------
 
 * Stores IDs as integers in the database
+* Allows lookups and filtering by either integer or hashid string
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Uses your settings.SECRET_KEY as the salt for the Hashids library
-* Supports custom min_length (7 by default) and alphabet characters
+* Supports custom *salt*, *min_length* and *alphabet* characters
 
 Installation
 ------------
@@ -155,9 +156,9 @@ salt
 min_length
 ~~~~~~~~~~
 
-:Type:    int
-:Default: 7
-:Example: `reference_id = HashidField(min_length=15)`
+:Type:     int
+:Default:  7
+:Example:: reference_id = HashidField(min_length=15)
 
 alphabet
 ~~~~~~~~
