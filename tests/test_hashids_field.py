@@ -102,3 +102,10 @@ class HashidsTests(TestCase):
         self.assertIsInstance(a.id, Hashid)
         self.assertIsInstance(b.id, Hashid)
         self.assertListEqual(list(Artist.objects.order_by('id')), [a, b])
+
+    def test_foreign_key(self):
+        a = Artist.objects.create(name="John Doe")
+        r = Record.objects.create(name="Blue Album", reference_id=456, artist=a)
+        self.assertIsInstance(r, Record)
+        self.assertIsInstance(r.artist, Artist)
+        self.assertEqual(r.artist, a)
