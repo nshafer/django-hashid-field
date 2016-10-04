@@ -139,14 +139,31 @@ Settings
 --------
 
 Besides the standard field options, there are 3 settings you can tweak that are specific to HashidField and
-AutoHashidField:
+AutoHashidField.
+
+**Please note** that changing any of these values *will* affect the obfuscation of the integers that are
+stored in the database, and will affect what are "valid" hashids. If you have links or URLs that include
+your HashidField values, then they will stop working after changing any of these values.
 
 salt
 ~~~~
 
-Value: Any string
-Default: settings.SECRET_KEY
-Note: You can change this and since the data is stored as an IntegerField in your database, your data won't need to
-      be modified, but any usage of old hashid strings will most likely stop working, such as those in URLs and
-      links on the web, so it's not suggested that you change this after you set it. The default should be fine in
-      99% of cases.
+:Type:    string
+:Default: settings.SECRET_KEY
+:Example: `reference_id = HashidField(salt="Some salt value")`
+
+min_length
+~~~~~~~~~~
+
+:Type:    int
+:Default: 7
+:Example: `reference_id = HashidField(min_length=15)`
+
+alphabet
+~~~~~~~~
+
+:Type:    string of characters (16 minimum)
+:Default: Hashids.ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+:Example: `reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")`
+
+
