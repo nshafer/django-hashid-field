@@ -196,7 +196,7 @@ Hashid Class
 Operations with a HashidField or HashidAutoField return a ``Hashid`` object. This simple class does the heavy lifting of
 converting integers and hashid strings back and forth.
 
-.. py:function:: __init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET)
+.. function:: __init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET)
 
     :param id: Integer you wish to *encode*
     :param salt: Salt to use
