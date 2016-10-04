@@ -53,7 +53,7 @@ Use your field like you would any other, for the most part. You can assign integ
     >>> b = Book()
     >>> b.reference_id = 123
     >>> b.reference_id
-    Hashid(123)\: 2L49bGK
+    Hashid(123): 2L49bGK
 
 You can assign valid hashids. It's valid only if it can be decoded into an integer based on your salt (SECRET_KEY):
 
@@ -61,7 +61,7 @@ You can assign valid hashids. It's valid only if it can be decoded into an integ
 
     >>> b.reference_id = 'r8636LO'
     >>> b.reference_id
-    Hashid(456)\: r8636LO
+    Hashid(456): r8636LO
 
 You can access your field with either integers or hashids:
 
