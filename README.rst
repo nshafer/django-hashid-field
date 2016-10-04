@@ -64,7 +64,7 @@ You can assign valid hashids. It's valid only if it can be decoded into an integ
     >>> b.reference_id
     Hashid(456): r8636LO
 
-You can access your field with either integers or hashids:
+You can access your field with either integers, hashid strings or Hashid objects:
 
 .. code-block:: python
 
@@ -72,10 +72,17 @@ You can access your field with either integers or hashids:
     <QuerySet [<Book:  (OwLxW8D)>]>
     >>> Book.objects.filter(reference_id='OwLxW8D')
     <QuerySet [<Book:  (OwLxW8D)>]>
-    >>> Book.objects.get(reference_id='OwLxW8D')
+    >>> b = Book.objects.get(reference_id='OwLxW8D')
+    >>> b
+    <Book:  (OwLxW8D)>
+    >>> h = b.reference_id
+    >>> h
+    Hashid(123): OwLxW8D
+    >>> Book.objects.filter(reference_id=h)
     <Book:  (OwLxW8D)>
 
-The objects returned from a HashidField are Called Hashid, and allow basic access to the original integer or the hashid:
+The objects returned from a HashidField are an instance of the class Hashid, and allow basic access to the original
+integer or the hashid:
 
 .. code-block:: python
 
@@ -96,6 +103,8 @@ Hashid Auto Field
 Along with `HashidField` there is also a `HashidAutoField` that works in the same way, but that auto-increments.
 
 .. code-block:: python
+
+    from hashid_field import HashidAutoField
 
     class Book(models.Model):
         serial_id = HashidAutoField()
@@ -143,8 +152,9 @@ Besides the standard field options, there are 3 settings you can tweak that are 
 AutoHashidField.
 
 **Please note** that changing any of these values *will* affect the obfuscation of the integers that are
-stored in the database, and will affect what are "valid" hashids. If you have links or URLs that include
-your HashidField values, then they will stop working after changing any of these values.
+stored in the database, and will change what are considered "valid" hashids. If you have links or URLs that include
+your HashidField values, then they will stop working after changing any of these values. It's highly advised that you
+don't change any of these settings once you publish any references to your field.
 
 salt
 ~~~~
@@ -170,10 +180,11 @@ alphabet
 ~~~~~~~~
 
 :Type:    string of characters (16 minimum)
-:Default: Hashids.ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+:Default: Hashids.ALPHABET, which is "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 :Example:
     .. code-block:: python
 
+        # Only use numbers and lower-case letters
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
 
