@@ -197,8 +197,9 @@ Operations with a HashidField or HashidAutoField return a ``Hashid`` object. Thi
 converting integers and hashid strings back and forth.
 
 \__init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    :id: Integer you wish to *encode*
-    :salt: Salt to use
-    :min_length: Minimum length of encoded hashid string
-    :alphabet: The characters to use in the encoded hashid string
+:id: Integer you wish to *encode*
+:salt: Salt to use
+:min_length: Minimum length of encoded hashid string
+:alphabet: The characters to use in the encoded hashid string
