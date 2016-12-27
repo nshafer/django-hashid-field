@@ -25,9 +25,6 @@ Install the package (preferably in a virtualenv):
     $ pip install django-hashid-field
 
 
-Installation
-------------
-
 Add it to your model
 
 .. code-block:: python
@@ -43,6 +40,11 @@ Migrate your database
 
     $ ./manage.py makemigrations
     $ ./manage.py migrate
+
+Upgrading
+------------
+
+Please see the `Change Log <CHANGELOG.MD>`_
 
 Basic Usage
 -----------
