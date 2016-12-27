@@ -44,7 +44,7 @@ Migrate your database
 Upgrading
 ------------
 
-Please see the `Change Log <CHANGELOG.md>`_
+Please see the `Change Log <https://github.com/nshafer/django-hashid-field/blob/master/CHANGELOG.md>`_
 
 Basic Usage
 -----------
