@@ -44,7 +44,7 @@ Migrate your database
 Upgrading
 ------------
 
-Please see the `Change Log <CHANGELOG.MD>`_
+Please see the `Change Log <CHANGELOG.md>`_
 
 Basic Usage
 -----------
