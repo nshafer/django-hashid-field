@@ -29,4 +29,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
-[1.0.0]: https://github.com/nshafer/django-hashid-field/compare/v0.1.6...v1.0.0
+[1.0.0]: https://github.com/nshafer/django-hashid-field/compare/0.1.6...1.0.0
