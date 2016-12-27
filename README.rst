@@ -12,8 +12,8 @@ Features
 * Allows lookups and filtering by either integer, hashid string or Hashid object
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
-* Uses your settings.SECRET_KEY as the salt
-* Supports custom *salt*, *min_length* and *alphabet* settings
+* Allows specifying a salt globally
+* Supports custom *salt*, *min_length* and *alphabet* settings per field
 
 Installation
 ------------
@@ -56,7 +56,7 @@ Use your field like you would any other, for the most part. You can assign integ
     >>> b.reference_id
     Hashid(123): OwLxW8D
 
-You can assign valid hashids. It's valid only if it can be decoded into an integer based on your salt (SECRET_KEY):
+You can assign valid hashids. It's valid only if it can be decoded into an integer based on your salt:
 
 .. code-block:: python
 
@@ -149,6 +149,23 @@ And now you can use the 'id' or 'pk' attributes on your model instances:
 Settings
 --------
 
+HASHID_FIELD_SALT
+~~~~~~~~~~~~~~~~~
+
+You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project, or set the salt
+on each individual field.
+
+:Type:    string
+:Default: ""
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_SALT = "a long and secure salt value that is not the same as settings.SECRET_KEY"
+
+
+Field Parameters
+----------------
+
 Besides the standard field options, there are 3 settings you can tweak that are specific to HashidField and
 AutoHashidField.
 
@@ -161,7 +178,7 @@ salt
 ~~~~
 
 :Type:    string
-:Default: settings.SECRET_KEY
+:Default: settings.HASHID_FIELD_SALT
 :Example:
     .. code-block:: python
 

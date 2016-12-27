@@ -15,7 +15,7 @@ class Author(models.Model):
 class Book(models.Model):
     name = models.CharField(max_length=40)
     author = models.ForeignKey(Author, null=True, blank=True)
-    reference_id = HashidField()
+    reference_id = HashidField(salt="alternative salt")
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz0123789", null=True, blank=True)
     some_number = models.IntegerField(null=True, blank=True)
 

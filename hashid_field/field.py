@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.core import exceptions, checks
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -7,6 +6,7 @@ from hashids import Hashids
 
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
+from .conf import settings
 
 
 class HashidFieldMixin(object):
@@ -14,7 +14,7 @@ class HashidFieldMixin(object):
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
     }
 
-    def __init__(self, salt=settings.SECRET_KEY, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
+    def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
@@ -29,6 +29,7 @@ class HashidFieldMixin(object):
     def check(self, **kwargs):
         errors = super(HashidFieldMixin, self).check(**kwargs)
         errors.extend(self._check_alphabet_min_length())
+        errors.extend(self._check_salt_is_set())
         return errors
 
     def _check_alphabet_min_length(self):
@@ -39,6 +40,18 @@ class HashidFieldMixin(object):
                     hint="Add more characters to custom 'alphabet'",
                     obj=self,
                     id='HashidField.E001',
+                )
+            ]
+        return []
+
+    def _check_salt_is_set(self):
+        if self.salt is None or self.salt == "":
+            return [
+                checks.Warning(
+                    "'salt' is not set",
+                    hint="Pass a salt value in your field or set settings.HASHID_FIELD_SALT",
+                    obj=self,
+                    id="HashidField.W001",
                 )
             ]
         return []
