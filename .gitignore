@@ -90,3 +90,6 @@ ENV/
 # Rope project settings
 .ropeproject
 *.sqlite3
+
+# PyCharm
+.idea/workspace.xml

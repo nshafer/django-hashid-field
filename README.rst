@@ -24,6 +24,13 @@ Install the package (preferably in a virtualenv):
 
     $ pip install django-hashid-field
 
+Configure a global SALT for all HashidFields to use by default in your settings.py.
+
+.. code-block:: python
+
+    HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
+    # Note: You can generate a secure key with:
+    #     from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())
 
 Add it to your model
 
@@ -155,14 +162,15 @@ HASHID_FIELD_SALT
 ~~~~~~~~~~~~~~~~~
 
 You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project, or set the salt
-on each individual field.
+on each individual field. Please note that changing this value will cause all HashidFields to change their values, and
+any previously published IDs will become invalid.
 
 :Type:    string
 :Default: ""
 :Example:
     .. code-block:: python
 
-        HASHID_FIELD_SALT = "a long and secure salt value that is not the same as settings.SECRET_KEY"
+        HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
 
 
 Field Parameters
