@@ -1,4 +1,6 @@
+from django.core.management import call_command
 from django.test import TestCase
+from django.utils.six import StringIO
 
 from hashid_field import Hashid
 from tests.forms import RecordForm, AlternateRecordForm
@@ -7,7 +9,7 @@ from tests.models import Record, Artist
 
 class HashidsTests(TestCase):
     def setUp(self):
-        self.record = Record.objects.create(name="Test Book", reference_id=123, key=456)
+        self.record = Record.objects.create(name="Test Record", reference_id=123, key=456)
         self.hashids = self.record.reference_id.hashids
 
     def test_book_create(self):
@@ -109,3 +111,20 @@ class HashidsTests(TestCase):
         self.assertIsInstance(r, Record)
         self.assertIsInstance(r.artist, Artist)
         self.assertEqual(r.artist, a)
+
+    def test_dumpdata(self):
+        a = Artist.objects.create(name="John Doe")
+        r = Record.objects.create(name="Blue Album", reference_id=456, artist=a)
+        out = StringIO()
+        call_command("dumpdata", "tests.Artist", stdout=out)
+        self.assertJSONEqual(out.getvalue(), '[{"pk": "bMrZ5lYd3axGxpW72Vo0", "fields": {"name": "John Doe"}, "model": "tests.artist"}]')
+        out = StringIO()
+        call_command("dumpdata", "tests.Record", stdout=out)
+        self.assertJSONEqual(out.getvalue(), '[{"model": "tests.record", "pk": 1, "fields": {"name": "Test Record", "key": "82x1vxv21o", "alternate_id": null, "reference_id": "M3Ka6wW", "artist": null}}, {"model": "tests.record", "pk": 2, "fields": {"name": "Blue Album", "key": null, "alternate_id": null, "reference_id": "9wXZ03N", "artist": "bMrZ5lYd3axGxpW72Vo0"}}]')
+
+    def test_loaddata(self):
+        out = StringIO()
+        call_command("loaddata", "artists", stdout=out)
+        self.assertEqual(out.getvalue().strip(), "Installed 2 object(s) from 1 fixture(s)")
+        self.assertEqual(Artist.objects.get(pk=1).name, "John Doe")
+        self.assertEqual(Artist.objects.get(pk="Ka0MzjgVGO031r5ybWkJ").name, "Jane Doe")

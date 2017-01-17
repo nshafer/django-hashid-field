@@ -1,0 +1,18 @@
+[
+{
+    "pk": "Ba9p1AG",
+    "fields": {
+        "name": "Arthur C Clarke",
+        "uid": "84fd666a-752e-4d27-a1d8-601afcf1ac2c"
+    },
+    "model": "library.author"
+},
+{
+    "pk": "7V9gk9Z",
+    "fields": {
+        "name": "Frederick Pohl",
+        "uid": "2b8d2a0e-f660-464f-9ad7-3df0551e0545"
+    },
+    "model": "library.author"
+}
+]

@@ -1,0 +1,35 @@
+[
+{
+    "pk": 1,
+    "model": "library.book",
+    "fields": {
+        "name": "2001",
+        "key": null,
+        "some_number": null,
+        "author": "Ba9p1AG",
+        "reference_id": "6AP88aA"
+    }
+},
+{
+    "pk": 2,
+    "model": "library.book",
+    "fields": {
+        "name": "2010",
+        "key": "78n07xwvw2",
+        "some_number": null,
+        "author": "Ba9p1AG",
+        "reference_id": "2Ag66Jz"
+    }
+},
+{
+    "pk": 3,
+    "model": "library.book",
+    "fields": {
+        "name": "Gateway",
+        "key": "78n07xwvw2",
+        "some_number": 5,
+        "author": "7V9gk9Z",
+        "reference_id": "6APYDwr"
+    }
+}
+]

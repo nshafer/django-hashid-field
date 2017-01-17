@@ -1,0 +1,16 @@
+[
+  {
+    "pk": "bMrZ5lYd3axGxpW72Vo0",
+    "fields": {
+      "name": "John Doe"
+    },
+    "model": "tests.artist"
+  },
+  {
+    "pk": 2,
+    "fields": {
+      "name": "Jane Doe"
+    },
+    "model": "tests.artist"
+  }
+]
