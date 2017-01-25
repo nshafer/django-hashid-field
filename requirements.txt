@@ -1,2 +1,7 @@
+# These requirements are only for setting up a dev environment with `pip install -r requirements.txt`
+# They should match `install_requires` in setup.py.
 Django>1.8,<1.11
 hashids>=1.1.0
+
+# Optional
+djangorestframework>=3.5.3,<3.6.0
