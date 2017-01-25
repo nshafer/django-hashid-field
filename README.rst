@@ -14,6 +14,7 @@ Features
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Allows specifying a salt globally
 * Supports custom *salt*, *min_length* and *alphabet* settings per field
+* Supports Django REST Framework Serializers
 
 Installation
 ------------
@@ -260,3 +261,68 @@ hashids
 
 :type: Hashids()
 :value: The instance of the Hashids class that is used to *encode* and *decode*
+
+
+Django REST Framework Integration
+=================================
+
+If you wish to use a HashidField or HashidAutoField with a DRF ModelSerializer, there is one extra step that you must
+take. Automatic declaration of any Hashid*Fields will result in an ImproperlyConfigured exception being thrown. You
+must explicitly declare them in your Serializer, as there is no way for the generated field to know how to work with
+a Hashid*Field, specifically what 'salt', 'min_length' and 'alphabet' to use, and can lead to very difficult errors or
+behavior to debug, or in the worst case, corruption of your data. Here is an example:
+
+.. code-block:: python
+
+    from rest_framework import serializers
+    from hashid_field.rest import HashidSerializerCharField
+
+
+    class BookSerializer(serializers.ModelSerializer):
+        reference_id = HashidSerializerCharField(source_field='library.Book.reference_id')
+
+        class Meta:
+            model = Book
+            fields = ('id', 'reference_id')
+
+The `source_field` allows the HashidSerializerCharField to copy the 'salt', 'min_length' and 'alphabet' settings from
+the given field at `app_name.model_name.field_name` so that it can be defined in just one place. Explicit settings are
+also possible:
+
+.. code-block:: python
+
+    reference_id = HashidSerializerCharField(salt="a different salt", min_length=10, alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+If nothing is given, then the field will use the same global settings as a Hashid*Field. It is very important that the
+options for the serializer field matches the model field, or else strange errors or data corruption can occur.
+
+HashidSerializerCharField will serialize the value into a Hashids string, but will deserialize either a Hashids string or
+integer and save it into the underlying Hashid*Field properly. There is also a HashidSerializerIntegerField that will
+serialize the Hashids into an un-encoded integer as well.
+
+HashidSerializerCharField
+-------------------------
+
+Serialize a Hashid\*Field to a Hashids string, de-serialize either a valid Hashids string or integer into a
+Hashid\*Field.
+
+Parameters
+~~~~~~~~~~
+
+source_field
+^^^^^^^^^^^^
+
+A 3-field dotted notation of the source field to load matching 'salt', 'min_length' and 'alphabet' settings from. Must
+be in the format of "app_name.model_name.field_name". Example: "library.Book.reference_id".
+
+salt, min_length, alphabet
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+See `Field Parameters`_
+
+
+HashidSerializerIntegerField
+============================
+
+Serialize a Hashid\*Field to an integer, de-serialize either a valid Hashids string or integer into a
+Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
