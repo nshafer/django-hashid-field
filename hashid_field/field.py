@@ -12,12 +12,15 @@ from .conf import settings
 class HashidFieldMixin(object):
     default_error_messages = {
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
+        'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
     }
 
-    def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET, *args, **kwargs):
+    def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET,
+                 allow_int=settings.HASHID_FIELD_ALLOW_INT, *args, **kwargs):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
+        self.allow_int = allow_int
         super(HashidFieldMixin, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
@@ -65,26 +68,32 @@ class HashidFieldMixin(object):
         return self.encode_id(value)
 
     def to_python(self, value):
-        if value and not isinstance(value, Hashid):
-            try:
-                return self.encode_id(value)
-            except ValueError:
-                raise exceptions.ValidationError(
-                    self.error_messages['invalid'],
-                    code='invalid',
-                    params={'value': value},
-                )
-        return value
+        if isinstance(value, Hashid):
+            return value
+        if value is None:
+            return value
+        try:
+            hashid = self.encode_id(value)
+        except ValueError:
+            raise exceptions.ValidationError(
+                self.error_messages['invalid'],
+                code='invalid',
+                params={'value': value},
+            )
+        return hashid
 
     def get_prep_value(self, value):
         if value is None or value == '':
             return None
-        if not isinstance(value, Hashid):
-            try:
-                value = self.encode_id(value)
-            except ValueError:
-                raise TypeError(self.error_messages['invalid'] % {'value': value})
-        return value.id
+        if isinstance(value, Hashid):
+            return value.id
+        try:
+            hashid = self.encode_id(value)
+        except ValueError:
+            raise TypeError(self.error_messages['invalid'] % {'value': value})
+        if not self.allow_int and value != hashid.hashid:
+            raise TypeError(self.error_messages['invalid_hashid'] % {'value': value})
+        return hashid.id
 
     def contribute_to_class(self, cls, name, **kwargs):
         super(HashidFieldMixin, self).contribute_to_class(cls, name, **kwargs)

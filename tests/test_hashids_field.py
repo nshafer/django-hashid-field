@@ -40,6 +40,9 @@ class HashidsTests(TestCase):
 
     def test_filter_by_int(self):
         self.assertTrue(Record.objects.filter(reference_id=123).exists())
+        with self.settings(HASHID_FIELD_ALLOW_INT=False):
+            with self.assertRaises(TypeError):
+                self.assertTrue(Record.objects.filter(reference_id=123).exists())
 
     def test_filter_by_hashid(self):
         self.assertTrue(Record.objects.filter(reference_id=self.hashids.encode(123)).exists())
@@ -81,10 +84,14 @@ class HashidsTests(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn('reference_id', form.errors)
 
-    def test_invalid_int_in_form(self):
+    def test_negative_int_in_form(self):
         form = RecordForm({'name': "A new name", 'reference_id': -5})
         self.assertFalse(form.is_valid())
         self.assertIn('reference_id', form.errors)
+
+    def test_int_in_form(self):
+        form = RecordForm({'name': "A new name", 'reference_id': 42})
+        self.assertTrue(form.is_valid())
 
     def test_blank_for_nullable_field(self):
         name = "Blue Album"
@@ -126,5 +133,5 @@ class HashidsTests(TestCase):
         out = StringIO()
         call_command("loaddata", "artists", stdout=out)
         self.assertEqual(out.getvalue().strip(), "Installed 2 object(s) from 1 fixture(s)")
-        self.assertEqual(Artist.objects.get(pk=1).name, "John Doe")
+        self.assertEqual(Artist.objects.get(pk='bMrZ5lYd3axGxpW72Vo0').name, "John Doe")
         self.assertEqual(Artist.objects.get(pk="Ka0MzjgVGO031r5ybWkJ").name, "Jane Doe")
