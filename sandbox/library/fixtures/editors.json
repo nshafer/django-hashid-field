@@ -1,0 +1,16 @@
+[
+{
+    "model": "library.editor",
+    "pk": "prAZgPyq7BAxK9XwkMGn",
+    "fields": {
+        "name": "John W. Campbell, Jr."
+    }
+},
+{
+    "model": "library.editor",
+    "pk": "oGvnwlKOVrm74JE09AX5",
+    "fields": {
+        "name": "Judy-Lynn del Rey"
+    }
+}
+]
