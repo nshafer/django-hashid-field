@@ -26,7 +26,7 @@ class Book(models.Model):
     reference_id = HashidField(salt="alternative salt")
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz0123789", null=True, blank=True)
     some_number = models.IntegerField(null=True, blank=True)
-    editors = models.ManyToManyField(Editor)
+    editors = models.ManyToManyField(Editor, blank=True)
 
     def __str__(self):
         return "{} ({})".format(self.name, self.reference_id)

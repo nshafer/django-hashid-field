@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Author {{ object.name }}</title>
+</head>
+<body>
+
+<h1>{{ object.name }} ({{ object.id }})</h1>
+<p>UID: {{ object.uid }}</p>
+
+<h2>Books</h2>
+<ul>
+    {% for book in object.books.all %}
+        <li><a href="{% url "library:book-detail" pk=book.id %}">{{ book.name }}</a></li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

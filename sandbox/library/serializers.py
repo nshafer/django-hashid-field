@@ -5,7 +5,7 @@ from library.models import Author, Book
 
 
 class AuthorSerializer(serializers.HyperlinkedModelSerializer):
-    id = HashidSerializerCharField(source_field='library.Author.id')
+    id = HashidSerializerCharField(source_field='library.Author.id', read_only=True)
 
     class Meta:
         model = Author

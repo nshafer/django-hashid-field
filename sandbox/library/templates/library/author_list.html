@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Authors</title>
+</head>
+<body>
+
+<ul>
+    {% for author in object_list %}
+        <li><a href="{% url "library:author-detail" pk=author.id %}">{{ author.name }}</a></li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

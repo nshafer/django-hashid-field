@@ -25,6 +25,7 @@ router.register('authors', library_views.AuthorViewSet)
 router.register('books', library_views.BookViewSet)
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    url(r'^', include('library.urls')),
+    url(r'^api/', include(router.urls)),
     url(r'^admin/', admin.site.urls),
 ]

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Book {{ object.name }}</title>
+</head>
+<body>
+
+<h1>{{ object.name }} ({{ object.id }})</h1>
+<p>Author: <a href="{% url "library:author-detail" pk=object.author.id %}">{{ object.author }}</a></p>
+<p>Reference ID: {{ object.reference_id }}</p>
+<p>Key: {{ object.key }}</p>
+<p>Some Number: {{ object.some_number }}</p>
+
+<h2>Editors</h2>
+<ul>
+    {% for editor in object.editors.all %}
+        <li>{{ editor.name }}</li>
+    {% empty %}
+        <li>None</li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>
