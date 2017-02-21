@@ -40,9 +40,9 @@ class HashidsTests(TestCase):
 
     def test_filter_by_int(self):
         self.assertTrue(Record.objects.filter(reference_id=123).exists())
-        with self.settings(HASHID_FIELD_ALLOW_INT=False):
-            with self.assertRaises(TypeError):
-                self.assertTrue(Record.objects.filter(reference_id=123).exists())
+        Record._meta.get_field('reference_id').allow_int = False
+        with self.assertRaises(TypeError):
+            self.assertTrue(Record.objects.filter(reference_id=123).exists())
 
     def test_filter_by_hashid(self):
         self.assertTrue(Record.objects.filter(reference_id=self.hashids.encode(123)).exists())
