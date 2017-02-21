@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] - 2017-02-21
+### Added
+- Added setting for turning off integer lookups
+- Added documentation on how to use Hashid*Fields with DRF's PrimaryKeyRelatedField
+
 ## [1.1.0] - 2017-01-25
 ### Added
 - Added support for Django REST Framework serializers.
@@ -37,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
+[1.2.0]: https://github.com/nshafer/django-hashid-field/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/nshafer/django-hashid-field/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nshafer/django-hashid-field/compare/0.1.6...1.0.0

@@ -10,6 +10,7 @@ Features
 
 * Stores IDs as integers in the database
 * Allows lookups and filtering by either integer, hashid string or Hashid object
+* Can disable integer lookups
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Allows specifying a salt globally
@@ -173,6 +174,21 @@ any previously published IDs will become invalid.
 
         HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
 
+HASHID_FIELD_ALLOW_INT
+~~~~~~~~~~~~~~~~~~~~~~
+
+Global setting on whether or not to allow lookups or fetches of fields using the underlying integer that's stored in the
+database. Enabled by default for backwards-compatibility. You can enable this to prevent users from being to do a
+sequential scan of objects by pulling objects by integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z",
+"wro12zm").
+
+:Type:    boolean
+:Default: True
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_ALLOW_INT = False
+
 
 Field Parameters
 ----------------
@@ -189,7 +205,7 @@ salt
 ~~~~
 
 :Type:    string
-:Default: settings.HASHID_FIELD_SALT
+:Default: settings.HASHID_FIELD_SALT, ""
 :Example:
     .. code-block:: python
 
@@ -217,6 +233,16 @@ alphabet
 
         # Only use numbers and lower-case letters
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
+
+allow_int
+~~~~~~~~~
+
+:Type:    boolean
+:Default: settings.HASHID_FIELD_ALLOW_INT, True
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(allow_int=False)
 
 
 Hashid Class
