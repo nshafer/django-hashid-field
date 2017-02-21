@@ -300,6 +300,36 @@ HashidSerializerCharField will serialize the value into a Hashids string, but wi
 integer and save it into the underlying Hashid*Field properly. There is also a HashidSerializerIntegerField that will
 serialize the Hashids into an un-encoded integer as well.
 
+Primary Key Related Fields
+--------------------------
+
+Any models that have a ForeignKey to another model that uses a Hashid*Field as its Primary Key will need to explicitly
+define how the `PrimaryKeyRelatedField <http://www.django-rest-framework.org/api-guide/relations/#primarykeyrelatedfield>`
+should serialize and deserialize the resulting value using the `pk_field` argument. For the given `Author` model defined
+above that has an `id = HashidAutoField(primary_key=True)` set, your BookSerializer should look like the following.
+
+.. code-block:: python
+
+    from rest_framework import serializers
+    from hashid_field.rest import HashidSerializerCharField
+
+
+    class BookSerializer(serializers.ModelSerializer):
+        author = serializers.PrimaryKeyRelatedField(pk_field=HashidSerializerCharField(source_field='library.Author.id'), read_only=True)
+
+        class Meta:
+            model = Book
+            fields = ('id', 'author')
+
+Make sure you pass the source field to the HashidSerializer*Field so that it can copy the 'salt', 'min_length' and 'alphabet'
+as described above.
+
+This example sets `read_only=True` but you can explicitly define a `queryset` or override `get_queryset(self)` to allow
+read-write behavior.
+
+For a ManyToManyField, you must also remember to pass `many=True` to the `PrimaryKeyRelatedField`.
+
+
 HashidSerializerCharField
 -------------------------
 
