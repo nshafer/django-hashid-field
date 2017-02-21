@@ -110,7 +110,7 @@ integer or the hashid:
 Hashid Auto Field
 -----------------
 
-Along with `HashidField` there is also a `HashidAutoField` that works in the same way, but that auto-increments.
+Along with ``HashidField`` there is also a ``HashidAutoField`` that works in the same way, but that auto-increments.
 
 .. code-block:: python
 
@@ -130,7 +130,7 @@ database, just as an AutoField would do:
     Hashid(1): AJEM7LK
 
 It can be dropped into an existing model that has an auto-created AutoField (all models do by default) as long as you
-give it `primary_key=True`. So if you have this model:
+give it ``primary_key=True``. So if you have this model:
 
 .. code-block:: python
 
@@ -285,8 +285,8 @@ behavior to debug, or in the worst case, corruption of your data. Here is an exa
             model = Book
             fields = ('id', 'reference_id')
 
-The `source_field` allows the HashidSerializerCharField to copy the 'salt', 'min_length' and 'alphabet' settings from
-the given field at `app_name.model_name.field_name` so that it can be defined in just one place. Explicit settings are
+The ``source_field`` allows the HashidSerializerCharField to copy the 'salt', 'min_length' and 'alphabet' settings from
+the given field at ``app_name.model_name.field_name`` so that it can be defined in just one place. Explicit settings are
 also possible:
 
 .. code-block:: python
@@ -306,8 +306,8 @@ Primary Key Related Fields
 Any models that have a ForeignKey to another model that uses a Hashid*Field as its Primary Key will need to explicitly
 define how the
 `PrimaryKeyRelatedField <http://www.django-rest-framework.org/api-guide/relations/#primarykeyrelatedfield>`_
-should serialize and deserialize the resulting value using the `pk_field` argument. For the given `Author` model defined
-above that has an `id = HashidAutoField(primary_key=True)` set, your BookSerializer should look like the following.
+should serialize and deserialize the resulting value using the ``pk_field`` argument. For the given ``Author`` model defined
+above that has an ``id = HashidAutoField(primary_key=True)`` set, your BookSerializer should look like the following.
 
 .. code-block:: python
 
@@ -325,10 +325,10 @@ above that has an `id = HashidAutoField(primary_key=True)` set, your BookSeriali
 Make sure you pass the source field to the HashidSerializer*Field so that it can copy the 'salt', 'min_length' and 'alphabet'
 as described above.
 
-This example sets `read_only=True` but you can explicitly define a `queryset` or override `get_queryset(self)` to allow
+This example sets ``read_only=True`` but you can explicitly define a ``queryset`` or override ``get_queryset(self)`` to allow
 read-write behavior.
 
-For a ManyToManyField, you must also remember to pass `many=True` to the `PrimaryKeyRelatedField`.
+For a ManyToManyField, you must also remember to pass ``many=True`` to the ``PrimaryKeyRelatedField``.
 
 
 HashidSerializerCharField
