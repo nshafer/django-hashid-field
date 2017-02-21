@@ -304,7 +304,8 @@ Primary Key Related Fields
 --------------------------
 
 Any models that have a ForeignKey to another model that uses a Hashid*Field as its Primary Key will need to explicitly
-define how the `PrimaryKeyRelatedField <http://www.django-rest-framework.org/api-guide/relations/#primarykeyrelatedfield>`
+define how the
+`PrimaryKeyRelatedField <http://www.django-rest-framework.org/api-guide/relations/#primarykeyrelatedfield>`_
 should serialize and deserialize the resulting value using the `pk_field` argument. For the given `Author` model defined
 above that has an `id = HashidAutoField(primary_key=True)` set, your BookSerializer should look like the following.
 
