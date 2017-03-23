@@ -17,6 +17,16 @@ Features
 * Supports custom *salt*, *min_length* and *alphabet* settings per field
 * Supports Django REST Framework Serializers
 
+Requirements
+------------
+
+This module is tested and known to work with:
+
+* Python 2.7, 3.5
+* Django 1.8, 1.9, 1.10, 1.11
+* Hashids 1.1
+* Django REST Framework 3.5
+
 Installation
 ------------
 

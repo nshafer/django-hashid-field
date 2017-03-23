@@ -2,6 +2,7 @@ from django import forms
 from django.core import exceptions, checks
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
 
 from .descriptor import HashidDescriptor
@@ -107,6 +108,8 @@ class HashidField(HashidFieldMixin, models.IntegerField):
     def formfield(self, **kwargs):
         defaults = {'form_class': forms.CharField}
         defaults.update(kwargs)
+        if defaults.get('widget') == admin_widgets.AdminIntegerFieldWidget:
+            defaults['widget'] = admin_widgets.AdminTextInputWidget
         return super(HashidField, self).formfield(**defaults)
 
 
