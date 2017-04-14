@@ -1,5 +1,14 @@
 language: python
+cache: pip
 python:
   - "2.7"
   - "3.5"
+env:
+  - DJANGO_VERSION=1.8.0
+  - DJANGO_VERSION=1.9.0
+  - DJANGO_VERSION=1.10.0
+  - DJANGO_VERSION=1.11.0
+install:
+  - pip install -r requirements.txt
+  - pip install --upgrade "Django~=${DJANGO_VERSION}"
 script: python runtests.py
