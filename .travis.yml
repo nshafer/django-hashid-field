@@ -8,7 +8,12 @@ env:
   - DJANGO_VERSION=1.9.0
   - DJANGO_VERSION=1.10.0
   - DJANGO_VERSION=1.11.0
+  - DJANGO_VERSION=1.8.0 DRF_VERSION=3.5.3
+  - DJANGO_VERSION=1.9.0 DRF_VERSION=3.5.3
+  - DJANGO_VERSION=1.10.0 DRF_VERSION=3.5.3
+  - DJANGO_VERSION=1.11.0 DRF_VERSION=3.5.3
 install:
-  - pip install -r requirements.txt
+  - pip install -r .travis/requirements.txt
   - pip install --upgrade "Django~=${DJANGO_VERSION}"
+  - [[ $DRF_VERSION ]]; then pip install --upgrade djangorestframework~=${DRF_VERSION}
 script: python runtests.py

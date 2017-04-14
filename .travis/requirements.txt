@@ -1,0 +1,2 @@
+# Requirements for Travis CI builds. Django and DRF are installed based on the Travis build matrix, so not listed here.
+hashids>=1.1.0
