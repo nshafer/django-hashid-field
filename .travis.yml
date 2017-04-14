@@ -15,5 +15,5 @@ env:
 install:
   - pip install -r .travis/requirements.txt
   - pip install --upgrade "Django~=${DJANGO_VERSION}"
-  - [[ $DRF_VERSION ]]; then pip install --upgrade djangorestframework~=${DRF_VERSION}
+  - if [[ $DRF_VERSION ]]; then pip install --upgrade djangorestframework~=${DRF_VERSION}; fi
 script: python runtests.py
