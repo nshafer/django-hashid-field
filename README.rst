@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/nshafer/django-hashid-field.svg?branch=master
+    :target: https://travis-ci.org/nshafer/django-hashid-field
+
 Django Hashid Field
 ====================
 
