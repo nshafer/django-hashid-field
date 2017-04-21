@@ -124,17 +124,19 @@ integer or the hashid:
 Hashid Auto Field
 -----------------
 
-Along with ``HashidField`` there is also a ``HashidAutoField`` that works in the same way, but that auto-increments.
+Along with ``HashidField`` there is also a ``HashidAutoField`` that works in the same way, but that auto-increments just
+like an ``AutoField``.
 
 .. code-block:: python
 
     from hashid_field import HashidAutoField
 
     class Book(models.Model):
-        serial_id = HashidAutoField()
+        serial_id = HashidAutoField(primary_key=True)
 
 The only difference is that if you don't assign a value to it when you save, it will auto-generate a value from your
-database, just as an AutoField would do:
+database, just as an AutoField would do. Please note that ``HashidAutoField`` inherits from ``AutoField`` and there can
+only be one ``AutoField`` on a model at a time.
 
 .. code-block:: python
 
@@ -144,7 +146,7 @@ database, just as an AutoField would do:
     Hashid(1): AJEM7LK
 
 It can be dropped into an existing model that has an auto-created AutoField (all models do by default) as long as you
-give it ``primary_key=True``. So if you have this model:
+give it the same name and set ``primary_key=True``. So if you have this model:
 
 .. code-block:: python
 
