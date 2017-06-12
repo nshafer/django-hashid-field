@@ -11,7 +11,7 @@ class HashidDescriptor(object):
         self.alphabet = alphabet
 
     def __get__(self, instance, owner=None):
-        if self.name in instance.__dict__:
+        if instance is not None and self.name in instance.__dict__:
             return instance.__dict__[self.name]
         else:
             return None
