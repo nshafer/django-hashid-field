@@ -12,8 +12,17 @@ class HashidsTests(TestCase):
         self.record = Record.objects.create(name="Test Record", reference_id=123, key=456)
         self.hashids = self.record.reference_id.hashids
 
-    def test_book_create(self):
+    def test_record_create(self):
         self.assertIsInstance(self.record, Record)
+
+    def test_get_or_create(self):
+        new_artist, created = Artist.objects.get_or_create(name="Get or Created Artist")
+        self.assertIsInstance(new_artist, Artist)
+        self.assertIsNotNone(new_artist.id)
+        Record._meta.get_field('reference_id').allow_int = True
+        new_record, created = Record.objects.get_or_create(name="Get or Created Record", reference_id=667373)
+        self.assertIsInstance(new_record, Record)
+        self.assertEqual(new_record.reference_id.id, 667373)
 
     def test_record_reference_is_hashid(self):
         self.assertIsInstance(self.record.reference_id, Hashid)
