@@ -21,6 +21,7 @@ class Hashid(object):
             return None
 
     def set(self, id):
+        # Check if we were passed an already-encoded Hashids string instead of an integer
         value = self.decode(id)
         if value:
             self.id = value

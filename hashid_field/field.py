@@ -98,7 +98,6 @@ class HashidFieldMixin(object):
 
     def contribute_to_class(self, cls, name, **kwargs):
         super(HashidFieldMixin, self).contribute_to_class(cls, name, **kwargs)
-        # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
         setattr(cls, self.attname, HashidDescriptor(self.attname, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet))
 
 
@@ -115,6 +114,45 @@ class HashidField(HashidFieldMixin, models.IntegerField):
 
 class HashidAutoField(HashidFieldMixin, models.AutoField):
     description = "A Hashids obscured AutoField"
+
+
+class HashidCharField(HashidFieldMixin, models.CharField):
+    description = "A Hashids obscured CharField"
+
+    def check(self, **kwargs):
+        errors = super(HashidFieldMixin, self).check(**kwargs)
+        errors.extend(self._check_max_length())
+        return errors
+
+    def _check_max_length(self):
+        if self.max_length < self.min_length:
+            return [
+                checks.Error(
+                    "max_length can not be less than min_length",
+                    hint="Set max_length to at least min_length",
+                    obj=self,
+                    id='HashidField.E002',
+                )
+            ]
+        return []
+
+
+class HashidExistingCharField(HashidCharField):
+    description = "A hashids obscured CharField that may have existing non-compliant strings"
+
+    def from_db_value(self, value, expression, connection, context):
+        try:
+            return super(HashidCharField, self).from_db_value(value, expression, connection, context)
+        except ValueError:
+            # Return non-compliant value
+            return value
+
+    def get_prep_value(self, value):
+        try:
+            return super(HashidCharField, self).get_prep_value(value)
+        except TypeError:
+            # Return non-compliant value
+            return value
 
 
 # Monkey patch Django REST Framework, if it's installed, to throw exceptions if fields aren't explicitly defined in

@@ -19,6 +19,6 @@ class EditorAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'reference_id', 'key', 'author')
+    list_display = ('char_id', 'name', 'id', 'reference_id', 'key', 'author')
     search_fields = ('name', 'reference_id')
     ordering = ('reference_id', 'id')
