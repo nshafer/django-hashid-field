@@ -42,6 +42,9 @@ class Hashid(object):
     def __str__(self):
         return self.hashid
 
+    def __int__(self):
+        return self.id
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.id == other.id and self.hashid == other.hashid
