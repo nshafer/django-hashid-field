@@ -48,3 +48,6 @@ class HashidTests(TestCase):
         arr = [b, a, c]
         self.assertEqual(sorted(arr), [a, b, c])
 
+    def test_typecast_to_int(self):
+        a = Hashid(1)
+        self.assertEqual(int(a), 1)
