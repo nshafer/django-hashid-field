@@ -5,3 +5,4 @@ hashids>=1.1.0
 
 # Optional
 djangorestframework>=3.5.3,<3.6.0
+django-extensions>=1.9.1
