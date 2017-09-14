@@ -22,7 +22,7 @@ class HashidDescriptor(object):
         else:
             try:
                 existing = instance.__dict__.get(self.name, None)
-                if existing:
+                if existing and isinstance(existing, Hashid):
                     existing.set(value)
                 else:
                     instance.__dict__[self.name] = Hashid(value, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
