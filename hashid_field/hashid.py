@@ -1,5 +1,6 @@
 from functools import total_ordering
 
+from django.utils import six
 from hashids import Hashids, _is_uint
 
 
@@ -48,6 +49,10 @@ class Hashid(object):
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.id == other.id and self.hashid == other.hashid
+        if isinstance(other, six.integer_types):
+            return self.id == other
+        if isinstance(other, six.string_types):
+            return self.hashid == other
         return NotImplemented
 
     def __lt__(self, other):

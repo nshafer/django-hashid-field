@@ -51,3 +51,15 @@ class HashidTests(TestCase):
     def test_typecast_to_int(self):
         a = Hashid(1)
         self.assertEqual(int(a), 1)
+
+    def test_typecast_to_str(self):
+        a = Hashid(1)
+        self.assertEqual(str(a), a.hashid)
+
+    def test_str_compare(self):
+        a = Hashid(1)
+        self.assertTrue(str(a) == a)
+
+    def test_int_compare(self):
+        a = Hashid(1)
+        self.assertTrue(int(a) == a)
