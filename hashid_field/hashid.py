@@ -22,17 +22,22 @@ class Hashid(object):
             return None
 
     def set(self, id):
+        # First see if we were given an already-encoded and valid Hashids string
         value = self.decode(id)
         if value:
             self.id = value
             self.hashid = id
             return self.hashid
+
+        # Next see if it's a positive integer
         try:
             id = int(id)
         except (TypeError, ValueError):
             raise ValueError("id must be a positive integer or valid Hashid value")
         if not _is_uint(id):
             raise ValueError("id must be a positive integer")
+
+        # Finally, set our internal values
         self.id = id
         self.hashid = self.encode(id)
         return self.hashid

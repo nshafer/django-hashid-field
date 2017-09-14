@@ -1,5 +1,7 @@
 .. image:: https://travis-ci.org/nshafer/django-hashid-field.svg?branch=master
     :target: https://travis-ci.org/nshafer/django-hashid-field
+.. image:: https://badge.fury.io/py/django-hashid-field.svg
+    :target: https://badge.fury.io/py/django-hashid-field
 
 Django Hashid Field
 ====================
