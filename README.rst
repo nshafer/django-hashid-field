@@ -402,13 +402,13 @@ Serialize a Hashid\*Field to an integer, de-serialize either a valid Hashids str
 Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
 
 Development
------------
+===========
 
 Here are some rough instructions on how to set up a dev environment to develop this module. Modify as needed. The
 sandbox is a django project that uses django-hashid-id, and is useful for developing features with.
 
 - `git clone https://github.com/nshafer/django-hashid-field.git && cd django-hashid-field`
-- `mkvirtualenv -a . -p /usr/bin/python3 -r requirements.txt django-hashid-field`
+- `mkvirtualenv -a . -p /usr/bin/python3 -r sandbox/requirements.txt django-hashid-field`
 - `python setup.py develop`
 - `sandbox/manage.py migrate`
 - `sandbox/manage.py createsuperuser`
