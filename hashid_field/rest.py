@@ -55,7 +55,8 @@ class HashidSerializerMixin(object):
 
 
 class HashidSerializerCharField(HashidSerializerMixin, fields.CharField):
-    pass
+    def to_representation(self, value):
+        return value.hashid
 
 
 class HashidSerializerIntegerField(HashidSerializerMixin, fields.IntegerField):

@@ -13,11 +13,11 @@ class AuthorListView(generic.ListView):
 class AuthorDetailView(generic.DetailView):
     model = Author
 
-    def get_object(self, queryset=None):
-        try:
-            return super(AuthorDetailView, self).get_object(queryset)
-        except (ValueError, TypeError):
-            raise Http404("Not Found")
+    # def get_object(self, queryset=None):
+    #     try:
+    #         return super(AuthorDetailView, self).get_object(queryset)
+    #     except (ValueError, TypeError):
+    #         raise Http404("Not Found")
 
 
 class BookListView(generic.ListView):

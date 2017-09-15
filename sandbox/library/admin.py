@@ -5,9 +5,16 @@ from library.models import Author, Editor, Book
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
+    list_display = ('id', 'int_id', 'name')
     search_fields = ('id', 'name')
     ordering = ('name',)
+
+    def int_id(self, obj):
+        return obj.id.id
+
+    def get_search_results(self, request, queryset, search_term):
+        print("get_search_results", request, queryset, search_term)
+        return super().get_search_results(request, queryset, search_term)
 
 
 @admin.register(Editor)
