@@ -63,3 +63,9 @@ class HashidTests(TestCase):
     def test_int_compare(self):
         a = Hashid(1)
         self.assertTrue(int(a) == a)
+
+    def test_hashid_equality(self):
+        a = Hashid(123)
+        b = Hashid(123)
+        self.assertTrue(a == b)
+        self.assertTrue(hash(a) == hash(b))
