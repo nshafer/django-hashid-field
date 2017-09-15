@@ -35,6 +35,10 @@ class HashidTests(TestCase):
         h = Hashid(987)
         d = {h: "some value"}
         self.assertEqual(d[h], "some value")
+        self.assertTrue(h in d)
+        self.assertTrue(str(h) in d)
+        self.assertTrue(hash(h) == hash(str(h)))
+        self.assertFalse(hash(int(h) == hash(h)))
 
     def test_force_text(self):
         h = Hashid(2923)
@@ -60,12 +64,12 @@ class HashidTests(TestCase):
         a = Hashid(1)
         self.assertTrue(str(a) == a)
 
-    def test_int_compare(self):
-        a = Hashid(1)
-        self.assertTrue(int(a) == a)
-
     def test_hashid_equality(self):
         a = Hashid(123)
         b = Hashid(123)
+        c = Hashid(123, salt="asdfqwer")
         self.assertTrue(a == b)
         self.assertTrue(hash(a) == hash(b))
+        self.assertTrue(hash(a) == hash(str(b)))
+        self.assertFalse(a == c)
+        self.assertFalse(hash(a) == hash(c))

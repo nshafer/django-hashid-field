@@ -54,8 +54,6 @@ class Hashid(object):
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.id == other.id and self.hashid == other.hashid
-        if isinstance(other, six.integer_types):
-            return self.id == other
         if isinstance(other, six.string_types):
             return self.hashid == other
         return NotImplemented
@@ -71,4 +69,4 @@ class Hashid(object):
         return len(self.hashid)
 
     def __hash__(self):
-        return self.id
+        return hash(self.hashid)
