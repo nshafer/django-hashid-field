@@ -400,3 +400,20 @@ HashidSerializerIntegerField
 
 Serialize a Hashid\*Field to an integer, de-serialize either a valid Hashids string or integer into a
 Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
+
+Development
+-----------
+
+Here are some rough instructions on how to set up a dev environment to develop this module. Modify as needed. The
+sandbox is a django project that uses django-hashid-id, and is useful for developing features with.
+
+- `git clone https://github.com/nshafer/django-hashid-field.git && cd django-hashid-field`
+- `mkvirtualenv -a . -p /usr/bin/python3 -r requirements.txt django-hashid-field`
+- `python setup.py develop`
+- `sandbox/manage.py migrate`
+- `sandbox/manage.py createsuperuser`
+- `sandbox/manage.py loaddata authors books editors`
+- `sandbox/manage.py runserver`
+- `python runtests.py`
+
+For any pull requests, clone the repo and push to it, then create the PR.
