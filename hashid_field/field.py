@@ -1,127 +1,14 @@
-import sys
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
-from django.db.models.lookups import FieldGetDbPrepValueMixin, FieldGetDbPrepValueIterableMixin, BuiltinLookup
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import widgets as admin_widgets
-from django.db.models import lookups, Lookup
 from hashids import Hashids
 
+from hashid_field.lookups import HashidLookup, HashidIterableLookup
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
 from .conf import settings
-
-
-def check_for_int(field, value):
-    try:
-        hashid = field.encode_id(value)
-    except ValueError:
-        raise TypeError(field.error_messages['invalid'] % {'value': value})
-    if not field.allow_int:
-        # Check the given value to see if it's an integer lookup, and disallow it.
-        # It is possible for real Hashids to resemble integers, especially if the alphabet == "0123456789", so we
-        # can't just check if `int(value)` succeeds.
-        # Instead, we'll encode the value with the given Hashid*Field, and if resulting Hashids string
-        # doesn't match the given value, then we know that something fishy is going on (an integer lookup)
-        if value != hashid.hashid:
-            raise TypeError(field.error_messages['invalid_hashid'] % {'value': value})
-    return hashid
-
-
-class ExactHashidLookup(lookups.Exact):
-    def __init__(self, lhs, rhs):
-        super().__init__(lhs, rhs)
-        try:
-            check_for_int(lhs.output_field, rhs)
-        except TypeError:
-            self.rhs = -1
-
-
-class ExactHashidIterableLookup(lookups.In):
-    def __init__(self, lhs, rhs):
-        super().__init__(lhs, rhs)
-        for value in rhs:
-            check_for_int(lhs.output_field, value)
-
-
-class HashidLookupMixin(object):
-    def process_hashid_lookup(self, value):
-        try:
-            hashid = self.lhs.output_field.encode_id(value)
-        except ValueError:
-            raise TypeError(self.lhs.output_field.error_messages['invalid'] % {'value': value})
-        if not self.lhs.output_field.allow_int:
-            # Check the given value to see if it's an integer lookup, and disallow it.
-            # It is possible for real Hashids to resemble integers, especially if the alphabet == "0123456789", so we
-            # can't just check if `int(value)` succeeds.
-            # Instead, we'll encode the value with the given Hashid*Field, and if resulting Hashids string
-            # doesn't match the given value, then we know that something fishy is going on (an integer lookup)
-            if value != hashid.hashid:
-                raise TypeError(self.lhs.output_field.error_messages['invalid_hashid'] % {'value': value})
-        return hashid
-
-    # def process_rhs(self, compiler, connection):
-    #     class InvalidHashid(object):
-    #         pass
-    #     print("process_rhs", self.rhs)
-    #     sql, params = super().process_rhs(compiler, connection)
-    #     sql = list(sql)
-    #     params = list(params)
-    #     print("  got", sql, params)
-    #     new_params = []
-    #     for param in params:
-    #         try:
-    #             hashid = check_for_int(self.lhs.output_field, param)
-    #             print("param to hashid", param, hashid.id)
-    #             param = hashid.id
-    #         except TypeError:
-    #             param = InvalidHashid
-    #         new_params.append(param)
-    #     print("new_params", new_params)
-    #     final_params = [a for a in new_params if a != InvalidHashid]
-    #     print("final_params", final_params)
-    #     if len(final_params) <= 0:
-    #         raise exceptions.EmptyResultSet
-    #     return sql, final_params
-
-    # def as_sql(self, compiler, connection):
-    #     lhs, params = self.process_lhs(compiler, connection)
-    #     print("lhs", lhs, params)
-    #     rhs, rhs_params = self.process_rhs(compiler, connection)
-    #     print("rhs", rhs, rhs_params)
-    #     params.extend(rhs_params)
-    #
-    #     new_params = []
-    #     for param in params:
-    #         try:
-    #             hashid = check_for_int(self.lhs.output_field, param)
-    #             print("param to hashid", param, hashid.id)
-    #             param = hashid.id
-    #         except TypeError:
-    #             raise exceptions.EmptyResultSet
-    #         new_params.append(param)
-    #     print("new_params", new_params)
-    #
-    #     return "{} = {}".format(lhs, rhs), new_params
-
-
-class HashidLookup(HashidLookupMixin, lookups.Exact):
-    prepare_rhs = False
-
-    def get_prep_lookup(self):
-        print("get_prep_lookup", self.lhs, self.rhs)
-        value = super().get_prep_lookup()
-        print("  got", value)
-        try:
-            hashid = self.process_hashid_lookup(value)
-        except TypeError:
-            raise exceptions.EmptyResultSet
-        return hashid.id
-
-
-class HashidIterableLookup(HashidLookupMixin, lookups.In):
-    prepare_rhs = False
 
 
 class HashidFieldMixin(object):
@@ -129,7 +16,7 @@ class HashidFieldMixin(object):
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
         'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
     }
-    exact_lookups = ('exact', 'iexact', 'contains', 'icontains', 'startswith', 'istartswith', 'endswith', 'iendswith')
+    exact_lookups = ('exact', 'iexact', 'contains', 'icontains')
     iterable_lookups = ('in',)
     passthrough_lookups = ('isnull',)
 
@@ -186,7 +73,6 @@ class HashidFieldMixin(object):
         return self.encode_id(value)
 
     def get_lookup(self, lookup_name):
-        print("get_lookup", lookup_name)
         if lookup_name in self.exact_lookups:
             return HashidLookup
         if lookup_name in self.iterable_lookups:

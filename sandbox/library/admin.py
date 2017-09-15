@@ -12,10 +12,6 @@ class AuthorAdmin(admin.ModelAdmin):
     def int_id(self, obj):
         return obj.id.id
 
-    def get_search_results(self, request, queryset, search_term):
-        print("get_search_results", request, queryset, search_term)
-        return super().get_search_results(request, queryset, search_term)
-
 
 @admin.register(Editor)
 class EditorAdmin(admin.ModelAdmin):
@@ -26,6 +22,9 @@ class EditorAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'reference_id', 'key', 'author')
+    list_display = ('name', 'id', 'reference_id', 'int_reference_id', 'key', 'author')
     search_fields = ('name', 'reference_id')
     ordering = ('reference_id', 'id')
+
+    def int_reference_id(self, obj):
+        return obj.reference_id.id

@@ -49,20 +49,27 @@ class HashidsTests(TestCase):
 
     def test_filter_by_int(self):
         self.assertTrue(Record.objects.filter(reference_id=123).exists())
+        self.assertTrue(Record.objects.filter(reference_id__exact=123).exists())
+        self.assertTrue(Record.objects.filter(reference_id__iexact=123).exists())
+        self.assertTrue(Record.objects.filter(reference_id__contains=123).exists())
+        self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
+        self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
         Record._meta.get_field('reference_id').allow_int = False
+        # These should return nothing now
         self.assertFalse(Record.objects.filter(reference_id=123).exists())
         self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
         self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
         self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
         self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__startswith=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__istartswith=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__endswith=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__iendswith=123).exists())
         self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
 
     def test_filter_by_hashid(self):
         self.assertTrue(Record.objects.filter(reference_id=self.hashids.encode(123)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__exact=self.hashids.encode(123)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__iexact=self.hashids.encode(123)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__contains=self.hashids.encode(123)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__icontains=self.hashids.encode(123)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__in=[self.hashids.encode(123)]).exists())
 
     def test_invalid_int(self):
         with self.assertRaises(TypeError):
@@ -135,6 +142,7 @@ class HashidsTests(TestCase):
         self.assertIsInstance(r, Record)
         self.assertIsInstance(r.artist, Artist)
         self.assertEqual(r.artist, a)
+        self.assertTrue(Record.objects.filter(artist__id=a.id))
 
     def test_dumpdata(self):
         a = Artist.objects.create(name="John Doe")
