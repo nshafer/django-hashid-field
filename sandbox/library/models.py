@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from hashid_field import HashidAutoField, HashidField
 
@@ -27,6 +28,9 @@ class Book(models.Model):
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz0123789", null=True, blank=True)
     some_number = models.IntegerField(null=True, blank=True)
     editors = models.ManyToManyField(Editor, blank=True)
+
+    def get_absolute_url(self):
+        return reverse("library:book-detail", kwargs={'pk': self.pk})
 
     def __str__(self):
         return "{} ({})".format(self.name, self.reference_id)
