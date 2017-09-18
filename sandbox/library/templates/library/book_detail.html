@@ -6,7 +6,12 @@
 </head>
 <body>
 
-<h1>{{ object.name }} ({{ object.id }})</h1>
+<h1>
+    {{ object.name }} ({{ object.id }})
+    <small>
+        <a href="{% url "library:book-update" pk=object.pk %}">[edit]</a>
+    </small>
+</h1>
 <p>Author: <a href="{% url "library:author-detail" pk=object.author.id %}">{{ object.author }}</a></p>
 <p>Reference ID: {{ object.reference_id }}</p>
 <p>Key: {{ object.key }}</p>
