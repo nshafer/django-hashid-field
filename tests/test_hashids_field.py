@@ -48,20 +48,36 @@ class HashidsTests(TestCase):
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(789))
 
     def test_filter_by_int(self):
+        # Tests when integer lookups are allowed
         self.assertTrue(Record.objects.filter(reference_id=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__exact=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__iexact=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__contains=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
+
+        # These should throw a TypeError when integer lookups are not allowed
         Record._meta.get_field('reference_id').allow_int = False
-        # These should return nothing now
-        self.assertFalse(Record.objects.filter(reference_id=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id=123).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
+        with self.assertRaises(TypeError):
+            self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
+
+    def test_filter_by_string(self):
+        self.assertTrue(Record.objects.filter(reference_id=str(self.record.reference_id)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__exact=str(self.record.reference_id)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__iexact=str(self.record.reference_id)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__contains=str(self.record.reference_id)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__icontains=str(self.record.reference_id)).exists())
+        self.assertTrue(Record.objects.filter(reference_id__in=[str(self.record.reference_id)]).exists())
 
     def test_filter_by_hashid(self):
         self.assertTrue(Record.objects.filter(reference_id=self.hashids.encode(123)).exists())
@@ -70,6 +86,32 @@ class HashidsTests(TestCase):
         self.assertTrue(Record.objects.filter(reference_id__contains=self.hashids.encode(123)).exists())
         self.assertTrue(Record.objects.filter(reference_id__icontains=self.hashids.encode(123)).exists())
         self.assertTrue(Record.objects.filter(reference_id__in=[self.hashids.encode(123)]).exists())
+
+    def test_iterable_lookup(self):
+        r1 = Record.objects.create(name="Red Album", reference_id=456)
+        r2 = Record.objects.create(name="Blue Album", reference_id=789)
+        # All 3 records exists (including record created in setUp())
+        self.assertEquals(Record.objects.count(), 3)
+        # Integers
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, 789]).count(), 2)
+        # Strings
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, str(r2.reference_id)]).count(), 2)
+        self.assertEquals(Record.objects.filter(reference_id__in=[str(r1.reference_id), str(r2.reference_id)]).count(), 2)
+        # Hashids
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, r2.reference_id]).count(), 2)
+        self.assertEquals(Record.objects.filter(reference_id__in=[r1.reference_id, r2.reference_id]).count(), 2)
+        # nonexistent integers
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, 1]).count(), 1)
+        # nonexistent, but valid strings
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, self.hashids.encode(1)]).count(), 1)
+        # nonexistent, but valid hashids
+        self.assertEquals(Record.objects.filter(reference_id__in=[456, Record._meta.get_field('reference_id').encode_id(1)]).count(), 1)
+        # Invalid integer
+        with self.assertRaises(TypeError):
+            Record.objects.filter(reference_id__in=[-1]).exists()
+        # Invalid string
+        with self.assertRaises(TypeError):
+            Record.objects.filter(reference_id__in=["asdf"]).exists()
 
     def test_invalid_int(self):
         with self.assertRaises(TypeError):

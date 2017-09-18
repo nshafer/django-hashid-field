@@ -1,8 +1,10 @@
-from django.core import exceptions
 from django.db.models import lookups
+from hashid_field.hashid import Hashid
 
 
 def get_id_for_hashid_field(field, value):
+    if isinstance(value, Hashid):
+        return value.id
     try:
         hashid = field.encode_id(value)
     except ValueError:
@@ -21,30 +23,14 @@ def get_id_for_hashid_field(field, value):
 class HashidLookupMixin(object):
     def get_db_prep_lookup(self, value, connection):
         # There are two modes this method can be called in... a single value or an iterable of values (usually a set)
-        # For a single value, just try to process it, then return the value, or else throw EmptyResultSet
-        # For multiple values, process each one in turn. If any of them are invalid, throw it away. If all are invalid,
-        # throw EmptyResultSet
+        # For a single value, just try to process it, then return the value
+        # For multiple values, process each one in turn.
         # For relational fields, use the 'field' attribute of the output_field
         field = getattr(self.lhs.output_field, 'field', self.lhs.output_field)
         if self.get_db_prep_lookup_value_is_iterable:
-            ids = []
-            for val in value:
-                try:
-                    id = get_id_for_hashid_field(field, val)
-                except TypeError:
-                    # Ignore this value
-                    pass
-                else:
-                    ids.append(id)
-            if len(ids) == 0:
-                raise exceptions.EmptyResultSet
-            return ('%s', ids)
+            return ('%s', [get_id_for_hashid_field(field, val) for val in value])
         else:
-            try:
-                id = get_id_for_hashid_field(field, value)
-            except TypeError:
-                raise exceptions.EmptyResultSet
-            return ('%s', [id])
+            return ('%s', [get_id_for_hashid_field(field, value)])
 
 
 class HashidLookup(HashidLookupMixin, lookups.Exact):
