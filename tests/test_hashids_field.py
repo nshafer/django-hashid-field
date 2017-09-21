@@ -113,6 +113,15 @@ class HashidsTests(TestCase):
         with self.assertRaises(TypeError):
             Record.objects.filter(reference_id__in=["asdf"]).exists()
 
+    def test_subquery_lookup(self):
+        a = Artist.objects.create(name="Artist A")
+        b = Artist.objects.create(name="Artist B")
+        c = Artist.objects.create(name="Artist C")
+        queryset = Artist.objects.all()[:2]
+        self.assertEqual(len(queryset), 2)
+        self.assertEqual(len(Artist.objects.filter(id__in=queryset)), 2)
+
+
     def test_invalid_int(self):
         with self.assertRaises(TypeError):
             self.record.reference_id = -5
