@@ -30,7 +30,9 @@ def get_id_for_hashid_field(field, value):
     return hashid.id
 
 
-class HashidLookupMixin(object):
+class HashidLookup(Lookup):
+    get_db_prep_lookup_value_is_iterable = False
+
     def get_prep_lookup(self):
         if hasattr(self.rhs, '_prepare'):
             if django.VERSION[0] <= 1 and django.VERSION[1] <= 8:
@@ -95,11 +97,7 @@ class HashidLookupMixin(object):
             return ('%s', [get_id_for_hashid_field(field, value)])
 
 
-class HashidLookup(HashidLookupMixin, Lookup):
-    get_db_prep_lookup_value_is_iterable = False
-
-
-class HashidIterableLookup(HashidLookupMixin, Lookup):
+class HashidIterableLookup(HashidLookup):
     get_db_prep_lookup_value_is_iterable = True
 
     def get_prep_lookup(self):
