@@ -13,7 +13,7 @@ class Artist(models.Model):
 
 class Record(models.Model):
     name = models.CharField(max_length=40)
-    artist = models.ForeignKey(Artist, null=True, blank=True)
+    artist = models.ForeignKey(Artist, null=True, blank=True, related_name="records")
     reference_id = HashidField()
     alternate_id = HashidField(salt="a different salt", null=True, blank=True)
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz123789", null=True, blank=True)

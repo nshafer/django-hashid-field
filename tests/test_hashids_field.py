@@ -195,6 +195,12 @@ class HashidsTests(TestCase):
         self.assertEqual(r.artist, a)
         self.assertTrue(Record.objects.filter(artist__id=a.id))
 
+    def test_spanning_relationships(self):
+        a = Artist.objects.create(name="John Doe")
+        r = Record.objects.create(name="Blue Album", reference_id=456, artist=a)
+        self.assertEqual(Record.objects.filter(artist__name="John Doe").first(), r)
+        self.assertEqual(Artist.objects.filter(records__reference_id=456).first(), a)
+
     def test_dumpdata(self):
         a = Artist.objects.create(name="John Doe")
         r = Record.objects.create(name="Blue Album", reference_id=456, artist=a)
