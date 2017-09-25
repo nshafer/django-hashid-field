@@ -417,3 +417,9 @@ sandbox is a django project that uses django-hashid-id, and is useful for develo
 - `python runtests.py`
 
 For any pull requests, clone the repo and push to it, then create the PR.
+
+LICENSE
+=======
+
+MIT License. You may use this in commercial and non-commercial projects with proper attribution.
+Please see the `LICENSE <https://github.com/nshafer/django-hashid-field/blob/master/LICENSE>`_
