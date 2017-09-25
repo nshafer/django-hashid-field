@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0] - 2017-09-25
+### Changed
+- Created custom Lookup system that supports Int, String and better restricts Int lookups if ALLOW_INT=False
+  Thanks to Oskar Persson (https://github.com/OskarPersson)
+- Allow comparison with strings.
+  Thanks to Gordon Wrigley (https://github.com/tolomea)
+- Updated dependencies to latest versions (Hashids 1.2.0, DRF 3.6.4)
+
+### Added
+- Added documentation for setting up Development environment.
+- Added official LICENSE (MIT)
+
+### Fixed
+- Fixed hashing functionality to conform to Python Data Model.
+- Fixed bug when setting descriptor after a set operation failed.
+
 ## [1.2.3] - 2017-07-22
 ### Changed
 - Added ability for Hashid instances to be typecast to integers.
@@ -56,6 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
+[1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/nshafer/django-hashid-field/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/nshafer/django-hashid-field/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/nshafer/django-hashid-field/compare/1.2.0...1.2.1
