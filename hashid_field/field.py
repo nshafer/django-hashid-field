@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
 
-from hashid_field.lookups import HashidLookup, HashidIterableLookup
+from .lookups import HashidLookup, HashidIterableLookup
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
 from .conf import settings

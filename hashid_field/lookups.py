@@ -1,15 +1,14 @@
 import itertools
 
 import django
-from django.db.models import Value
+from django.db.models.lookups import Lookup
+from hashid_field.hashid import Hashid
 
 try:
     from django.core.exceptions import EmptyResultSet
 except ImportError:
-    # Fallback to location in Django 1.10
+    # Fallback to location in Django <= 1.10
     from django.db.models.sql.datastructures import EmptyResultSet
-from django.db.models.lookups import Lookup
-from hashid_field.hashid import Hashid
 
 
 def get_id_for_hashid_field(field, value):
