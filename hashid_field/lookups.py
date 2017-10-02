@@ -20,7 +20,7 @@ def get_id_for_hashid_field(field, value):
         hashid = field.encode_id(value)
     except ValueError:
         raise TypeError(field.error_messages['invalid'] % {'value': value})
-    if not field.allow_int:
+    if not field.allow_int_lookup:
         # Check the given value to see if it's an integer lookup, and disallow it.
         # It is possible for real Hashids to resemble integers, especially if the alphabet == "0123456789", so we
         # can't just check if `int(value)` succeeds.

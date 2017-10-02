@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - 2017-10-03
+### Changed
+- Lookups with invalid Hashids strings or integers if allow_int_lookups is disabled now returns no results instead
+  of throwing a TypeError exception.
+- New global setting HASHID_FIELD_LOOKUP_EXCEPTION to revert to the older behavior or throwing an exception when an
+  invalid Hashid string or integer is given.
+- Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will throw
+  a DeprecationWarning and be removed in a future version.
+- Global setting HASHID_FIELD_ALLOW_INT renamed to HASHID_FIELD_ALLOW_INT_LOOKUP for the same reason.
+- Integer lookups are now disabled by default. Set HASHID_FIELD_ALLOW_INT_LOOKUP=True to revert to older behavior.
+
 ## [1.3.0] - 2017-09-25
 ### Changed
 - Created custom Lookup system that supports Int, String and better restricts Int lookups if ALLOW_INT=False
@@ -72,6 +83,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
+[2.0.0]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.0
 [1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/nshafer/django-hashid-field/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/nshafer/django-hashid-field/compare/1.2.1...1.2.2

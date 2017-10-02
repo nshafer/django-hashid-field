@@ -1,3 +1,5 @@
+import warnings
+
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
@@ -21,11 +23,15 @@ class HashidFieldMixin(object):
     passthrough_lookups = ('isnull',)
 
     def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET,
-                 allow_int=settings.HASHID_FIELD_ALLOW_INT, *args, **kwargs):
+                 allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP, *args, **kwargs):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
-        self.allow_int = allow_int
+        if 'allow_int' in kwargs:
+            warnings.warn("The 'allow_int' parameter was renamed to 'allow_int_lookup'.", DeprecationWarning, stacklevel=2)
+            allow_int_lookup = kwargs['allow_int']
+            del kwargs['allow_int']
+        self.allow_int_lookup = allow_int_lookup
         super(HashidFieldMixin, self).__init__(*args, **kwargs)
 
     def deconstruct(self):

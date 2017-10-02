@@ -20,7 +20,7 @@ class HashidsTests(TestCase):
         new_artist, created = Artist.objects.get_or_create(name="Get or Created Artist")
         self.assertIsInstance(new_artist, Artist)
         self.assertIsNotNone(new_artist.id)
-        Record._meta.get_field('reference_id').allow_int = True
+        Record._meta.get_field('reference_id').allow_int_lookup = True
         new_record, created = Record.objects.get_or_create(name="Get or Created Record", reference_id=667373)
         self.assertIsInstance(new_record, Record)
         self.assertEqual(new_record.reference_id.id, 667373)
@@ -49,7 +49,16 @@ class HashidsTests(TestCase):
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(789))
 
     def test_filter_by_int(self):
+        # These should not return anything when integer lookups are not allowed
+        self.assertFalse(Record.objects.filter(reference_id=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
+
         # Tests when integer lookups are allowed
+        Record._meta.get_field('reference_id').allow_int_lookup = True
         self.assertTrue(Record.objects.filter(reference_id=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__exact=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__iexact=123).exists())
@@ -57,14 +66,6 @@ class HashidsTests(TestCase):
         self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
 
-        # These should not return anything when integer lookups are not allowed
-        Record._meta.get_field('reference_id').allow_int = False
-        self.assertFalse(Record.objects.filter(reference_id=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
 
     def test_filter_by_string(self):
         self.assertTrue(Record.objects.filter(reference_id=str(self.record.reference_id)).exists())
@@ -121,7 +122,6 @@ class HashidsTests(TestCase):
 
         # Regular lookups should succeed
         self.assertEqual(get_object_or_404(Artist, pk=a.id), a)
-        self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
         self.assertEqual(get_object_or_404(Artist, pk=str(a.id)), a)
 
         # Lookups for non-existant IDs should fail
@@ -130,8 +130,8 @@ class HashidsTests(TestCase):
         with self.assertRaises(Http404):
             get_object_or_404(Artist, pk="asdf")
 
-        # If we turn allow_int off, int lookups should fail
-        Artist._meta.get_field('id').allow_int = False
+        # If we turn allow_int_lookup off, int lookups should fail
+        Artist._meta.get_field('id').allow_int_lookup = False
         with self.assertRaises(Http404):
             self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
 
@@ -233,7 +233,7 @@ class HashidsTests(TestCase):
 
     @override_settings(HASHID_FIELD_LOOKUP_EXCEPTION=True)
     def test_exceptions(self):
-        Record._meta.get_field('key').allow_int = False
+        Record._meta.get_field('key').allow_int_lookup = False
         self.assertTrue(Record.objects.filter(key=str(self.record.key)).exists())
         self.assertTrue(Record.objects.filter(key__in=[str(self.record.key)]).exists())
         with self.assertRaises(TypeError):

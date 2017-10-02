@@ -191,20 +191,19 @@ any previously published IDs will become invalid.
 
         HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
 
-HASHID_FIELD_ALLOW_INT
+HASHID_FIELD_ALLOW_INT_LOOKUP
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Global setting on whether or not to allow lookups or fetches of fields using the underlying integer that's stored in the
-database. Enabled by default for backwards-compatibility. You can enable this to prevent users from being to do a
-sequential scan of objects by pulling objects by integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z",
-"wro12zm").
+database. Disabled by default to prevent users from being to do a sequential scan of objects by pulling objects by
+integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z", "wro12zm").
 
 :Type:    boolean
-:Default: True
+:Default: False
 :Example:
     .. code-block:: python
 
-        HASHID_FIELD_ALLOW_INT = False
+        HASHID_FIELD_ALLOW_INT_LOOKUP = True
 
 
 Field Parameters
@@ -251,15 +250,15 @@ alphabet
         # Only use numbers and lower-case letters
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
-allow_int
+allow_int_lookup
 ~~~~~~~~~
 
 :Type:    boolean
-:Default: settings.HASHID_FIELD_ALLOW_INT, True
+:Default: settings.HASHID_FIELD_ALLOW_INT_LOOKUP, False
 :Example:
     .. code-block:: python
 
-        reference_id = HashidField(allow_int=False)
+        reference_id = HashidField(allow_int_lookup=True)
 
 
 Hashid Class
