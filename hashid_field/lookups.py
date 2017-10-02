@@ -2,7 +2,9 @@ import itertools
 
 import django
 from django.db.models.lookups import Lookup
-from hashid_field.hashid import Hashid
+
+from .hashid import Hashid
+from .conf import settings
 
 try:
     from django.core.exceptions import EmptyResultSet
@@ -76,14 +78,34 @@ class HashidLookup(Lookup):
 
     def get_db_prep_lookup(self, value, connection):
         # There are two modes this method can be called in... a single value or an iterable of values (usually a set)
-        # For a single value, just try to process it, then return the value
-        # For multiple values, process each one in turn.
+        # For a single value, just try to process it, then return the value, or else throw EmptyResultSet
+        # For multiple values, process each one in turn. If any of them are invalid, throw it away. If all are invalid,
+        # throw EmptyResultSet
         # For relational fields, use the 'field' attribute of the output_field
         field = getattr(self.lhs.output_field, 'field', self.lhs.output_field)
         if self.get_db_prep_lookup_value_is_iterable:
-            return ('%s', [get_id_for_hashid_field(field, val) for val in value])
+            lookup_ids = []
+            for val in value:
+                try:
+                    lookup_id = get_id_for_hashid_field(field, val)
+                except TypeError:
+                    if settings.HASHID_FIELD_LOOKUP_EXCEPTION:
+                        raise
+                    # Ignore this value
+                    pass
+                else:
+                    lookup_ids.append(lookup_id)
+            if len(lookup_ids) == 0:
+                raise EmptyResultSet
+            return '%s', lookup_ids
         else:
-            return ('%s', [get_id_for_hashid_field(field, value)])
+            try:
+                lookup_id = get_id_for_hashid_field(field, value)
+            except TypeError:
+                if settings.HASHID_FIELD_LOOKUP_EXCEPTION:
+                    raise
+                raise EmptyResultSet
+            return '%s', [lookup_id]
 
 
 class HashidIterableLookup(HashidLookup):

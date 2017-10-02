@@ -1,5 +1,6 @@
 from django.core.management import call_command
-from django.test import TestCase
+from django.shortcuts import get_object_or_404
+from django.test import TestCase, override_settings
 from django.utils.six import StringIO
 
 from hashid_field import Hashid
@@ -56,20 +57,14 @@ class HashidsTests(TestCase):
         self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
 
-        # These should throw a TypeError when integer lookups are not allowed
+        # These should not return anything when integer lookups are not allowed
         Record._meta.get_field('reference_id').allow_int = False
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id=123).exists())
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
-        with self.assertRaises(TypeError):
-            self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
+        self.assertFalse(Record.objects.filter(reference_id=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
+        self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
 
     def test_filter_by_string(self):
         self.assertTrue(Record.objects.filter(reference_id=str(self.record.reference_id)).exists())
@@ -107,11 +102,9 @@ class HashidsTests(TestCase):
         # nonexistent, but valid hashids
         self.assertEquals(Record.objects.filter(reference_id__in=[456, Record._meta.get_field('reference_id').encode_id(1)]).count(), 1)
         # Invalid integer
-        with self.assertRaises(TypeError):
-            Record.objects.filter(reference_id__in=[-1]).exists()
+        self.assertFalse(Record.objects.filter(reference_id__in=[-1]).exists())
         # Invalid string
-        with self.assertRaises(TypeError):
-            Record.objects.filter(reference_id__in=["asdf"]).exists()
+        self.assertFalse(Record.objects.filter(reference_id__in=["asdf"]).exists())
 
     def test_subquery_lookup(self):
         a = Artist.objects.create(name="Artist A")
@@ -121,6 +114,26 @@ class HashidsTests(TestCase):
         self.assertEqual(len(queryset), 2)
         self.assertEqual(len(Artist.objects.filter(id__in=queryset)), 2)
 
+    def test_get_object_or_404(self):
+        a = Artist.objects.create(name="Artist A")
+
+        from django.http import Http404
+
+        # Regular lookups should succeed
+        self.assertEqual(get_object_or_404(Artist, pk=a.id), a)
+        self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
+        self.assertEqual(get_object_or_404(Artist, pk=str(a.id)), a)
+
+        # Lookups for non-existant IDs should fail
+        with self.assertRaises(Http404):
+            get_object_or_404(Artist, pk=-1)
+        with self.assertRaises(Http404):
+            get_object_or_404(Artist, pk="asdf")
+
+        # If we turn allow_int off, int lookups should fail
+        Artist._meta.get_field('id').allow_int = False
+        with self.assertRaises(Http404):
+            self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
 
     def test_invalid_int(self):
         with self.assertRaises(TypeError):
@@ -217,3 +230,15 @@ class HashidsTests(TestCase):
         self.assertEqual(out.getvalue().strip(), "Installed 2 object(s) from 1 fixture(s)")
         self.assertEqual(Artist.objects.get(pk='bMrZ5lYd3axGxpW72Vo0').name, "John Doe")
         self.assertEqual(Artist.objects.get(pk="Ka0MzjgVGO031r5ybWkJ").name, "Jane Doe")
+
+    @override_settings(HASHID_FIELD_LOOKUP_EXCEPTION=True)
+    def test_exceptions(self):
+        Record._meta.get_field('key').allow_int = False
+        self.assertTrue(Record.objects.filter(key=str(self.record.key)).exists())
+        self.assertTrue(Record.objects.filter(key__in=[str(self.record.key)]).exists())
+        with self.assertRaises(TypeError):
+            self.assertTrue(Record.objects.filter(key=456).exists())
+        with self.assertRaises(TypeError):
+            self.assertTrue(Record.objects.filter(key="asdf").exists())
+        with self.assertRaises(TypeError):
+            self.assertTrue(Record.objects.filter(key__in=[456]).exists())
