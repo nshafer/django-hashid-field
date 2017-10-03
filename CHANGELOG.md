@@ -5,15 +5,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.0] - 2017-10-03
-### Changed
-- Lookups with invalid Hashids strings or integers if allow_int_lookups is disabled now returns no results instead
-  of throwing a TypeError exception.
-- New global setting HASHID_FIELD_LOOKUP_EXCEPTION to revert to the older behavior or throwing an exception when an
-  invalid Hashid string or integer is given.
-- Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will throw
-  a DeprecationWarning and be removed in a future version.
-- Global setting HASHID_FIELD_ALLOW_INT renamed to HASHID_FIELD_ALLOW_INT_LOOKUP for the same reason.
-- Integer lookups are now disabled by default. Set HASHID_FIELD_ALLOW_INT_LOOKUP=True to revert to older behavior.
+### Changes
+- Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will print
+  a DeprecationWarning and will be removed in a future version.
+- Global setting `HASHID_FIELD_ALLOW_INT` renamed to `HASHID_FIELD_ALLOW_INT_LOOKUP` to be more descriptive. Setting
+  `HASHID_FIELD_ALLOW_INT` will print a DeprecationWarning and will be removed in a future version.
+  
+### Potentially Breaking Changes
+- Integer lookups are now disabled by default. Set `HASHID_FIELD_ALLOW_INT_LOOKUP=True` or `allow_int_lookup=True` to
+  revert to previous behavior. Saving integers is always supported regardless of the setting or parameter.
+- Lookups with invalid Hashids strings (or integers if integer lookups is disabled) now returns no results by default
+  instead of throwing an exception. This will mean fewer exceptions being throw due to user input, and will also allow
+  Hashid*Fields to be used in the Django ModelAdmin `search_fields` parameter without throwing exceptions.
+  Set the new global setting `HASHID_FIELD_LOOKUP_EXCEPTION=True` to revert to the
+  older behavior of throwing an exception when an invalid Hashid string or integer is given in lookups.
+  Saving an invalid hashid string will always result in a ValueError being thrown.
+- The field will now throw a ValueError instead of TypeError when attempting to save (or lookup, if lookup exceptions
+  are enabled) an invalid hashid string.
+
+### Upgrading
+- Integer lookups are now disabled by default, so if you are setting it to False, then you can just remove the setting
+  and/or parameters.
+- Rename the setting `HASHID_FIELD_ALLOW_INT=True` to `HASHID_FIELD_ALLOW_INT_LOOKUP=True`
+- Rename any instances of the parameter `allow_int=True` to `allow_int_lookup=True` in Hashid*Field definitions.
+- You can remove any traps for TypeError when doing lookups, or conversely if you rely on the behavior, then set
+  `HASHID_FIELD_LOOKUP_EXCEPTION=True` in your project settings, and catch ValueError now instead of TypeError.
 
 ## [1.3.0] - 2017-09-25
 ### Changed

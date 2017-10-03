@@ -14,13 +14,14 @@ Features
 --------
 
 * Stores IDs as integers in the database
-* Allows lookups and filtering by either integer, hashid string or Hashid object
-* Can disable integer lookups
+* Allows lookups and filtering by hashid string or Hashid object and (optionally) integer.
+* Can enable integer lookups global or per-field
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Allows specifying a salt globally
-* Supports custom *salt*, *min_length* and *alphabet* settings per field
+* Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
+* Support common filtering lookups, such as ``__contains`` so that Django Admin search_fields works out of the box.
 
 Requirements
 ------------
@@ -68,6 +69,8 @@ Migrate your database
 Upgrading
 ------------
 
+**Potentially breaking changes in 2.0.0** depending on your usage and configuration.
+
 Please see the `Change Log <https://github.com/nshafer/django-hashid-field/blob/master/CHANGELOG.md>`_
 
 Basic Usage
@@ -90,12 +93,10 @@ You can assign valid hashids. It's valid only if it can be decoded into an integ
     >>> b.reference_id
     Hashid(456): r8636LO
 
-You can access your field with either integers, hashid strings or Hashid objects:
+You can access your field with either hashid strings or Hashid objects:
 
 .. code-block:: python
 
-    >>> Book.objects.filter(reference_id=123)
-    <QuerySet [<Book:  (OwLxW8D)>]>
     >>> Book.objects.filter(reference_id='OwLxW8D')
     <QuerySet [<Book:  (OwLxW8D)>]>
     >>> b = Book.objects.get(reference_id='OwLxW8D')
@@ -106,6 +107,21 @@ You can access your field with either integers, hashid strings or Hashid objects
     Hashid(123): OwLxW8D
     >>> Book.objects.filter(reference_id=h)
     <Book:  (OwLxW8D)>
+
+You can lookup objects with integers if you set ``HASHID_FIELD_ALLOW_INT_LOOKUP = True`` or ``allow_int_lookup=True``
+as a parameter to the field.
+
+.. code-block:: python
+
+    from hashid_field import HashidField
+
+    class Book(models.Model):
+        reference_id = HashidField(allow_int_lookup=True)
+
+.. code-block:: python
+
+    >>> Book.objects.filter(reference_id=123)
+    <QuerySet [<Book:  (OwLxW8D)>]>
 
 The objects returned from a HashidField are an instance of the class Hashid, and allow basic access to the original
 integer or the hashid:
@@ -174,15 +190,16 @@ And now you can use the 'id' or 'pk' attributes on your model instances:
     >>> Author.objects.get(pk='N8VNa8z')
     <Author: Author object>
 
-Settings
+Global Settings
 --------
 
 HASHID_FIELD_SALT
 ~~~~~~~~~~~~~~~~~
 
-You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project, or set the salt
-on each individual field. Please note that changing this value will cause all HashidFields to change their values, and
-any previously published IDs will become invalid.
+You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project.
+Please note that changing this value will cause all HashidFields to change their values, and any previously published
+IDs will become invalid.
+Can be overridden by the field definition.
 
 :Type:    string
 :Default: ""
@@ -194,9 +211,10 @@ any previously published IDs will become invalid.
 HASHID_FIELD_ALLOW_INT_LOOKUP
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Global setting on whether or not to allow lookups or fetches of fields using the underlying integer that's stored in the
-database. Disabled by default to prevent users from being to do a sequential scan of objects by pulling objects by
+Allow lookups or fetches of fields using the underlying integer that's stored in the database.
+Disabled by default to prevent users from being to do a sequential scan of objects by pulling objects by
 integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z", "wro12zm").
+Can be overriden by the field definition.
 
 :Type:    boolean
 :Default: False
@@ -205,17 +223,31 @@ integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z", "wro12zm").
 
         HASHID_FIELD_ALLOW_INT_LOOKUP = True
 
+HASHID_FIELD_LOOKUP_EXCEPTION
+~~~~~~~~~~~~~~~~~~~~~~
+
+By default any invalid hashid strings or integer lookups when integer lookups are turned off will result in an
+EmptyResultSet being returned. Enable this to instead throw a ValueError exception (similar to the behavior prior to 2.0).
+
+:Type:    boolean
+:Default: False
+:Example:
+        .. code-block:: python
+
+        HASHID_FIELD_LOOKUP_EXCEPTION = True
+
+
 
 Field Parameters
 ----------------
 
-Besides the standard field options, there are 3 settings you can tweak that are specific to HashidField and
+Besides the standard field options, there are settings you can tweak that are specific to HashidField and
 AutoHashidField.
 
-**Please note** that changing any of these values *will* affect the obfuscation of the integers that are
-stored in the database, and will change what are considered "valid" hashids. If you have links or URLs that include
-your HashidField values, then they will stop working after changing any of these values. It's highly advised that you
-don't change any of these settings once you publish any references to your field.
+**Please note** that changing any of the values for ``salt``, ``min_length`` or ``alphabet`` *will* affect the
+obfuscation of the integers that are stored in the database, and will change what are considered "valid" hashids.
+If you have links or URLs that include your HashidField values, then they will stop working after changing any of these
+values. It's highly advised that you don't change any of these settings once you publish any references to your field.
 
 salt
 ~~~~
@@ -395,7 +427,7 @@ See `Field Parameters`_
 
 
 HashidSerializerIntegerField
-============================
+----------------------------
 
 Serialize a Hashid\*Field to an integer, de-serialize either a valid Hashids string or integer into a
 Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
@@ -417,7 +449,7 @@ sandbox is a django project that uses django-hashid-id, and is useful for develo
 
 For any pull requests, clone the repo and push to it, then create the PR.
 
-To install the latest development version, use this:
+To install the latest development version, use:
 
 ```
 pip install git+https://github.com/nshafer/django-hashid-field.git
