@@ -2,10 +2,18 @@
 from __future__ import print_function, unicode_literals
 import os
 import sys
+import warnings
 
 import django
 from django.conf import settings
 from django.test.utils import get_runner
+
+# Make deprecation warnings errors to ensure no usage of deprecated features.
+warnings.simplefilter("error", DeprecationWarning)
+# Make runtime warning errors to ensure no usage of error prone patterns.
+warnings.simplefilter("error", RuntimeWarning)
+# Ignore known warnings in test dependencies.
+warnings.filterwarnings("ignore", "'U' mode is deprecated", DeprecationWarning, module='docutils.io')
 
 if __name__ == "__main__":
     print("Python:", sys.version)

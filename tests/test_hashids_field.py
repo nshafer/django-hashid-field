@@ -66,7 +66,6 @@ class HashidsTests(TestCase):
         self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
         self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
 
-
     def test_filter_by_string(self):
         self.assertTrue(Record.objects.filter(reference_id=str(self.record.reference_id)).exists())
         self.assertTrue(Record.objects.filter(reference_id__exact=str(self.record.reference_id)).exists())
@@ -87,21 +86,21 @@ class HashidsTests(TestCase):
         r1 = Record.objects.create(name="Red Album", reference_id=456)
         r2 = Record.objects.create(name="Blue Album", reference_id=789)
         # All 3 records exists (including record created in setUp())
-        self.assertEquals(Record.objects.count(), 3)
+        self.assertEqual(Record.objects.count(), 3)
         # Integers
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, 789]).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, 789]).count(), 2)
         # Strings
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, str(r2.reference_id)]).count(), 2)
-        self.assertEquals(Record.objects.filter(reference_id__in=[str(r1.reference_id), str(r2.reference_id)]).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, str(r2.reference_id)]).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__in=[str(r1.reference_id), str(r2.reference_id)]).count(), 2)
         # Hashids
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, r2.reference_id]).count(), 2)
-        self.assertEquals(Record.objects.filter(reference_id__in=[r1.reference_id, r2.reference_id]).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, r2.reference_id]).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__in=[r1.reference_id, r2.reference_id]).count(), 2)
         # nonexistent integers
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, 1]).count(), 1)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, 1]).count(), 1)
         # nonexistent, but valid strings
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, self.hashids.encode(1)]).count(), 1)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, self.hashids.encode(1)]).count(), 1)
         # nonexistent, but valid hashids
-        self.assertEquals(Record.objects.filter(reference_id__in=[456, Record._meta.get_field('reference_id').encode_id(1)]).count(), 1)
+        self.assertEqual(Record.objects.filter(reference_id__in=[456, Record._meta.get_field('reference_id').encode_id(1)]).count(), 1)
         # Invalid integer
         self.assertFalse(Record.objects.filter(reference_id__in=[-1]).exists())
         # Invalid string
