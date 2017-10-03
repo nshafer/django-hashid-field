@@ -31,6 +31,13 @@ def get_id_for_hashid_field(field, value):
     return hashid.id
 
 
+# Most of this code is derived or copied from Django 1.11, django/db/models/lookups.py.
+# It has been included here to increase compatibility of this module with Django versions 1.8, 1.9 and 1.10.
+# Django is Copyright (c) Django Software Foundation and individual contributors.
+# Please see https://github.com/django/django/blob/master/LICENSE
+# Upon the release of Django 2.0, and when this module drops support for Django < 1.11, most of this code will be
+# removed.
+
 class HashidLookup(Lookup):
     get_db_prep_lookup_value_is_iterable = False
 
