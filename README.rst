@@ -314,12 +314,7 @@ Methods
 :min_length: Minimum length of encoded hashid string. **Default**: 0
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
 
-set(id)
-^^^^^^^
-
-:id: Integer you with to *encode*
-
-Instance Variables
+Read-Only Properties
 ~~~~~~~~~~~~~~~~~~
 
 id

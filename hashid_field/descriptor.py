@@ -21,10 +21,6 @@ class HashidDescriptor(object):
             instance.__dict__[self.name] = value
         else:
             try:
-                existing = instance.__dict__.get(self.name, None)
-                if existing and isinstance(existing, Hashid):
-                    existing.set(value)
-                else:
-                    instance.__dict__[self.name] = Hashid(value, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
+                instance.__dict__[self.name] = Hashid(value, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
             except ValueError:
                 instance.__dict__[self.name] = value

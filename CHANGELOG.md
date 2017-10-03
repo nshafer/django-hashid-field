@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   a DeprecationWarning and will be removed in a future version.
 - Global setting `HASHID_FIELD_ALLOW_INT` renamed to `HASHID_FIELD_ALLOW_INT_LOOKUP` to be more descriptive. Setting
   `HASHID_FIELD_ALLOW_INT` will print a DeprecationWarning and will be removed in a future version.
+- Instances of the Hashid class are now immutable to conform to the Python Data Model and hashing behavior.
+  This should be invisible to any typical uses.
   
 ### Potentially Breaking Changes
 - Integer lookups are now disabled by default. Set `HASHID_FIELD_ALLOW_INT_LOOKUP=True` or `allow_int_lookup=True` to

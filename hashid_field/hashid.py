@@ -7,66 +7,73 @@ from hashids import Hashids, _is_uint
 @total_ordering
 class Hashid(object):
     def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
-        self.hashids = Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
-        self.id = id
-        self.hashid = self.set(id)
+        self._hashids = Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
+
+        # First see if we were given an already-encoded and valid Hashids string
+        value = self.decode(id)
+        if value:
+            self._id = value
+            self._hashid = id
+        else:
+            # Next see if it's a positive integer
+            try:
+                id = int(id)
+            except (TypeError, ValueError):
+                raise ValueError("id must be a positive integer or valid Hashid value")
+            if not _is_uint(id):
+                raise ValueError("id must be a positive integer")
+
+            # Finally, set our internal values
+            self._id = id
+            self._hashid = self.encode(id)
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def hashid(self):
+        return self._hashid
+
+    @property
+    def hashids(self):
+        return self._hashids
 
     def encode(self, id):
-        return self.hashids.encode(id)
+        return self._hashids.encode(id)
 
     def decode(self, hashid):
-        id = self.hashids.decode(hashid)
+        id = self._hashids.decode(hashid)
         if len(id) == 1:
             return id[0]
         else:
             return None
 
-    def set(self, id):
-        # First see if we were given an already-encoded and valid Hashids string
-        value = self.decode(id)
-        if value:
-            self.id = value
-            self.hashid = id
-            return self.hashid
-
-        # Next see if it's a positive integer
-        try:
-            id = int(id)
-        except (TypeError, ValueError):
-            raise ValueError("id must be a positive integer or valid Hashid value")
-        if not _is_uint(id):
-            raise ValueError("id must be a positive integer")
-
-        # Finally, set our internal values
-        self.id = id
-        self.hashid = self.encode(id)
-        return self.hashid
-
     def __repr__(self):
-        return "Hashid({}): {}".format(self.id, self.hashid)
+        return "Hashid({}): {}".format(self._id, self._hashid)
 
     def __str__(self):
-        return self.hashid
+        return self._hashid
 
     def __int__(self):
-        return self.id
+        return self._id
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.id == other.id and self.hashid == other.hashid
+            return self._id == other._id and self._hashid == other._hashid
         if isinstance(other, six.string_types):
-            return self.hashid == other
+            return self._hashid == other
         return NotImplemented
 
     def __lt__(self, other):
         if isinstance(other, self.__class__):
-            return self.id < other.id
-        if isinstance(other, type(self.id)):
-            return self.id < other
+            return self._id < other._id
+        if isinstance(other, type(self._id)):
+            return self._id < other
         return NotImplemented
 
     def __len__(self):
-        return len(self.hashid)
+        return len(self._hashid)
 
     def __hash__(self):
-        return hash(self.hashid)
+        return hash(self._hashid)
