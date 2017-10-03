@@ -83,12 +83,12 @@ class BookTests(TestCase):
         self.assertTrue(Book.objects.filter(reference_id=self.hashids.encode(123)).exists())
 
     def test_invalid_int(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.book.reference_id = -5
             self.book.save()
 
     def test_invalid_string(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.book.reference_id = "asdfqwer"
             self.book.save()
 

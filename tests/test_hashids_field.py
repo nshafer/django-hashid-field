@@ -135,12 +135,12 @@ class HashidsTests(TestCase):
             self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
 
     def test_invalid_int(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.record.reference_id = -5
             self.record.save()
 
     def test_invalid_string(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.record.reference_id = "asdfqwer"
             self.record.save()
 
@@ -235,9 +235,9 @@ class HashidsTests(TestCase):
         Record._meta.get_field('key').allow_int_lookup = False
         self.assertTrue(Record.objects.filter(key=str(self.record.key)).exists())
         self.assertTrue(Record.objects.filter(key__in=[str(self.record.key)]).exists())
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.assertTrue(Record.objects.filter(key=456).exists())
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.assertTrue(Record.objects.filter(key="asdf").exists())
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ValueError):
             self.assertTrue(Record.objects.filter(key__in=[456]).exists())

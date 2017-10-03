@@ -19,7 +19,7 @@ def get_id_for_hashid_field(field, value):
     try:
         hashid = field.encode_id(value)
     except ValueError:
-        raise TypeError(field.error_messages['invalid'] % {'value': value})
+        raise ValueError(field.error_messages['invalid'] % {'value': value})
     if not field.allow_int_lookup:
         # Check the given value to see if it's an integer lookup, and disallow it.
         # It is possible for real Hashids to resemble integers, especially if the alphabet == "0123456789", so we
@@ -27,7 +27,7 @@ def get_id_for_hashid_field(field, value):
         # Instead, we'll encode the value with the given Hashid*Field, and if resulting Hashids string
         # doesn't match the given value, then we know that something fishy is going on (an integer lookup)
         if value != hashid.hashid:
-            raise TypeError(field.error_messages['invalid_hashid'] % {'value': value})
+            raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
     return hashid.id
 
 
@@ -88,7 +88,7 @@ class HashidLookup(Lookup):
             for val in value:
                 try:
                     lookup_id = get_id_for_hashid_field(field, val)
-                except TypeError:
+                except ValueError:
                     if settings.HASHID_FIELD_LOOKUP_EXCEPTION:
                         raise
                     # Ignore this value
@@ -101,7 +101,7 @@ class HashidLookup(Lookup):
         else:
             try:
                 lookup_id = get_id_for_hashid_field(field, value)
-            except TypeError:
+            except ValueError:
                 if settings.HASHID_FIELD_LOOKUP_EXCEPTION:
                     raise
                 raise EmptyResultSet
