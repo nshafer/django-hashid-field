@@ -15,13 +15,15 @@ Features
 
 * Stores IDs as integers in the database
 * Allows lookups and filtering by hashid string or Hashid object and (optionally) integer.
-* Can enable integer lookups global or per-field
+* Can enable integer lookups globally or per-field
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Allows specifying a salt globally
 * Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
-* Support common filtering lookups, such as ``__contains`` so that Django Admin search_fields works out of the box.
+* Supports common filtering lookups, such as ``field__icontains`` so that Django Admin search_fields works out of the box.
+* Supports subquery lookups with `field__in=queryset`
+* Supports hashing operations so the fields can be used in Dictionaries and Sets.
 
 Requirements
 ------------
@@ -69,7 +71,8 @@ Migrate your database
 Upgrading
 ------------
 
-**Potentially breaking changes in 2.0.0** depending on your usage and configuration.
+**Potentially breaking changes in 2.0.0** depending on your usage and configuration, specifically if you rely on
+integer lookups (now off by default) or exceptions for invalid lookup values.
 
 Please see the `Change Log <https://github.com/nshafer/django-hashid-field/blob/master/CHANGELOG.md>`_
 
@@ -85,7 +88,7 @@ Use your field like you would any other, for the most part. You can assign integ
     >>> b.reference_id
     Hashid(123): OwLxW8D
 
-You can assign valid hashids. It's valid only if it can be decoded into an integer based on your salt:
+You can assign valid hashids. It's valid only if it can be decoded into an integer based on your settings:
 
 .. code-block:: python
 
@@ -113,10 +116,10 @@ as a parameter to the field.
 
 .. code-block:: python
 
-    from hashid_field import HashidField
+    reference_id = HashidField(allow_int_lookup=True)
 
-    class Book(models.Model):
-        reference_id = HashidField(allow_int_lookup=True)
+Now integer lookups are allowed. Useful if migrating an existing AutoField to a HashidAutoField, but you need to allow
+lookups with older integers.
 
 .. code-block:: python
 
@@ -196,7 +199,8 @@ Global Settings
 HASHID_FIELD_SALT
 ~~~~~~~~~~~~~~~~~
 
-You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project.
+You can optionally set a global Salt to be used by all HashFields and HashidAutoFields in your project. Do not use the
+same string as your SECRET_KEY, as this could lead to your SECRET_KEY being exposed to an attacker.
 Please note that changing this value will cause all HashidFields to change their values, and any previously published
 IDs will become invalid.
 Can be overridden by the field definition.
