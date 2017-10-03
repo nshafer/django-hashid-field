@@ -29,8 +29,8 @@ This module is tested and known to work with:
 
 * Python 2.7, 3.5
 * Django 1.8, 1.9, 1.10, 1.11
-* Hashids 1.1
-* Django REST Framework 3.5
+* Hashids 1.2
+* Django REST Framework 3.6
 
 Installation
 ------------
@@ -416,6 +416,12 @@ sandbox is a django project that uses django-hashid-id, and is useful for develo
 - `python runtests.py`
 
 For any pull requests, clone the repo and push to it, then create the PR.
+
+To install the latest development version, use this:
+
+```
+pip install git+https://github.com/nshafer/django-hashid-field.git
+```
 
 LICENSE
 =======
