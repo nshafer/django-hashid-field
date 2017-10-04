@@ -22,7 +22,7 @@ Features
 * Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
 * Supports common filtering lookups, such as ``field__icontains`` so that Django Admin search_fields works out of the box.
-* Supports subquery lookups with `field__in=queryset`
+* Supports subquery lookups with ``field__in=queryset``
 * Supports hashing operations so the fields can be used in Dictionaries and Sets.
 
 Requirements
@@ -194,7 +194,7 @@ And now you can use the 'id' or 'pk' attributes on your model instances:
     <Author: Author object>
 
 Global Settings
---------
+---------------
 
 HASHID_FIELD_SALT
 ~~~~~~~~~~~~~~~~~
@@ -213,7 +213,7 @@ Can be overridden by the field definition.
         HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
 
 HASHID_FIELD_ALLOW_INT_LOOKUP
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Allow lookups or fetches of fields using the underlying integer that's stored in the database.
 Disabled by default to prevent users from being to do a sequential scan of objects by pulling objects by
@@ -228,7 +228,7 @@ Can be overriden by the field definition.
         HASHID_FIELD_ALLOW_INT_LOOKUP = True
 
 HASHID_FIELD_LOOKUP_EXCEPTION
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default any invalid hashid strings or integer lookups when integer lookups are turned off will result in an
 EmptyResultSet being returned. Enable this to instead throw a ValueError exception (similar to the behavior prior to 2.0).
@@ -236,7 +236,7 @@ EmptyResultSet being returned. Enable this to instead throw a ValueError excepti
 :Type:    boolean
 :Default: False
 :Example:
-        .. code-block:: python
+    .. code-block:: python
 
         HASHID_FIELD_LOOKUP_EXCEPTION = True
 
@@ -287,7 +287,7 @@ alphabet
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
 allow_int_lookup
-~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 :Type:    boolean
 :Default: settings.HASHID_FIELD_ALLOW_INT_LOOKUP, False
@@ -315,7 +315,7 @@ Methods
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
 
 Read-Only Properties
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 id
 ^^
@@ -437,14 +437,14 @@ Development
 Here are some rough instructions on how to set up a dev environment to develop this module. Modify as needed. The
 sandbox is a django project that uses django-hashid-id, and is useful for developing features with.
 
-- `git clone https://github.com/nshafer/django-hashid-field.git && cd django-hashid-field`
-- `mkvirtualenv -a . -p /usr/bin/python3 -r sandbox/requirements.txt django-hashid-field`
-- `python setup.py develop`
-- `sandbox/manage.py migrate`
-- `sandbox/manage.py createsuperuser`
-- `sandbox/manage.py loaddata authors books editors`
-- `sandbox/manage.py runserver`
-- `python runtests.py`
+- ``git clone https://github.com/nshafer/django-hashid-field.git && cd django-hashid-field``
+- ``mkvirtualenv -a . -p /usr/bin/python3 -r sandbox/requirements.txt django-hashid-field``
+- ``python setup.py develop``
+- ``sandbox/manage.py migrate``
+- ``sandbox/manage.py createsuperuser``
+- ``sandbox/manage.py loaddata authors books editors``
+- ``sandbox/manage.py runserver``
+- ``python runtests.py``
 
 For any pull requests, clone the repo and push to it, then create the PR.
 

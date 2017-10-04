@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.0.0] - 2017-10-03
+## [2.0.1] - 2017-10-04
 ### Changes
 - Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will print
   a DeprecationWarning and will be removed in a future version.
@@ -101,7 +101,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
-[2.0.0]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.0
+[2.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.1
 [1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/nshafer/django-hashid-field/compare/1.2.2...1.2.3
 [1.2.2]: https://github.com/nshafer/django-hashid-field/compare/1.2.1...1.2.2
