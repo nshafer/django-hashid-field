@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.core import exceptions
 from django.utils import six
-from django.utils.encoding import force_text
 from hashids import Hashids
 from rest_framework import fields, serializers
 
@@ -10,11 +9,7 @@ from hashid_field.hashid import Hashid
 
 
 class UnconfiguredHashidSerialField(fields.Field):
-    def __init__(self, *args, **kwargs):
-        super(UnconfiguredHashidSerialField, self).__init__(*args, **kwargs)
-
     def bind(self, field_name, parent):
-        # print("bind", field_name, parent)
         super(UnconfiguredHashidSerialField, self).bind(field_name, parent)
         raise exceptions.ImproperlyConfigured(
             "The field '{field_name}' on {parent} must be explicitly declared when used with a ModelSerializer".format(
