@@ -94,3 +94,4 @@ ENV/
 # PyCharm
 .idea/workspace.xml
 .idea/shelf
+.idea/dataSources*
