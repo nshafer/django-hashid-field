@@ -1,3 +1,5 @@
+import pickle
+
 from django.test import TestCase
 from django.utils.encoding import force_text
 
@@ -56,6 +58,10 @@ class HashidTests(TestCase):
         a = Hashid(1)
         self.assertEqual(int(a), 1)
 
+    def test_typecast_to_long(self):
+        a = Hashid(1)
+        self.assertEqual(long(a), 1)
+
     def test_typecast_to_str(self):
         a = Hashid(1)
         self.assertEqual(str(a), a.hashid)
@@ -63,6 +69,14 @@ class HashidTests(TestCase):
     def test_str_compare(self):
         a = Hashid(1)
         self.assertTrue(str(a) == a)
+
+    def test_int_compare(self):
+        a = Hashid(1)
+        self.assertTrue(int(a) == a)
+
+    def test_long_compare(self):
+        a = Hashid(1)
+        self.assertTrue(long(a) == a)
 
     def test_hashid_equality(self):
         a = Hashid(123)
@@ -73,3 +87,8 @@ class HashidTests(TestCase):
         self.assertTrue(hash(a) == hash(str(b)))
         self.assertFalse(a == c)
         self.assertFalse(hash(a) == hash(c))
+
+    def test_pickle(self):
+        a = Hashid(123)
+        pickled = pickle.loads(pickle.dumps(a))
+        self.assertTrue(a == pickled)
