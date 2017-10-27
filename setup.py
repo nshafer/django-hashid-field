@@ -6,7 +6,9 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+import io
 import os
+import re
 import sys
 
 from setuptools import setup, find_packages
@@ -15,7 +17,6 @@ from codecs import open
 
 from django.conf import settings
 settings.configure()
-from hashid_field import __version__
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -23,7 +24,23 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+def read(*names, **kwargs):
+    with io.open(
+        os.path.join(os.path.dirname(__file__), *names),
+        encoding=kwargs.get("encoding", "utf8")
+    ) as fp:
+        return fp.read()
+
+def find_version(*file_paths):
+    version_file = read(*file_paths)
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
+                              version_file, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
+
 if sys.argv[-1] == 'publish':
+    __version__ = find_version("hashid_field", "__init__.py")
     os.system('python setup.py bdist_wheel')
     os.system('python setup.py sdist')
     os.system('twine upload dist/*')
@@ -38,7 +55,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=__version__,
+    version=find_version('hashid_field', '__init__.py'),
 
     description='A Hashids obfuscated Django Model Field',
     long_description=long_description,
