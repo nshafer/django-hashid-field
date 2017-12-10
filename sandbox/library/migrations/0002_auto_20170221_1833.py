@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='book',
             name='author',
-            field=models.ForeignKey(to='library.Author', blank=True, null=True, related_name='books'),
+            field=models.ForeignKey(to='library.Author', on_delete=models.CASCADE, blank=True, null=True, related_name='books'),
         ),
         migrations.AddField(
             model_name='book',
