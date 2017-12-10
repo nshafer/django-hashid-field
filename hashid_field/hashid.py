@@ -1,3 +1,4 @@
+import sys
 from functools import total_ordering
 
 from django.utils import six
@@ -7,7 +8,11 @@ from hashids import Hashids, _is_uint
 @total_ordering
 class Hashid(object):
     def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
-        self._hashids = Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
+        self._salt = salt
+        self._min_length = min_length
+        self._alphabet = alphabet
+
+        self._hashids = Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
 
         # First see if we were given an already-encoded and valid Hashids string
         value = self.decode(id)
@@ -58,11 +63,19 @@ class Hashid(object):
     def __int__(self):
         return self._id
 
+    def __long__(self):
+        if sys.version_info < (3,):
+            return long(self._id)
+        else:
+            return int(self._id)
+
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self._id == other._id and self._hashid == other._hashid
         if isinstance(other, six.string_types):
             return self._hashid == other
+        if isinstance(other, six.integer_types):
+            return self._id == other
         return NotImplemented
 
     def __lt__(self, other):
@@ -77,3 +90,6 @@ class Hashid(object):
 
     def __hash__(self):
         return hash(self._hashid)
+
+    def __reduce__(self):
+        return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet))
