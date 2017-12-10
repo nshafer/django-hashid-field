@@ -84,7 +84,7 @@ class HashidFieldMixin(object):
         if lookup_name in self.iterable_lookups:
             return HashidIterableLookup
         if lookup_name in self.passthrough_lookups:
-            return super().get_lookup(lookup_name)
+            return super(HashidFieldMixin, self).get_lookup(lookup_name)
         return None  # Otherwise, we don't allow lookups of this type
 
     def to_python(self, value):
