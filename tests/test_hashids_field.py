@@ -112,7 +112,7 @@ class HashidsTests(TestCase):
         c = Artist.objects.create(name="Artist C")
         queryset = Artist.objects.all()[:2]
         self.assertEqual(len(queryset), 2)
-        self.assertEqual(len(Artist.objects.filter(id__in=queryset)), 2)
+        self.assertEqual(len(Artist.objects.filter(id__in=queryset.values('id'))), 2)
 
     def test_get_object_or_404(self):
         a = Artist.objects.create(name="Artist A")
