@@ -31,9 +31,9 @@ Requirements
 This module is tested and known to work with:
 
 * Python 2.7, 3.5
-* Django 1.8, 1.9, 1.10, 1.11
+* Django 1.8, 1.9, 1.10, 1.11, 2.0
 * Hashids 1.2
-* Django REST Framework 3.6
+* Django REST Framework 3.7
 
 Installation
 ------------

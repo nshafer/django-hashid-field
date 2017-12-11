@@ -80,6 +80,7 @@ setup(
         'Framework :: Django :: 1.9',
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
     ],
 
     # What does your project relate to?
@@ -97,7 +98,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['Django>1.8,<1.12', 'hashids>=1.2.0'],
+    install_requires=['Django>1.8,<2.1', 'hashids>=1.2.0'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
