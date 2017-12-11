@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] - 2017-12-10
+### Changes
+- Added support for pickling Hashid instances
+- Add `long` comparisons for python2
+- Add support for Django 2.0.
+
+Please note: 1.8 will be supported until April at least (same as Django), but after that we may support only
+Django 1.11 and 2.0, per Django's recommendations and release schedule.
+
+Django Rest Framework has dropped support for Django 1.8 and 1.9 as of their 3.7.x line, and there are import bugs
+with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django 1.8 -> 1.11, and DRF 3.7 for 2.0.
+
 ## [2.0.1] - 2017-10-04
 ### Changes
 - Field option 'allow_int' renamed to 'allow_int_lookup' to be more descriptive. Using 'allow_int' will print
@@ -101,6 +113,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release
 
+[2.1.0]: https://github.com/nshafer/django-hashid-field/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.1
 [1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
 [1.2.3]: https://github.com/nshafer/django-hashid-field/compare/1.2.2...1.2.3
