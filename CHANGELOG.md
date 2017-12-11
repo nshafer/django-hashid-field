@@ -6,9 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.1.0] - 2017-12-10
 ### Changes
-- Added support for pickling Hashid instances
-- Add `long` comparisons for python2
-- Add support for Django 2.0.
+- Added support for pickling Hashid instances (Thanks [Oleg Pesok](https://github.com/olegpesok))
+- Add `long` comparisons for python2 (Thanks [Oleg Pesok](https://github.com/olegpesok))
+- Add support for Django 2.0. (Thanks [Paul Nakata](https://github.com/pmn))
 
 Please note: 1.8 will be supported until April at least (same as Django), but after that we may support only
 Django 1.11 and 2.0, per Django's recommendations and release schedule.
