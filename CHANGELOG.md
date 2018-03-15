@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1] - 2018-03-15
+### Changes
+- Update documentation for DRF integration
+
 ## [2.1.0] - 2017-12-10
 ### Changes
 - Added support for pickling Hashid instances (Thanks [Oleg Pesok](https://github.com/olegpesok))
@@ -113,6 +117,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[2.1.1]: https://github.com/nshafer/django-hashid-field/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/nshafer/django-hashid-field/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.1
 [1.3.0]: https://github.com/nshafer/django-hashid-field/compare/1.2.3...1.3.0
