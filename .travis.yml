@@ -2,7 +2,7 @@ language: python
 cache: pip
 python:
   - 2.7
-  - 3.5
+  - 3.7
 env:
   - DJANGO_VERSION=1.8.18
   - DJANGO_VERSION=1.9.13
@@ -13,7 +13,8 @@ env:
   - DJANGO_VERSION=1.9.13 DRF_VERSION=3.6.4
   - DJANGO_VERSION=1.10.8 DRF_VERSION=3.6.4
   - DJANGO_VERSION=1.11.8 DRF_VERSION=3.6.4
-  - DJANGO_VERSION=2.0 DRF_VERSION=3.7.3
+  - DJANGO_VERSION=2.0 DRF_VERSION=3.8.2
+  - DJANGO_VERSION=2.1.1 DRF_VERSION=3.8.2
 matrix:
   exclude:
     - python: 2.7
