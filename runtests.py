@@ -14,13 +14,10 @@ warnings.simplefilter("error", DeprecationWarning)
 warnings.simplefilter("error", RuntimeWarning)
 # Ignore known warnings in test dependencies.
 warnings.filterwarnings("ignore", "'U' mode is deprecated", DeprecationWarning, module='docutils.io')
-# Ignore that until it will be fixed in DRF
-warnings.filterwarnings(
-    'ignore',
-    category=DeprecationWarning,
-    message="Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated, "
-            "and in 3.8 it will stop working"
-)
+warnings.filterwarnings("ignore", "Using or importing the ABCs from 'collections' instead of from 'collections.abc' is "
+                        "deprecated, and in 3.8 it will stop working", module='rest_framework')
+warnings.filterwarnings("ignore", "Using or importing the ABCs from 'collections' instead of from 'collections.abc' is "
+                        "deprecated, and in 3.8 it will stop working", module='django')
 
 if __name__ == "__main__":
     print("Python:", sys.version)
