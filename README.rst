@@ -21,7 +21,8 @@ Features
 * Allows specifying a salt globally
 * Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
-* Supports common filtering lookups, such as ``field__icontains`` so that Django Admin search_fields works out of the box.
+* Supports exact ID searches in Django Admin when field is specified in search_fields.
+* Supports common filtering lookups, such as ``__iexact``, ``__contains``, ``__icontains``, though matching is the same as ``__exact``.
 * Supports subquery lookups with ``field__in=queryset``
 * Supports hashing operations so the fields can be used in Dictionaries and Sets.
 
