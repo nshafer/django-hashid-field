@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.2] - 2018-09-11
+### Changes
+- Added official support for Django 2.1. (Thanks [adam-tokarski](https://github.com/adam-tokarski))
+- Deprecated support for Python 3.5, Django 1.8 - 1.10. Next major release will drop support completely.
+- Updated Django Rest Framework support to 3.8.
+- Clarified README (Issue #23)
+
 ## [2.1.1] - 2018-03-15
 ### Changes
 - Update documentation for DRF integration
@@ -117,6 +124,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[2.1.2]: https://github.com/nshafer/django-hashid-field/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/nshafer/django-hashid-field/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/nshafer/django-hashid-field/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.3.0...2.0.1
