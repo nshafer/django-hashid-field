@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.3] - 2018-09-21
+### Changes
+- [#26]: Fixed version import error. (Thanks [Dido Arellano](https://github.com/didoarellano))
+
 ## [2.1.2] - 2018-09-11
 ### Changes
-- Added official support for Django 2.1. (Thanks [adam-tokarski](https://github.com/adam-tokarski))
+- [#24]: Added official support for Django 2.1. (Thanks [Adam Tokarski](https://github.com/adam-tokarski))
 - Deprecated support for Python 3.5, Django 1.8 - 1.10. Next major release will drop support completely.
 - Updated Django Rest Framework support to 3.8.
 - Clarified README (Issue #23)
@@ -124,6 +128,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[2.1.3]: https://github.com/nshafer/django-hashid-field/compare/2.1.2...2.1.3
 [2.1.2]: https://github.com/nshafer/django-hashid-field/compare/2.1.1...2.1.2
 [2.1.1]: https://github.com/nshafer/django-hashid-field/compare/2.1.0...2.1.1
 [2.1.0]: https://github.com/nshafer/django-hashid-field/compare/2.0.1...2.1.0
@@ -136,3 +141,6 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [1.1.0]: https://github.com/nshafer/django-hashid-field/compare/1.0.1...1.1.0
 [1.0.1]: https://github.com/nshafer/django-hashid-field/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nshafer/django-hashid-field/compare/0.1.6...1.0.0
+
+[#24]: https://github.com/nshafer/django-hashid-field/pull/24
+[#26]: https://github.com/nshafer/django-hashid-field/pull/26
