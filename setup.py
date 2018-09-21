@@ -7,28 +7,42 @@ https://github.com/pypa/sampleproject
 
 # Always prefer setuptools over distutils
 import os
+import re
 import sys
 
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 
-__version__ = "2.1.2"
-
 here = os.path.abspath(os.path.dirname(__file__))
+
+
+# Get the VERSION from the __init__ file.
+def get_version(package):
+    """
+    Return package version as listed in `__version__` in `init.py`.
+    """
+    init_py = open(os.path.join(here, package, '__init__.py')).read()
+    return re.search("__version__ = ['\"]([^'\"]+)['\"]", init_py).group(1)
+
+
+version = get_version('hashid_field')
+
 
 # Get the long description from the README file
 with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+
 
 if sys.argv[-1] == 'publish':
     os.system('python setup.py bdist_wheel')
     os.system('python setup.py sdist')
     os.system('twine upload dist/*')
     print("You probably want to also tag the version now:")
-    print("  git tag -a %s -m 'version %s'" % (__version__, __version__))
+    print("  git tag -a %s -m 'version %s'" % (version, version))
     print("  git push --tags")
     sys.exit()
+
 
 setup(
     name='django-hashid-field',
@@ -36,7 +50,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=__version__,
+    version=version,
 
     description='A Hashids obfuscated Django Model Field',
     long_description=long_description,
