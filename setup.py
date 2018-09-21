@@ -13,9 +13,7 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 
-from django.conf import settings
-settings.configure()
-from hashid_field import __version__
+__version__ = "2.1.2"
 
 here = os.path.abspath(os.path.dirname(__file__))
 
