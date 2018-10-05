@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.1.4] - 2018-09-21
+## [2.1.4] - 2018-10-05
 ### Changes
 - [#27]: Fixed PendingDeprectationWarning for `context` in `from_db_value()`.
          (Thanks [Adam Johnson](https://github.com/adamchainz))
