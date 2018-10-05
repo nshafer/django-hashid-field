@@ -8,6 +8,7 @@ https://github.com/pypa/sampleproject
 # Always prefer setuptools over distutils
 import os
 import re
+import shutil
 import sys
 
 from setuptools import setup, find_packages
@@ -35,12 +36,17 @@ with open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 
 if sys.argv[-1] == 'publish':
-    os.system('python setup.py bdist_wheel')
-    os.system('python setup.py sdist')
+    if os.system("pip freeze | grep twine"):
+        print("twine not installed.\nUse `pip install twine`.\nExiting.")
+        sys.exit()
+    os.system('python setup.py sdist bdist_wheel')
     os.system('twine upload dist/*')
     print("You probably want to also tag the version now:")
     print("  git tag -a %s -m 'version %s'" % (version, version))
     print("  git push --tags")
+    shutil.rmtree('dist')
+    shutil.rmtree('build')
+    shutil.rmtree('django_hashid_field.egg-info')
     sys.exit()
 
 
