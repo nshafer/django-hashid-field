@@ -26,6 +26,11 @@ class HashidTests(TestCase):
         with self.assertRaises(Exception):
             h = Hashid(-5)
 
+    def test_hashid_encoded_zero_integer(self):
+        h = Hashid(0)
+        z = Hashid(h.hashid)
+        self.assertEqual(h, z)
+
     def test_invalid_hashid(self):
         with self.assertRaises(Exception):
             h = Hashid('asdfqwer')

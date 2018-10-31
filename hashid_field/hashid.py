@@ -16,7 +16,6 @@ class Hashid(object):
 
         # First see if we were given an already-encoded and valid Hashids string
         value = self.decode(id)
-        # Since zero also legit unsigned int
         if value is not None:
             self._id = value
             self._hashid = id
