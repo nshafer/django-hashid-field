@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.5] - 2018-10-31
+### Changes
+- [#29] / [#30]: Fixed exception when decoding a Hashids value of 0.
+         (Thanks [Lee H](https://github.com/fpghost))
+
 ## [2.1.4] - 2018-10-05
 ### Changes
 - [#27]: Fixed PendingDeprectationWarning for `context` in `from_db_value()`.
@@ -133,6 +138,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[2.1.5]: https://github.com/nshafer/django-hashid-field/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/nshafer/django-hashid-field/compare/2.1.3...2.1.4
 [2.1.3]: https://github.com/nshafer/django-hashid-field/compare/2.1.2...2.1.3
 [2.1.2]: https://github.com/nshafer/django-hashid-field/compare/2.1.1...2.1.2
@@ -151,3 +157,5 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#24]: https://github.com/nshafer/django-hashid-field/pull/24
 [#26]: https://github.com/nshafer/django-hashid-field/pull/26
 [#27]: https://github.com/nshafer/django-hashid-field/issues/27
+[#29]: https://github.com/nshafer/django-hashid-field/issues/29
+[#30]: https://github.com/nshafer/django-hashid-field/pull/30
