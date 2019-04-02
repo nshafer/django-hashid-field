@@ -32,11 +32,11 @@ Requirements
 This module is tested and known to work with:
 
 * Python 2.7, 3.6, 3.7
-* Django 1.11, 2.0, 2.1
+* Django 1.11, 2.1, 2.2
 * Hashids 1.2
-* Django REST Framework 3.8
+* Django REST Framework 3.9
 
-Django versions <= 1.10 will still work for the time being in version 2.1.x, but are deprecated and not tested.
+Django versions <= 1.10 and 2.0 will still work for the time being in version 2.1.x, but are deprecated and not tested.
 
 Installation
 ------------
