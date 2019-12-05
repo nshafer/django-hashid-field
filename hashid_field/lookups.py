@@ -122,10 +122,10 @@ class HashidIterableLookup(HashidLookup):
         if django.VERSION[0] <= 1 and django.VERSION[1] <= 8:
             return super().get_prep_lookup()
         prepared_values = []
-        if hasattr(self.rhs, '_prepare'):
+        if hasattr(self.rhs, 'subquery') and self.rhs.subquery:
             # A subquery is like an iterable but its items shouldn't be
             # prepared independently.
-            return self.rhs._prepare(self.lhs.output_field)
+            return self.rhs
         for rhs_value in self.rhs:
             if hasattr(rhs_value, 'resolve_expression'):
                 # An expression will be handled by the database but can coexist
