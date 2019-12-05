@@ -2,7 +2,6 @@ from unittest import skipUnless
 
 from django.core import exceptions
 from django.test import TestCase
-from django.utils import six
 
 from tests.models import Artist
 
@@ -39,7 +38,7 @@ class TestRestFramework(TestCase):
         orig_id = artist.id
         s = ArtistSerializer(artist)
         self.assertEqual(Artist._meta.get_field('id').salt, s.fields['id'].hashid_salt)
-        self.assertTrue(isinstance(s.data['id'], six.string_types))
+        self.assertTrue(isinstance(s.data['id'], str))
         self.assertEqual(artist.id.hashid, s.data['id'])
         s2 = ArtistSerializer(artist, data={'id': 128, 'name': "Test Artist Changed"})
         self.assertTrue(s2.is_valid())

@@ -1,6 +1,6 @@
 from django.apps import apps
 from django.core import exceptions
-from django.utils import six
+
 from hashids import Hashids
 from rest_framework import fields, serializers
 
@@ -27,7 +27,7 @@ class HashidSerializerMixin(object):
         source_field = kwargs.pop('source_field', None)
         if source_field:
             from hashid_field import HashidField, HashidAutoField
-            if isinstance(source_field, six.string_types):
+            if isinstance(source_field, str):
                 try:
                     app_label, model_name, field_name = source_field.split(".")
                 except ValueError:

@@ -1,7 +1,7 @@
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
 from django.test import TestCase, override_settings
-from django.utils.six import StringIO
+from io import StringIO
 
 from hashid_field import Hashid
 from tests.forms import RecordForm, AlternateRecordForm

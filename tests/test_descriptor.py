@@ -1,5 +1,4 @@
 from django.test import TestCase
-from django.utils import six
 
 from hashid_field.field import Hashid
 from hashid_field.descriptor import HashidDescriptor
@@ -80,7 +79,7 @@ class DescriptorTests(TestCase):
     def test_reset_after_invalid_set(self):
         t = TestClass()
         t.hashid = "asdf"  # First set it to something invalid, so the descriptor will just set it to this string
-        self.assertIsInstance(t.hashid, six.string_types)
+        self.assertIsInstance(t.hashid, str)
         self.assertEqual(t.hashid, "asdf")
         t.hashid = 123  # Now set it to a valid value for a Hashid, so it should create a new Hashid()
         self.assertIsInstance(t.hashid, Hashid)
