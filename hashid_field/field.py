@@ -4,7 +4,7 @@ import django
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
 

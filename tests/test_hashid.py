@@ -3,7 +3,7 @@ from unittest import skipIf
 
 import sys
 from django.test import TestCase
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from hashid_field import Hashid
 
@@ -51,7 +51,7 @@ class HashidTests(TestCase):
 
     def test_force_text(self):
         h = Hashid(2923)
-        t = force_text(h)
+        t = force_str(h)
         self.assertEqual(t, h.hashid)
 
     def test_sorting(self):
