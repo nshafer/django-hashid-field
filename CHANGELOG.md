@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] - 2019-12-XX
+### Changes
+- Dropped Python 2.7 support. 
+- Added Python 3.8 support. 
+- Added official support for Django 3.0
+- Added official support for Django Rest Framework 3.10.
+
 ## [2.1.6] - 2019-04-02
 ### Changes
 - Added official support for Django 2.2 LTS.

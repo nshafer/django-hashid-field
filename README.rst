@@ -31,8 +31,8 @@ Requirements
 
 This module is tested and known to work with:
 
-* Python 2.7, 3.6, 3.7
-* Django 1.11, 2.1, 2.2
+* Python 3.6, 3.7, 3.8
+* Django 1.11, 2.1, 2.2, 3.0
 * Hashids 1.2
 * Django REST Framework 3.9
 
@@ -73,6 +73,7 @@ Migrate your database
 
 Upgrading
 ------------
+**Version 2.2 follows Django 3.0 and drops support for Python 2.7.**
 
 **Potentially breaking changes in 2.0.0** depending on your usage and configuration, specifically if you rely on
 integer lookups (now off by default) or exceptions for invalid lookup values.

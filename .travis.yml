@@ -2,8 +2,9 @@ language: python
 cache: pip
 dist: xenial
 python:
-  - 2.7
   - 3.6
+  - 3.7
+  - 3.8
 env:
   - DJANGO_VERSION=1.11.20
   - DJANGO_VERSION=2.1.8
@@ -11,16 +12,6 @@ env:
   - DJANGO_VERSION=1.11.20 DRF_VERSION=3.9.2
   - DJANGO_VERSION=2.1.8 DRF_VERSION=3.9.2
   - DJANGO_VERSION=2.2 DRF_VERSION=3.9.2
-matrix:
-  exclude:
-    - python: 2.7
-      env: DJANGO_VERSION=2.1.8
-    - python: 2.7
-      env: DJANGO_VERSION=2.1.8 DRF_VERSION=3.9.2
-    - python: 2.7
-      env: DJANGO_VERSION=2.2
-    - python: 2.7
-      env: DJANGO_VERSION=2.2 DRF_VERSION=3.9.2
 install:
   - pip install -r .travis/requirements.txt
   - pip install --upgrade "Django==${DJANGO_VERSION}"
