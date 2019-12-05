@@ -4,12 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.2.0] - 2019-12-XX
+## [3.0.0] - 2019-12-05
 ### Changes
 - Dropped Python 2.7 support. 
 - Added Python 3.8 support. 
 - Added official support for Django 3.0
 - Added official support for Django Rest Framework 3.10.
+- (Thanks [hhamana](https://github.com/hhamana))
 
 ## [2.1.6] - 2019-04-02
 ### Changes
@@ -152,6 +153,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.0.0]: https://github.com/nshafer/django-hashid-field/compare/2.1.6...3.0.0
 [2.1.6]: https://github.com/nshafer/django-hashid-field/compare/2.1.5...2.1.6
 [2.1.5]: https://github.com/nshafer/django-hashid-field/compare/2.1.4...2.1.5
 [2.1.4]: https://github.com/nshafer/django-hashid-field/compare/2.1.3...2.1.4
