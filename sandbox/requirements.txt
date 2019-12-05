@@ -4,5 +4,5 @@ Django>=2.2
 hashids>=1.2.0
 
 # Optional
-djangorestframework>=3.9.2
-django-extensions>=2.1.2
+djangorestframework>=3.10.3
+django-extensions>=2.2.5

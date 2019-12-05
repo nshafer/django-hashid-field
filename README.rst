@@ -34,7 +34,7 @@ This module is tested and known to work with:
 * Python 3.6, 3.7, 3.8
 * Django 1.11, 2.2, 3.0
 * Hashids 1.2
-* Django REST Framework 3.9
+* Django REST Framework 3.10
 
 *Please Note*: Python 2.x is at its end of life and is no longer supported.
 
