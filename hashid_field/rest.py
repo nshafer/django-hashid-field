@@ -10,7 +10,7 @@ from hashid_field.hashid import Hashid
 
 class UnconfiguredHashidSerialField(fields.Field):
     def bind(self, field_name, parent):
-        super(UnconfiguredHashidSerialField, self).bind(field_name, parent)
+        super().bind(field_name, parent)
         raise exceptions.ImproperlyConfigured(
             "The field '{field_name}' on {parent} must be explicitly declared when used with a ModelSerializer".format(
                 field_name=field_name, parent=parent.__class__.__name__))
@@ -39,11 +39,11 @@ class HashidSerializerMixin(object):
             self.hashid_salt, self.hashid_min_length, self.hashid_alphabet = \
                 source_field.salt, source_field.min_length, source_field.alphabet
 
-        super(HashidSerializerMixin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         try:
-            value = super(HashidSerializerMixin, self).to_internal_value(data)
+            value = super().to_internal_value(data)
             return Hashid(value, salt=self.hashid_salt, min_length=self.hashid_min_length, alphabet=self.hashid_alphabet)
         except ValueError:
             raise serializers.ValidationError("Invalid int or Hashid string")

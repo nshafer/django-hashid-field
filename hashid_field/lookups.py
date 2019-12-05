@@ -120,7 +120,7 @@ class HashidIterableLookup(HashidLookup):
 
     def get_prep_lookup(self):
         if django.VERSION[0] <= 1 and django.VERSION[1] <= 8:
-            return super(HashidIterableLookup, self).get_prep_lookup()
+            return super().get_prep_lookup()
         prepared_values = []
         if hasattr(self.rhs, '_prepare'):
             # A subquery is like an iterable but its items shouldn't be
@@ -157,7 +157,7 @@ class HashidIterableLookup(HashidLookup):
             placeholder = '(' + ', '.join(sqls) + ')'
             return (placeholder, sqls_params)
         else:
-            return super(HashidIterableLookup, self).process_rhs(compiler, connection)
+            return super().process_rhs(compiler, connection)
 
     def resolve_expression_parameter(self, compiler, connection, sql, param):
         params = [param]
@@ -168,7 +168,7 @@ class HashidIterableLookup(HashidLookup):
         return sql, params
 
     def batch_process_rhs(self, compiler, connection, rhs=None):
-        pre_processed = super(HashidIterableLookup, self).batch_process_rhs(compiler, connection, rhs)
+        pre_processed = super().batch_process_rhs(compiler, connection, rhs)
         # The params list may contain expressions which compile to a
         # sql/param pair. Zip them to get sql and param pairs that refer to the
         # same argument and attempt to replace them with the result of

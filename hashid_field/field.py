@@ -33,16 +33,16 @@ class HashidFieldMixin(object):
             allow_int_lookup = kwargs['allow_int']
             del kwargs['allow_int']
         self.allow_int_lookup = allow_int_lookup
-        super(HashidFieldMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(HashidFieldMixin, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         kwargs['min_length'] = self.min_length
         kwargs['alphabet'] = self.alphabet
         return name, path, args, kwargs
 
     def check(self, **kwargs):
-        errors = super(HashidFieldMixin, self).check(**kwargs)
+        errors = super().check(**kwargs)
         errors.extend(self._check_alphabet_min_length())
         errors.extend(self._check_salt_is_set())
         return errors
@@ -91,7 +91,7 @@ class HashidFieldMixin(object):
         if lookup_name in self.iterable_lookups:
             return HashidIterableLookup
         if lookup_name in self.passthrough_lookups:
-            return super(HashidFieldMixin, self).get_lookup(lookup_name)
+            return super().get_lookup(lookup_name)
         return None  # Otherwise, we don't allow lookups of this type
 
     def to_python(self, value):
@@ -121,7 +121,7 @@ class HashidFieldMixin(object):
         return hashid.id
 
     def contribute_to_class(self, cls, name, **kwargs):
-        super(HashidFieldMixin, self).contribute_to_class(cls, name, **kwargs)
+        super().contribute_to_class(cls, name, **kwargs)
         # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
         setattr(cls, self.attname, HashidDescriptor(self.attname, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet))
 
@@ -134,7 +134,7 @@ class HashidField(HashidFieldMixin, models.IntegerField):
         defaults.update(kwargs)
         if defaults.get('widget') == admin_widgets.AdminIntegerFieldWidget:
             defaults['widget'] = admin_widgets.AdminTextInputWidget
-        return super(HashidField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
 
 class HashidAutoField(HashidFieldMixin, models.AutoField):
