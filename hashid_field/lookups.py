@@ -1,16 +1,11 @@
 import itertools
 
-import django
 from django.db.models.lookups import Lookup
+from django.utils.datastructures import OrderedSet
+from django.core.exceptions import EmptyResultSet
 
 from .hashid import Hashid
 from .conf import settings
-
-try:
-    from django.core.exceptions import EmptyResultSet
-except ImportError:
-    # Fallback to location in Django <= 1.10
-    from django.db.models.sql.datastructures import EmptyResultSet
 
 
 def get_id_for_hashid_field(field, value):
@@ -31,47 +26,14 @@ def get_id_for_hashid_field(field, value):
     return hashid.id
 
 
-# Most of this code is derived or copied from Django 1.11, django/db/models/lookups.py.
-# It has been included here to increase compatibility of this module with Django versions 1.8, 1.9 and 1.10.
+# Most of this code is derived or copied from Django. (django/db/models/lookups.py)
+# It has been included here to increase compatibility of this module with Django versions 1.11, 2.2 and 3.0.
 # Django is Copyright (c) Django Software Foundation and individual contributors.
 # Please see https://github.com/django/django/blob/master/LICENSE
-# Upon the release of Django 2.0, and when this module drops support for Django < 1.11, most of this code will be
-# removed.
 
 class HashidLookup(Lookup):
     get_db_prep_lookup_value_is_iterable = False
-
-    def get_prep_lookup(self):
-        if hasattr(self.rhs, '_prepare'):
-            if django.VERSION[0] <= 1 and django.VERSION[1] <= 8:
-                return self.rhs._prepare()
-            else:
-                return self.rhs._prepare(self.lhs.output_field)
-        return self.rhs
-
-    def process_rhs(self, compiler, connection):
-        value = self.rhs
-        # Due to historical reasons there are a couple of different
-        # ways to produce sql here. get_compiler is likely a Query
-        # instance and as_sql just something with as_sql. Finally the value
-        # can of course be just plain Python value.
-        if hasattr(value, 'get_compiler'):
-            value = value.get_compiler(connection=connection)
-        if hasattr(value, 'as_sql'):
-            sql, params = compiler.compile(value)
-            return '(' + sql + ')', params
-        if hasattr(value, '_as_sql'):
-            sql, params = value._as_sql(connection=connection)
-            return '(' + sql + ')', params
-        else:
-            return self.get_db_prep_lookup(value, connection)
-
-    def batch_process_rhs(self, compiler, connection, rhs=None):
-        if rhs is None:
-            rhs = self.rhs
-        _, params = self.get_db_prep_lookup(rhs, connection)
-        sqls, sqls_params = ['%s'] * len(params), params
-        return sqls, sqls_params
+    prepare_rhs = False
 
     def as_sql(self, compiler, connection):
         lhs_sql, params = self.process_lhs(compiler, connection)
@@ -116,16 +78,18 @@ class HashidLookup(Lookup):
 
 
 class HashidIterableLookup(HashidLookup):
+    # This is an amalgamation of Django's FieldGetDbPrepValueIterableMixin and In lookup to allow support of both
+    # iterables (lists, tuples) and subqueries.
     get_db_prep_lookup_value_is_iterable = True
 
     def get_prep_lookup(self):
-        if django.VERSION[0] <= 1 and django.VERSION[1] <= 8:
-            return super().get_prep_lookup()
+        if hasattr(self.rhs, 'resolve_expression'):
+            return self.rhs
         prepared_values = []
-        if hasattr(self.rhs, 'subquery') and self.rhs.subquery:
+        if hasattr(self.rhs, '_prepare'):
             # A subquery is like an iterable but its items shouldn't be
             # prepared independently.
-            return self.rhs
+            return self.rhs._prepare(self.lhs.output_field)
         for rhs_value in self.rhs:
             if hasattr(rhs_value, 'resolve_expression'):
                 # An expression will be handled by the database but can coexist
@@ -144,7 +108,7 @@ class HashidIterableLookup(HashidLookup):
 
         if self.rhs_is_direct_value():
             try:
-                rhs = set(self.rhs)
+                rhs = OrderedSet(self.rhs)
             except TypeError:  # Unhashable items in self.rhs
                 rhs = self.rhs
 
