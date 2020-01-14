@@ -114,6 +114,36 @@ class HashidsTests(TestCase):
         self.assertEqual(len(queryset), 2)
         self.assertEqual(len(Artist.objects.filter(id__in=queryset.values('id'))), 2)
 
+    def test_passthrough_lookups(self):
+        # Test null lookups
+        self.assertTrue(Record.objects.filter(alternate_id__isnull=True).exists())
+        self.assertFalse(Record.objects.filter(alternate_id__isnull=False).exists())
+
+        # Create some new objects to test with
+        a = Artist.objects.create(name="Artist A")
+        b = Artist.objects.create(name="Artist B")
+        c = Artist.objects.create(name="Artist C")
+        r1 = self.record
+        r2 = Record.objects.create(name="Red Album", reference_id=456)
+        r3 = Record.objects.create(name="Blue Album", reference_id=789)
+
+        # All 3 records exists (including record created in setUp())
+        self.assertEqual(Record.objects.count(), 3)
+        # greater than with hashid and integer values
+        self.assertEqual(Artist.objects.filter(id__gt=a.id).count(), 2)
+        self.assertEqual(Artist.objects.filter(id__gt=a.id.id).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__gt=r1.reference_id).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__gt=r1.reference_id.id).count(), 2)
+        # great than or equal
+        self.assertEqual(Artist.objects.filter(id__gte=a.id).count(), 3)
+        self.assertEqual(Record.objects.filter(reference_id__gte=r1.reference_id.id).count(), 3)
+        # less than
+        self.assertEqual(Artist.objects.filter(id__lt=b.id.id).count(), 1)
+        self.assertEqual(Record.objects.filter(reference_id__lt=r3.reference_id).count(), 2)
+        # less than or equal
+        self.assertEqual(Artist.objects.filter(id__lte=b.id).count(), 2)
+        self.assertEqual(Record.objects.filter(reference_id__lte=r3.reference_id.id).count(), 3)
+
     def test_get_object_or_404(self):
         a = Artist.objects.create(name="Artist A")
 

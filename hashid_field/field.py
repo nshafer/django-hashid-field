@@ -21,7 +21,7 @@ class HashidFieldMixin(object):
     }
     exact_lookups = ('exact', 'iexact', 'contains', 'icontains')
     iterable_lookups = ('in',)
-    passthrough_lookups = ('isnull',)
+    passthrough_lookups = ('isnull', 'gt', 'gte', 'lt', 'lte')
 
     def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET,
                  allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP, *args, **kwargs):
