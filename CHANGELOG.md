@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.0] - 2020-01-14
+### Changes
+- Added support for `gt`, `gte`, `lt` and `lte` lookups.
+  - Example: `MyModel.objects.filter(id__gt=100)`
+  - Example: `MyModel.objects.filter(id__gt="Ba9p1AG")`
+  - (Thanks for report from [frossigneux](https://github.com/frossigneux) in Issue [#38]
+
 ## [3.0.0] - 2019-12-05
 ### Changes
 - Dropped Python 2.7 support. 
@@ -153,6 +160,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.1.0]: https://github.com/nshafer/django-hashid-field/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/nshafer/django-hashid-field/compare/2.1.6...3.0.0
 [2.1.6]: https://github.com/nshafer/django-hashid-field/compare/2.1.5...2.1.6
 [2.1.5]: https://github.com/nshafer/django-hashid-field/compare/2.1.4...2.1.5
@@ -176,3 +184,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#27]: https://github.com/nshafer/django-hashid-field/issues/27
 [#29]: https://github.com/nshafer/django-hashid-field/issues/29
 [#30]: https://github.com/nshafer/django-hashid-field/pull/30
+[#38]: https://github.com/nshafer/django-hashid-field/issues/38

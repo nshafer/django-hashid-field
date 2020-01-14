@@ -24,6 +24,7 @@ Features
 * Supports exact ID searches in Django Admin when field is specified in search_fields.
 * Supports common filtering lookups, such as ``__iexact``, ``__contains``, ``__icontains``, though matching is the same as ``__exact``.
 * Supports subquery lookups with ``field__in=queryset``
+* Supports other lookups: `isnull`, `gt`, `gte`, `lt` and `lte`.
 * Supports hashing operations so the fields can be used in Dictionaries and Sets.
 
 Requirements
