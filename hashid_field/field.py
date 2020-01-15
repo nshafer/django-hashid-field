@@ -8,7 +8,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
 
-from .lookups import HashidLookup, HashidIterableLookup
+from .lookups import HashidExactLookup, HashidIterableLookup
+from .lookups import HashidGreaterThan, HashidGreaterThanOrEqual, HashidLessThan, HashidLessThanOrEqual
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
 from .conf import settings
@@ -21,7 +22,13 @@ class HashidFieldMixin(object):
     }
     exact_lookups = ('exact', 'iexact', 'contains', 'icontains')
     iterable_lookups = ('in',)
-    passthrough_lookups = ('isnull', 'gt', 'gte', 'lt', 'lte')
+    passthrough_lookups = ('isnull',)
+    comparison_lookups = {
+        'gt': HashidGreaterThan,
+        'gte': HashidGreaterThanOrEqual,
+        'lt': HashidLessThan,
+        'lte': HashidLessThanOrEqual,
+    }
 
     def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET,
                  allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP, *args, **kwargs):
@@ -87,9 +94,11 @@ class HashidFieldMixin(object):
 
     def get_lookup(self, lookup_name):
         if lookup_name in self.exact_lookups:
-            return HashidLookup
+            return HashidExactLookup
         if lookup_name in self.iterable_lookups:
             return HashidIterableLookup
+        if lookup_name in self.comparison_lookups:
+            return self.comparison_lookups[lookup_name]
         if lookup_name in self.passthrough_lookups:
             return super().get_lookup(lookup_name)
         return None  # Otherwise, we don't allow lookups of this type

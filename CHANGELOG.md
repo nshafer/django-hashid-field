@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.1] - 2020-01-15
+### Fixes
+- Fixed security bug where comparison operators (gt, gte, lt, lte) would allow integer lookups regardless of
+  ALLOW_INT_LOOKUP setting.
+- Fixed tests that were relying on allow_int_lookup to be set in other tests.
+
 ## [3.1.0] - 2020-01-14
 ### Changes
 - Added support for `gt`, `gte`, `lt` and `lte` lookups.
-  - Example: `MyModel.objects.filter(id__gt=100)`
+  - Example: `MyModel.objects.filter(id__gt=100)` (If `allow_int_lookups` is True)
   - Example: `MyModel.objects.filter(id__gt="Ba9p1AG")`
   - (Thanks for report from [frossigneux](https://github.com/frossigneux) in Issue [#38]
 

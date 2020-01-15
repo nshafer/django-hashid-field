@@ -1,8 +1,8 @@
 # These requirements are only for setting up a dev environment with `pip install -r requirements.txt`
 # They should match `install_requires` in setup.py. See also .travis/requirements.txt for Travis builds.
-Django>=2.2
-hashids>=1.2.0
+Django~=2.2.9
+hashids~=1.2.0
 
 # Optional
-djangorestframework>=3.10.3
+djangorestframework~=3.11.0
 django-extensions>=2.2.5

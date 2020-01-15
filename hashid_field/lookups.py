@@ -1,6 +1,6 @@
 import itertools
 
-from django.db.models.lookups import Lookup
+from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual
 from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
 
@@ -31,19 +31,8 @@ def get_id_for_hashid_field(field, value):
 # Django is Copyright (c) Django Software Foundation and individual contributors.
 # Please see https://github.com/django/django/blob/master/LICENSE
 
-class HashidLookup(Lookup):
+class HashidFieldGetDbPrepValueMixin:
     get_db_prep_lookup_value_is_iterable = False
-    prepare_rhs = False
-
-    def as_sql(self, compiler, connection):
-        lhs_sql, params = self.process_lhs(compiler, connection)
-        rhs_sql, rhs_params = self.process_rhs(compiler, connection)
-        params.extend(rhs_params)
-        rhs_sql = self.get_rhs_op(connection, rhs_sql)
-        return '%s %s' % (lhs_sql, rhs_sql), params
-
-    def get_rhs_op(self, connection, rhs):
-        return "= %s" % rhs
 
     def get_db_prep_lookup(self, value, connection):
         # There are two modes this method can be called in... a single value or an iterable of values (usually a set)
@@ -77,7 +66,21 @@ class HashidLookup(Lookup):
             return '%s', [lookup_id]
 
 
-class HashidIterableLookup(HashidLookup):
+class HashidExactLookup(HashidFieldGetDbPrepValueMixin, Lookup):
+    prepare_rhs = False
+
+    def as_sql(self, compiler, connection):
+        lhs_sql, params = self.process_lhs(compiler, connection)
+        rhs_sql, rhs_params = self.process_rhs(compiler, connection)
+        params.extend(rhs_params)
+        rhs_sql = self.get_rhs_op(connection, rhs_sql)
+        return '%s %s' % (lhs_sql, rhs_sql), params
+
+    def get_rhs_op(self, connection, rhs):
+        return "= %s" % rhs
+
+
+class HashidIterableLookup(HashidExactLookup):
     # This is an amalgamation of Django's FieldGetDbPrepValueIterableMixin and In lookup to allow support of both
     # iterables (lists, tuples) and subqueries.
     get_db_prep_lookup_value_is_iterable = True
@@ -146,3 +149,19 @@ class HashidIterableLookup(HashidLookup):
 
     def get_rhs_op(self, connection, rhs):
         return 'IN %s' % rhs
+
+
+class HashidGreaterThan(HashidFieldGetDbPrepValueMixin, GreaterThan):
+    prepare_rhs = False
+
+
+class HashidGreaterThanOrEqual(HashidFieldGetDbPrepValueMixin, GreaterThanOrEqual):
+    prepare_rhs = False
+
+
+class HashidLessThan(HashidFieldGetDbPrepValueMixin, LessThan):
+    prepare_rhs = False
+
+
+class HashidLessThanOrEqual(HashidFieldGetDbPrepValueMixin, LessThanOrEqual):
+    prepare_rhs = False
