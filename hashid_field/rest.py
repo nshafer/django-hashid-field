@@ -38,13 +38,13 @@ class HashidSerializerMixin(object):
                 raise TypeError(self.usage_text)
             self.hashid_salt, self.hashid_min_length, self.hashid_alphabet = \
                 source_field.salt, source_field.min_length, source_field.alphabet
-
+        self._hashids = Hashids(salt=self.hashid_salt, min_length=self.hashid_min_length, alphabet=self.hashid_alphabet)
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         try:
             value = super().to_internal_value(data)
-            return Hashid(value, salt=self.hashid_salt, min_length=self.hashid_min_length, alphabet=self.hashid_alphabet)
+            return Hashid(value, self._hashids)
         except ValueError:
             raise serializers.ValidationError("Invalid int or Hashid string")
 

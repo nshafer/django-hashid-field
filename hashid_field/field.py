@@ -35,6 +35,7 @@ class HashidFieldMixin(object):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
+        self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
         if 'allow_int' in kwargs:
             warnings.warn("The 'allow_int' parameter was renamed to 'allow_int_lookup'.", DeprecationWarning, stacklevel=2)
             allow_int_lookup = kwargs['allow_int']
@@ -79,7 +80,7 @@ class HashidFieldMixin(object):
         return []
 
     def encode_id(self, id):
-        return Hashid(id, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
+        return Hashid(id, hashids=self._hashids)
 
     if django.VERSION < (2, 0):
         def from_db_value(self, value, expression, connection, context):
