@@ -7,13 +7,16 @@ from hashids import Hashids, _is_uint
 @total_ordering
 class Hashid(object):
     def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None):
-        if hashids is not None and salt:
-            raise ValueError("Cannot use hashids and salt at the same time")
-        self._salt = salt
-        self._min_length = min_length
-        self._alphabet = alphabet
-
-        self._hashids = hashids or Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
+        if hashids is None:
+            self._salt = salt
+            self._min_length = min_length
+            self._alphabet = alphabet
+            self._hashids = Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
+        else:
+            self._hashids = hashids
+            self._salt = hashids._salt
+            self._min_length = hashids._min_length
+            self._alphabet = hashids._alphabet
 
         # First see if we were given an already-encoded and valid Hashids string
         value = self.decode(id)
