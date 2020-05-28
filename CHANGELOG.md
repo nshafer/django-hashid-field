@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.2] - 2020-05-28
+### Changes
+- [#40]: Use a single instance of the Hashids class for all instances of a given Hashid*Field. In testing, this decreased
+  time taken to instantiate those rows by about 63%, and memory usage is drastically decreased.
+  (Thanks [Alexandru Chirila](https://github.com/alexkiro))
+
 ## [3.1.1] - 2020-01-15
 ### Fixes
 - Fixed security bug where comparison operators (gt, gte, lt, lte) would allow integer lookups regardless of
@@ -166,6 +172,8 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.1.2]: https://github.com/nshafer/django-hashid-field/compare/3.1.1...3.1.2
+[3.1.1]: https://github.com/nshafer/django-hashid-field/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/nshafer/django-hashid-field/compare/3.0.0...3.1.0
 [3.0.0]: https://github.com/nshafer/django-hashid-field/compare/2.1.6...3.0.0
 [2.1.6]: https://github.com/nshafer/django-hashid-field/compare/2.1.5...2.1.6
@@ -191,3 +199,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#29]: https://github.com/nshafer/django-hashid-field/issues/29
 [#30]: https://github.com/nshafer/django-hashid-field/pull/30
 [#38]: https://github.com/nshafer/django-hashid-field/issues/38
+[#40]: https://github.com/nshafer/django-hashid-field/pull/40
