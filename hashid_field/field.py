@@ -133,7 +133,7 @@ class HashidFieldMixin(object):
     def contribute_to_class(self, cls, name, **kwargs):
         super().contribute_to_class(cls, name, **kwargs)
         # setattr(cls, "_" + self.attname, getattr(cls, self.attname))
-        setattr(cls, self.attname, HashidDescriptor(self.attname, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet))
+        setattr(cls, self.attname, HashidDescriptor(self.attname, hashids=self._hashids))
 
 
 class HashidField(HashidFieldMixin, models.IntegerField):

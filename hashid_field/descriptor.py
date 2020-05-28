@@ -4,12 +4,15 @@ from .hashid import Hashid
 
 
 class HashidDescriptor(object):
-    def __init__(self, name, salt='', min_length=0, alphabet=Hashids.ALPHABET):
+    def __init__(self, name, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None):
         self.name = name
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
-        self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
+        if hashids is None:
+            self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
+        else:
+            self._hashids = hashids
 
     def __get__(self, instance, owner=None):
         if instance is not None and self.name in instance.__dict__:
