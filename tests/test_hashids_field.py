@@ -1,9 +1,10 @@
+from django.core import exceptions
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
 from django.test import TestCase, override_settings
 from io import StringIO
 
-from hashid_field import Hashid
+from hashid_field import Hashid, HashidField
 from tests.forms import RecordForm, AlternateRecordForm
 from tests.models import Record, Artist
 
@@ -160,7 +161,6 @@ class HashidsTests(TestCase):
         Artist._meta.get_field('id').allow_int_lookup = False
         Record._meta.get_field('reference_id').allow_int_lookup = False
 
-
     def test_get_object_or_404(self):
         a = Artist.objects.create(name="Artist A")
 
@@ -288,3 +288,31 @@ class HashidsTests(TestCase):
             self.assertTrue(Record.objects.filter(key="asdf").exists())
         with self.assertRaises(ValueError):
             self.assertTrue(Record.objects.filter(key__in=[456]).exists())
+
+    def test_custom_hashids_settings(self):
+        SALT="abcd"
+        ALPHABET="abcdefghijklmnop"
+        MIN_LENGTH=10
+        field = HashidField(salt=SALT, alphabet=ALPHABET, min_length=MIN_LENGTH)
+        hashids = field._hashids
+        self.assertEqual(hashids._salt, SALT)
+        self.assertEqual(hashids._min_length, MIN_LENGTH)
+        self.assertEqual("".join(sorted(hashids._alphabet + hashids._guards + hashids._separators)), ALPHABET)
+        # Make sure all characters in 100 hashids are in the ALPHABET and are at least MIN_LENGTH
+        for i in range(1, 100):
+            hashid = str(field.to_python(i))
+            self.assertGreaterEqual(len(hashid), MIN_LENGTH)
+            for c in hashid:
+                self.assertIn(c, ALPHABET)
+
+    def test_invalid_alphabets(self):
+        with self.assertRaises(exceptions.ImproperlyConfigured):
+            HashidField(alphabet="")  # blank
+        with self.assertRaises(exceptions.ImproperlyConfigured):
+            HashidField(alphabet="abcdef")  # too short
+        with self.assertRaises(exceptions.ImproperlyConfigured):
+            HashidField(alphabet="abcdefghijklmno")  # too short by one
+        with self.assertRaises(exceptions.ImproperlyConfigured):
+            HashidField(alphabet="aaaaaaaaaaaaaaaaaaaaa")  # not unique
+        with self.assertRaises(exceptions.ImproperlyConfigured):
+            HashidField(alphabet="aabcdefghijklmno")  # not unique by one

@@ -15,6 +15,10 @@ from .hashid import Hashid
 from .conf import settings
 
 
+def _alphabet_unique_len(alphabet):
+    return len([x for i, x in enumerate(alphabet) if alphabet.index(x) == i])
+
+
 class HashidFieldMixin(object):
     default_error_messages = {
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
@@ -35,6 +39,8 @@ class HashidFieldMixin(object):
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
+        if _alphabet_unique_len(self.alphabet) < 16:
+            raise exceptions.ImproperlyConfigured("'alphabet' must contain a minimum of 16 unique characters")
         self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
         if 'allow_int' in kwargs:
             warnings.warn("The 'allow_int' parameter was renamed to 'allow_int_lookup'.", DeprecationWarning, stacklevel=2)
@@ -56,11 +62,11 @@ class HashidFieldMixin(object):
         return errors
 
     def _check_alphabet_min_length(self):
-        if len(self.alphabet) < 16:
+        if _alphabet_unique_len(self.alphabet) < 16:
             return [
                 checks.Error(
-                    "'alphabet' must contain a minimum of 16 characters",
-                    hint="Add more characters to custom 'alphabet'",
+                    "'alphabet' must contain a minimum of 16 unique characters",
+                    hint="Add more unique characters to custom 'alphabet'",
                     obj=self,
                     id='HashidField.E001',
                 )
