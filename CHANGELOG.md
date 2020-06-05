@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.3] - 2020-06-05
+### Changes
+- Check passed alphabet for length and that the characters are unique.
+
 ## [3.1.2] - 2020-05-28
 ### Changes
 - [#40]: Use a single instance of the Hashids class for all instances of a given Hashid*Field. In testing, this decreased
@@ -172,6 +176,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/nshafer/django-hashid-field/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/nshafer/django-hashid-field/compare/3.1.0...3.1.1
 [3.1.0]: https://github.com/nshafer/django-hashid-field/compare/3.0.0...3.1.0
