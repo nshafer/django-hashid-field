@@ -6,7 +6,7 @@ from io import StringIO
 
 from hashid_field import Hashid, HashidField
 from tests.forms import RecordForm, AlternateRecordForm
-from tests.models import Record, Artist
+from tests.models import Record, Artist, Track
 
 
 class HashidsTests(TestCase):
@@ -316,3 +316,19 @@ class HashidsTests(TestCase):
             HashidField(alphabet="aaaaaaaaaaaaaaaaaaaaa")  # not unique
         with self.assertRaises(exceptions.ImproperlyConfigured):
             HashidField(alphabet="aabcdefghijklmno")  # not unique by one
+
+    def test_encode_with_prefix(self):
+        SALT = "abcd"
+        ALPHABET = "abcdefghijklmnop"
+
+        field_without_prefix = HashidField(min_length=5)
+        field_with_prefix = HashidField(min_length=5, prefix=1)
+
+        hashed_id_without_prefix = field_without_prefix.encode_id(1)
+        hashed_id_with_prefix = field_with_prefix.encode_id(1)
+
+        self.assertNotEqual(hashed_id_without_prefix, hashed_id_with_prefix)
+
+    def test_decode_with_prefix(self):
+        instance = Track.objects.create()
+        self.assertEqual(1, Track.objects.filter(id=1).count())

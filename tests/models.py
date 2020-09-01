@@ -20,3 +20,6 @@ class Record(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.name, self.reference_id)
+
+class Track(models.Model):
+    id = HashidAutoField(primary_key=True, allow_int_lookup=True, min_length=10, prefix=1, salt="abcd", alphabet="abcdefghijklmnop")
