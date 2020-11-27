@@ -24,6 +24,7 @@ class HashidFieldMixin(object):
         'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
         'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
     }
+    description = _('HashId (from %(min_length)s - to %(max_length)s)')
     exact_lookups = ('exact', 'iexact', 'contains', 'icontains')
     iterable_lookups = ('in',)
     passthrough_lookups = ('isnull',)
