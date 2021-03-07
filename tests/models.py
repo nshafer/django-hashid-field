@@ -1,5 +1,4 @@
 from django.db import models
-from time import time
 
 from hashid_field import HashidAutoField, HashidField
 
