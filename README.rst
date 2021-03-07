@@ -251,8 +251,8 @@ Field Parameters
 Besides the standard field options, there are settings you can tweak that are specific to HashidField and
 AutoHashidField.
 
-**Please note** that changing any of the values for ``salt``, ``min_length`` or ``alphabet`` *will* affect the
-obfuscation of the integers that are stored in the database, and will change what are considered "valid" hashids.
+**Please note** that changing any of the values for ``salt``, ``min_length``, ``alphabet`` or ``prefix`` *will* affect
+the obfuscation of the integers that are stored in the database, and will change what are considered "valid" hashids.
 If you have links or URLs that include your HashidField values, then they will stop working after changing any of these
 values. It's highly advised that you don't change any of these settings once you publish any references to your field.
 
@@ -289,6 +289,23 @@ alphabet
         # Only use numbers and lower-case letters
         reference_id = HashidField(alphabet="0123456789abcdefghijklmnopqrstuvwxyz")
 
+prefix
+~~~~~~
+
+:Type:    String or callable object.
+:Default: ''
+:Example:
+    .. code-block:: python
+
+        # Using URLs for identifiers:
+        reference_id = HashidField(prefix="https://example.com/")
+
+        # Using a callable that inserts the field name:
+        def get_prefix(field_name, **kw):
+            return 'myids:{}:'.format(field_name)
+        reference_id = HashidField(prefix=get_prefix)
+
+
 allow_int_lookup
 ~~~~~~~~~~~~~~~~
 
@@ -309,13 +326,14 @@ converting integers and hashid strings back and forth. There shouldn't be any ne
 Methods
 ~~~~~~~
 
-\__init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET):
+\__init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET, prefix=''):
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :id: **REQUIRED** Integer you wish to *encode*
 :salt: Salt to use. **Default**: ''
 :min_length: Minimum length of encoded hashid string. **Default**: 0
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
+:prefix: String prefix prepended to hashid strings. **Default**: ''
 
 Read-Only Properties
 ~~~~~~~~~~~~~~~~~~~~

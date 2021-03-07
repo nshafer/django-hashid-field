@@ -3,7 +3,8 @@ from unittest import skipUnless
 from django.core import exceptions
 from django.test import TestCase
 
-from tests.models import Artist
+from tests.models import Artist, Track
+import hashids
 
 try:
     from rest_framework import serializers
@@ -79,3 +80,22 @@ class TestRestFramework(TestCase):
         with self.assertRaises(exceptions.FieldDoesNotExist):
             id = HashidSerializerIntegerField(source_field="tests.Artist.baz")
 
+    def test_modelserializer_with_prefix(self):
+        class TrackSerializer(serializers.ModelSerializer):
+            id = HashidSerializerCharField(source_field="tests.Track.id")
+
+            class Meta:
+                model = Track
+                fields = ("id",)
+
+        salt = Track._meta.get_field("id").salt
+        alphabet = Track._meta.get_field("id").alphabet
+        min_length = Track._meta.get_field("id").min_length
+        reference = hashids.Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
+
+        track = Track.objects.create()
+        expected = 'albumtrack:' + reference.encode(1)
+        self.assertEqual(track.id, expected)
+
+        serializer = TrackSerializer(track)
+        self.assertEqual(serializer.data["id"], expected)

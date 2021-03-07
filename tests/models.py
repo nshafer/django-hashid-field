@@ -1,4 +1,5 @@
 from django.db import models
+from time import time
 
 from hashid_field import HashidAutoField, HashidField
 
@@ -20,3 +21,14 @@ class Record(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.name, self.reference_id)
+
+
+class Track(models.Model):
+    id = HashidAutoField(primary_key=True, allow_int_lookup=True, min_length=10, prefix='albumtrack:', salt="abcd", alphabet="abcdefghijklmnop")
+
+
+class RecordLabel(models.Model):
+    def name_prefix(model_class, **kw):
+        return model_class._meta.verbose_name.replace(' ', '_') + '/'
+
+    id = HashidAutoField(primary_key=True, allow_int_lookup=True, prefix=name_prefix)

@@ -4,11 +4,12 @@ from .hashid import Hashid
 
 
 class HashidDescriptor(object):
-    def __init__(self, name, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None):
+    def __init__(self, name, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=''):
         self.name = name
         self.salt = salt
         self.min_length = min_length
         self.alphabet = alphabet
+        self.prefix = prefix
         if hashids is None:
             self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
         else:
@@ -25,6 +26,6 @@ class HashidDescriptor(object):
             instance.__dict__[self.name] = value
         else:
             try:
-                instance.__dict__[self.name] = Hashid(value, hashids=self._hashids)
+                instance.__dict__[self.name] = Hashid(value, hashids=self._hashids, prefix=self.prefix)
             except ValueError:
                 instance.__dict__[self.name] = value

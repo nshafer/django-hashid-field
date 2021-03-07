@@ -6,7 +6,8 @@ from hashids import Hashids, _is_uint
 
 @total_ordering
 class Hashid(object):
-    def __init__(self, id, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None):
+    def __init__(self, value, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=''):
+        self._prefix = prefix
         if hashids is None:
             self._salt = salt
             self._min_length = min_length
@@ -18,23 +19,31 @@ class Hashid(object):
             self._min_length = hashids._min_length
             self._alphabet = hashids._alphabet
 
-        # First see if we were given an already-encoded and valid Hashids string
-        value = self.decode(id)
-        if value is not None:
-            self._id = value
-            self._hashid = id
+        if value is None:
+            return
+
+        # Is this a positive integer?
+        try:
+            value = int(value)
+        except (TypeError, ValueError):
+            # Is it an already-encoded value?
+            if not value.startswith(self._prefix):
+                raise ValueError("Invalid id prefix")
+            without_prefix = value[len(self._prefix):]
+            _id = self.decode(without_prefix)
+            if _id is None:
+                raise ValueError("Invalid id")
+            else:
+                self._id = _id
+                self._hashid = without_prefix
         else:
-            # Next see if it's a positive integer
-            try:
-                id = int(id)
-            except (TypeError, ValueError):
-                raise ValueError("id must be a positive integer or valid Hashid value")
-            if not _is_uint(id):
-                raise ValueError("id must be a positive integer")
+            if not _is_uint(value):
+                raise ValueError("Underlying ids must be positive integers")
 
             # Finally, set our internal values
-            self._id = id
-            self._hashid = self.encode(id)
+            self._id = value
+            self._hashid = self.encode(value)
+
 
     @property
     def id(self):
@@ -59,10 +68,10 @@ class Hashid(object):
             return None
 
     def __repr__(self):
-        return "Hashid({}): {}".format(self._id, self._hashid)
+        return "Hashid({}): {}".format(self._id, str(self))
 
     def __str__(self):
-        return self._hashid
+        return self._prefix + self._hashid
 
     def __int__(self):
         return self._id
@@ -72,11 +81,15 @@ class Hashid(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self._id == other._id and self._hashid == other._hashid
+            return (
+                self._id == other._id and
+                self._hashid == other._hashid and
+                self._prefix == other._prefix
+            )
         if isinstance(other, str):
-            return self._hashid == other
+            return str(self) == other
         if isinstance(other, int):
-            return self._id == other
+            return int(self) == other
         return NotImplemented
 
     def __lt__(self, other):
@@ -87,10 +100,10 @@ class Hashid(object):
         return NotImplemented
 
     def __len__(self):
-        return len(self._hashid)
+        return len(str(self))
 
     def __hash__(self):
-        return hash(self._hashid)
+        return hash(str(self))
 
     def __reduce__(self):
-        return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet))
+        return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet, None, self._prefix))

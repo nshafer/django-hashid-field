@@ -23,6 +23,7 @@ class HashidSerializerMixin(object):
         self.hashid_salt = kwargs.pop('salt', settings.HASHID_FIELD_SALT)
         self.hashid_min_length = kwargs.pop('min_length', 7)
         self.hashid_alphabet = kwargs.pop('alphabet', Hashids.ALPHABET)
+        self.prefix = None
 
         source_field = kwargs.pop('source_field', None)
         if source_field:
@@ -36,25 +37,25 @@ class HashidSerializerMixin(object):
                 source_field = model._meta.get_field(field_name)
             elif not isinstance(source_field, (HashidField, HashidAutoField)):
                 raise TypeError(self.usage_text)
-            self.hashid_salt, self.hashid_min_length, self.hashid_alphabet = \
-                source_field.salt, source_field.min_length, source_field.alphabet
+            self.hashid_salt, self.hashid_min_length, self.hashid_alphabet, self.prefix = \
+                source_field.salt, source_field.min_length, source_field.alphabet, source_field.prefix
         self._hashids = Hashids(salt=self.hashid_salt, min_length=self.hashid_min_length, alphabet=self.hashid_alphabet)
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         try:
             value = super().to_internal_value(data)
-            return Hashid(value, hashids=self._hashids)
+            return Hashid(value, hashids=self._hashids, prefix=self.prefix)
         except ValueError:
             raise serializers.ValidationError("Invalid int or Hashid string")
 
 
 class HashidSerializerCharField(HashidSerializerMixin, fields.CharField):
     def to_representation(self, value):
-        return value.hashid
+        return str(value)
 
 
 class HashidSerializerIntegerField(HashidSerializerMixin, fields.IntegerField):
     def to_representation(self, value):
-        return value.id
+        return int(value)
 
