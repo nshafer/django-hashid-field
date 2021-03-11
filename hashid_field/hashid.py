@@ -18,7 +18,7 @@ class Hashid(object):
             self._min_length = hashids._min_length
             self._alphabet = hashids._alphabet
 
-        self._prefix = prefix
+        self._prefix = str(prefix)
 
         if value is None:
             raise ValueError("id must be a positive integer or a valid Hashid string")
