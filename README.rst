@@ -49,7 +49,9 @@ Install the package (preferably in a virtualenv):
 
     $ pip install django-hashid-field
 
-Configure a global SALT for all HashidFields to use by default in your settings.py.
+Configure a global SALT for all HashidFields to use by default in your settings.py. (*Note*: Using a global salt for all
+fields will result in IDs from different fields/models being the same. If you want to have unique hashid strings for the
+same id, then also configure per-field salts as described in Field Parameters below.)
 
 .. code-block:: python
 
@@ -207,7 +209,8 @@ You can optionally set a global Salt to be used by all HashFields and HashidAuto
 same string as your SECRET_KEY, as this could lead to your SECRET_KEY being exposed to an attacker.
 Please note that changing this value will cause all HashidFields to change their values, and any previously published
 IDs will become invalid.
-Can be overridden by the field definition.
+Can be overridden by the field definition if you desire unique hashid strings for a given field, as described in
+Field Parameters below.
 
 :Type:    string
 :Default: ""
@@ -262,6 +265,9 @@ salt
 
 :Type:    string
 :Default: settings.HASHID_FIELD_SALT, ""
+:Note:    Set this to a unique value for each field if you want the IDs for that field to be different to the same IDs
+          on another field. e.g. so that `book.id = Hashid(5): 0Q8Kg9r` and `author.id = Hashid(5): kp0eq0V`.
+          Suggestion: `fieldname = HashIdField(salt=settings.HASHID_FIELD_SALT + "_modelname_fieldname")`
 :Example:
     .. code-block:: python
 
