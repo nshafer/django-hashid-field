@@ -23,7 +23,7 @@ class HashidSerializerMixin(object):
         self.hashid_salt = kwargs.pop('salt', settings.HASHID_FIELD_SALT)
         self.hashid_min_length = kwargs.pop('min_length', 7)
         self.hashid_alphabet = kwargs.pop('alphabet', Hashids.ALPHABET)
-        self.prefix = None
+        self.prefix = kwargs.pop('alphabet', "")
 
         source_field = kwargs.pop('source_field', None)
         if source_field:
