@@ -1,13 +1,12 @@
 import sys
 from functools import total_ordering
 
-from hashids import Hashids, _is_uint
+from hashids import Hashids, _is_uint, _is_str
 
 
 @total_ordering
 class Hashid(object):
-    def __init__(self, value, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=''):
-        self._prefix = prefix
+    def __init__(self, value, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=""):
         if hashids is None:
             self._salt = salt
             self._min_length = min_length
@@ -19,31 +18,45 @@ class Hashid(object):
             self._min_length = hashids._min_length
             self._alphabet = hashids._alphabet
 
+        self._prefix = prefix
+
         if value is None:
-            return
+            raise ValueError("id must be a positive integer or a valid Hashid string")
 
-        # Is this a positive integer?
-        try:
-            value = int(value)
-        except (TypeError, ValueError):
-            # Is it an already-encoded value?
-            if not value.startswith(self._prefix):
-                raise ValueError("Invalid id prefix")
-            without_prefix = value[len(self._prefix):]
-            _id = self.decode(without_prefix)
-            if _id is None:
-                raise ValueError("Invalid id")
-            else:
-                self._id = _id
-                self._hashid = without_prefix
-        else:
-            if not _is_uint(value):
-                raise ValueError("Underlying ids must be positive integers")
-
-            # Finally, set our internal values
+        # Check if `value` is an integer first as it is much faster than checking if a string is a valid hashid
+        if _is_uint(value):
             self._id = value
             self._hashid = self.encode(value)
+        elif _is_str(value):
+            # `value` could be a string representation of an integer and not a hashid, but since the Hashids algorithm
+            # requires a minimum of 16 characters in the alphabet, `int(value, base=10)` will always throw a ValueError
+            # for a hashids string, as it's impossible to represent a hashids string with only chars [0-9].
+            try:
+                value = int(value, base=10)
+            except (TypeError, ValueError):
+                # We must assume that this string is a hashids representation.
+                # Verify that it begins with the prefix, which could be the default ""
+                if not value.startswith(self._prefix):
+                    raise ValueError("value must begin with prefix {}".format(self._prefix))
 
+                without_prefix = value[len(self._prefix):]
+                _id = self.decode(without_prefix)
+                if _id is None:
+                    raise ValueError("id must be a positive integer or a valid Hashid string")
+                else:
+                    self._id = _id
+                    self._hashid = without_prefix
+            else:
+                if not _is_uint(value):
+                    raise ValueError("value must be a positive integer")
+
+                # Finally, set our internal values
+                self._id = value
+                self._hashid = self.encode(value)
+        elif isinstance(value, int) and value < 0:
+            raise ValueError("value must be a positive integer")
+        else:
+            raise ValueError("value must be a positive integer or a valid Hashid string")
 
     @property
     def id(self):
@@ -54,6 +67,10 @@ class Hashid(object):
         return self._hashid
 
     @property
+    def prefix(self):
+        return self._prefix
+
+    @property
     def hashids(self):
         return self._hashids
 
@@ -61,9 +78,9 @@ class Hashid(object):
         return self._hashids.encode(id)
 
     def decode(self, hashid):
-        id = self._hashids.decode(hashid)
-        if len(id) == 1:
-            return id[0]
+        ret = self._hashids.decode(hashid)
+        if len(ret) == 1:
+            return ret[0]
         else:
             return None
 

@@ -14,6 +14,13 @@ class HashidTests(TestCase):
         self.assertEqual(h.id, 5)
         self.assertEqual(h.hashid, h.hashids.encode(5))
 
+    def test_integer_with_prefix(self):
+        h = Hashid(10, prefix="num_")
+        self.assertIsInstance(h, Hashid)
+        self.assertEqual(h.id, 10)
+        self.assertEqual(h.hashid, h.hashids.encode(10))
+        self.assertEqual(str(h), "num_" + h.hashids.encode(10))
+
     def test_hashid(self):
         h = Hashid(123)
         b = Hashid(h.hashid)
@@ -21,18 +28,40 @@ class HashidTests(TestCase):
         self.assertEqual(h.id, b.id)
         self.assertEqual(h.hashid, b.hashid)
 
+    def test_hashid_with_prefix(self):
+        h = Hashid(123, prefix="hid_")
+        b = Hashid(str(h), prefix="hid_")
+        self.assertEqual(h, b)
+        self.assertEqual(h.id, b.id)
+        self.assertEqual(h.hashid, b.hashid)
+        self.assertEqual(h.prefix, b.prefix)
+
     def test_negative_integer(self):
         with self.assertRaises(Exception):
             h = Hashid(-5)
+
+    def test_none_value(self):
+        with self.assertRaises(Exception):
+            h = Hashid(None)
 
     def test_hashid_encoded_zero_integer(self):
         h = Hashid(0)
         z = Hashid(h.hashid)
         self.assertEqual(h, z)
 
+    def test_hashid_encoded_zero_integer_with_prefix(self):
+        h = Hashid(0, prefix="zero_")
+        z = Hashid(str(h), prefix="zero_")
+        self.assertEqual(h, z)
+
     def test_invalid_hashid(self):
         with self.assertRaises(Exception):
             h = Hashid('asdfqwer')
+
+    def test_invalid_prefix(self):
+        h = Hashid(678, prefix="inv_")
+        with self.assertRaises(ValueError):
+            Hashid("wrong_" + h.hashid, prefix="inv_")
 
     def test_min_length(self):
         h = Hashid(456, min_length=10)
@@ -53,6 +82,11 @@ class HashidTests(TestCase):
         t = force_str(h)
         self.assertEqual(t, h.hashid)
 
+    def test_force_text_with_prefix(self):
+        h = Hashid(2923, prefix="prefix_")
+        t = force_str(h)
+        self.assertEqual(t, "prefix_" + h.hashid)
+
     def test_sorting(self):
         a = Hashid(1)
         b = Hashid(2)
@@ -68,25 +102,46 @@ class HashidTests(TestCase):
         a = Hashid(1)
         self.assertEqual(str(a), a.hashid)
 
+    def test_typecast_to_str_with_prefix(self):
+        a = Hashid(2, prefix="a_")
+        self.assertEqual(str(a), "a_" + a.hashid)
+
     def test_str_compare(self):
         a = Hashid(1)
+        self.assertTrue(str(a) == a)
+
+    def test_str_compare_with_prefix(self):
+        a = Hashid(2, prefix="b_")
         self.assertTrue(str(a) == a)
 
     def test_int_compare(self):
         a = Hashid(1)
         self.assertTrue(int(a) == a)
 
+    def test_int_compare_with_prefix(self):
+        a = Hashid(100, prefix='int_compare_')
+        self.assertTrue(int(a) == a)
+
     def test_hashid_equality(self):
         a = Hashid(123)
         b = Hashid(123)
         c = Hashid(123, salt="asdfqwer")
+        d = Hashid(123, prefix="eq_")
         self.assertTrue(a == b)
         self.assertTrue(hash(a) == hash(b))
         self.assertTrue(hash(a) == hash(str(b)))
         self.assertFalse(a == c)
         self.assertFalse(hash(a) == hash(c))
+        self.assertFalse(a == d)
+        self.assertFalse(hash(a) == hash(d))
 
     def test_pickle(self):
         a = Hashid(123)
         pickled = pickle.loads(pickle.dumps(a))
         self.assertTrue(a == pickled)
+
+    def test_pickle_with_prefix(self):
+        a = Hashid(125, prefix="pickle_")
+        pickled = pickle.loads(pickle.dumps(a))
+        self.assertTrue(a == pickled)
+
