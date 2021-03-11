@@ -15,6 +15,7 @@ Features
 
 * Stores IDs as integers in the database
 * Allows lookups and filtering by hashid string or Hashid object and (optionally) integer.
+* Allows prefixing hashids with custom string, e.g. `prefix="user_"` for hashids like "user_h6ks82g"
 * Can enable integer lookups globally or per-field
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
@@ -293,16 +294,17 @@ prefix
 ~~~~~~
 
 :Type:    String or callable object.
-:Default: ''
+:Default: ""
+:Callable args: mycallable(field_instance, model_class, field_name, **kwargs)
 :Example:
     .. code-block:: python
 
-        # Using URLs for identifiers:
-        reference_id = HashidField(prefix="https://example.com/")
+        # Including the type of id in the id itself:
+        reference_id = HashidField(prefix="order_")
 
-        # Using a callable that inserts the field name:
-        def get_prefix(field_name, **kw):
-            return 'myids:{}:'.format(field_name)
+        # Using a callable that inserts the model_class and field_name
+        def get_prefix(field_instance, model_class, field_name, **kwargs):
+            return '{}:{}:'.format(model_class.__name__, field_name)
         reference_id = HashidField(prefix=get_prefix)
 
 
@@ -326,14 +328,14 @@ converting integers and hashid strings back and forth. There shouldn't be any ne
 Methods
 ~~~~~~~
 
-\__init__(id, salt='', min_length=0, alphabet=Hashids.ALPHABET, prefix=''):
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+\__init__(value, salt='', min_length=0, alphabet=Hashids.ALPHABET, prefix=''):
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:id: **REQUIRED** Integer you wish to *encode*
-:salt: Salt to use. **Default**: ''
+:value: **REQUIRED** Integer you wish to *encode* or hashid you wish to *decode*
+:salt: Salt to use. **Default**: "" (empty string)
 :min_length: Minimum length of encoded hashid string. **Default**: 0
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
-:prefix: String prefix prepended to hashid strings. **Default**: ''
+:prefix: String prefix prepended to hashid strings. **Default**: "" (empty string)
 
 Read-Only Properties
 ~~~~~~~~~~~~~~~~~~~~
@@ -355,6 +357,12 @@ hashids
 
 :type: Hashids()
 :value: The instance of the Hashids class that is used to *encode* and *decode*
+
+prefix
+^^^^^^
+
+:type: String
+:value: The prefix prepended to hashid strings
 
 
 Django REST Framework Integration
@@ -459,8 +467,8 @@ source_field
 A 3-field dotted notation of the source field to load matching 'salt', 'min_length' and 'alphabet' settings from. Must
 be in the format of "app_name.model_name.field_name". Example: "library.Book.reference_id".
 
-salt, min_length, alphabet
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+salt, min_length, alphabet, prefix
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 See `Field Parameters`_
 
