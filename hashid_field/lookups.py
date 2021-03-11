@@ -21,7 +21,7 @@ def get_id_for_hashid_field(field, value):
         # can't just check if `int(value)` succeeds.
         # Instead, we'll encode the value with the given Hashid*Field, and if resulting Hashids string
         # doesn't match the given value, then we know that something fishy is going on (an integer lookup)
-        if value != hashid.hashid:
+        if value != hashid.hashid and value != str(hashid):
             raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
     return hashid.id
 
