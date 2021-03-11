@@ -6,7 +6,7 @@ from tests.models import Record
 class RecordForm(forms.ModelForm):
     class Meta:
         model = Record
-        fields = ('name', 'reference_id')
+        fields = ('name', 'reference_id', 'prefixed_id')
 
 
 class AlternateRecordForm(forms.ModelForm):
