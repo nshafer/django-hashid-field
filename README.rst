@@ -20,7 +20,7 @@ Features
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
 * Allows specifying a salt globally
-* Supports custom *salt*, *min_length*, *alphabet* and *allow_int_lookup* settings per field
+* Supports custom *salt*, *min_length*, *alphabet*, *prefix* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
 * Supports exact ID searches in Django Admin when field is specified in search_fields.
 * Supports common filtering lookups, such as ``__iexact``, ``__contains``, ``__icontains``, though matching is the same as ``__exact``.
@@ -132,8 +132,8 @@ lookups with older integers.
     >>> Book.objects.filter(reference_id=123)
     <QuerySet [<Book:  (OwLxW8D)>]>
 
-The objects returned from a HashidField are an instance of the class Hashid, and allow basic access to the original
-integer or the hashid:
+By default, the objects returned from a HashidField are an instance of the class Hashid (this can be disabled globally or per-field),
+and allow basic access to the original integer or the hashid:
 
 .. code-block:: python
 
@@ -247,6 +247,41 @@ EmptyResultSet being returned. Enable this to instead throw a ValueError excepti
 
         HASHID_FIELD_LOOKUP_EXCEPTION = True
 
+HASHID_FIELD_ENABLE_HASHID_OBJECT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default behavior is to return an instance of the Hashid object (described below) in each instance of your Model.
+This makes it possible to get both the integer and hashid version of the field. However, other django modules, serializers,
+etc may be confused and not know how to handle a Hashid object, so you can turn them off here. Instead, a string
+of the hashid will be returned, and a new attribute with the suffix `_hashid` will be created on each instance with the
+Hashid object. So if you have `key = HashidField(...)` then `key_hashid` will be created on each instance.
+Can be overriden by the field definition.
+
+:Type:    boolean
+:Default: True
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_ENABLE_HASHID_OBJECT = False
+
+HASHID_FIELD_ENABLE_DESCRIPTOR
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default a Hashid*Field on a model will replace the original value returned from the database with a Descriptor
+that attempts to convert values that are set on that field of an instance with a new Hashid object (or string if
+ENABLE_HASHID_OBJECT is False), regardless if you set an integer or a valid hashid. For the most part this is
+completely invisible and benign, however if you have issues due to this descriptor, you can disable it here, or
+on the field, and the raw value will not be replaced with the Descriptor.
+Can be overriden by the field definition.
+
+
+:Type:    boolean
+:Default: True
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_ENABLE_DESCRIPTOR = False
+
 
 
 Field Parameters
@@ -263,11 +298,14 @@ values. It's highly advised that you don't change any of these settings once you
 salt
 ~~~~
 
+Local overridable salt for hashids generated specifically for this field.
+Set this to a unique value for each field if you want the IDs for that field to be different to the same IDs
+on another field. e.g. so that `book.id = Hashid(5): 0Q8Kg9r` and `author.id = Hashid(5): kp0eq0V`.
+Suggestion: `fieldname = HashIdField(salt=settings.HASHID_FIELD_SALT + "_modelname_fieldname")`
+See HASHID_FIELD_SALT above.
+
 :Type:    string
 :Default: settings.HASHID_FIELD_SALT, ""
-:Note:    Set this to a unique value for each field if you want the IDs for that field to be different to the same IDs
-          on another field. e.g. so that `book.id = Hashid(5): 0Q8Kg9r` and `author.id = Hashid(5): kp0eq0V`.
-          Suggestion: `fieldname = HashIdField(salt=settings.HASHID_FIELD_SALT + "_modelname_fieldname")`
 :Example:
     .. code-block:: python
 
@@ -276,10 +314,12 @@ salt
 min_length
 ~~~~~~~~~~
 
+Generate hashid strings of this minimum length, regardless of the value of the integer that is being encoded.
+This defaults to 7 for the field since the maximum IntegerField value can be encoded in 7 characters with
+the default *alphabet* setting of 62 characters.
+
 :Type:     int
 :Default:  7
-:Note:     This defaults to 7 for the field since the maximum IntegerField value can be encoded in 7 characters with
-           the default *alphabet* setting of 62 characters.
 :Example:
     .. code-block:: python
 
@@ -288,7 +328,9 @@ min_length
 alphabet
 ~~~~~~~~
 
-:Type:    string of characters (16 minimum)
+The set of characters to generate hashids from. Must be at least 16 characters.
+
+:Type:    string of characters
 :Default: Hashids.ALPHABET, which is "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 :Example:
     .. code-block:: python
@@ -298,6 +340,9 @@ alphabet
 
 prefix
 ~~~~~~
+
+An optional string prefix that will be prepended to all generated hashids. Also affects validation, so only hashids
+that have this prefix will be considered correct.
 
 :Type:    String or callable object.
 :Default: ""
@@ -317,6 +362,9 @@ prefix
 allow_int_lookup
 ~~~~~~~~~~~~~~~~
 
+Local field override for default global on whether or not integer lookups for this field should be allowed.
+See HASHID_FIELD_ALLOW_INT_LOOKUP above.
+
 :Type:    boolean
 :Default: settings.HASHID_FIELD_ALLOW_INT_LOOKUP, False
 :Example:
@@ -325,16 +373,46 @@ allow_int_lookup
         reference_id = HashidField(allow_int_lookup=True)
 
 
+enable_hashid_object
+~~~~~~~~~~~~~~~~~~~~
+
+Local field override for whether or not to return Hashid objects or plain strings.
+Can be safely changed without affecting any existing hashids.
+See HASHID_FIELD_ENABLE_HASHID_OBJECT above.
+
+:Type:    boolean
+:Default: settings.HASHID_FIELD_ENABLE_HASHID_OBJECT, True
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(enable_hashid_object=False)
+
+enable_descriptor
+~~~~~~~~~~~~~~~~~
+
+Local field override for whether or not to use the Descriptor on instances of the field.
+Can be safely changed without affecting any existing hashids.
+See HASHID_FIELD_ENABLE_DESCRIPTOR above.
+
+:Type:    boolean
+:Default: settings.HASHID_FIELD_ENABLE_DESCRIPTOR, True
+:Example:
+    .. code-block:: python
+
+        reference_id = HashidField(enable_descriptor=False)
+
+
 Hashid Class
 ------------
 
-Operations with a HashidField or HashidAutoField return a ``Hashid`` object. This simple class does the heavy lifting of
-converting integers and hashid strings back and forth. There shouldn't be any need to instantiate these manually.
+Operations with a HashidField or HashidAutoField return a ``Hashid`` object (unless disabled).
+This simple class does the heavy lifting of converting integers and hashid strings back and forth.
+There shouldn't be any need to instantiate these manually.
 
 Methods
 ~~~~~~~
 
-\__init__(value, salt='', min_length=0, alphabet=Hashids.ALPHABET, prefix=''):
+\__init__(value, salt="", min_length=0, alphabet=Hashids.ALPHABET, prefix="", hashids=None):
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :value: **REQUIRED** Integer you wish to *encode* or hashid you wish to *decode*
@@ -342,6 +420,7 @@ Methods
 :min_length: Minimum length of encoded hashid string. **Default**: 0
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
 :prefix: String prefix prepended to hashid strings. **Default**: "" (empty string)
+:hashids: Instance of hashids.Hashids to use for encoding/decoding. Provide for optimization.
 
 Read-Only Properties
 ~~~~~~~~~~~~~~~~~~~~

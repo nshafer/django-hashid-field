@@ -12,7 +12,7 @@ def get_id_for_hashid_field(field, value):
     if isinstance(value, Hashid):
         return value.id
     try:
-        hashid = field.encode_id(value)
+        hashid = field.get_hashid(value)
     except ValueError:
         raise ValueError(field.error_messages['invalid'] % {'value': value})
     if not field.allow_int_lookup and _is_int(value):

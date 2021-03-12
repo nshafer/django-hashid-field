@@ -1,86 +1,84 @@
 from django.test import TestCase
+from hashids import Hashids
 
-from hashid_field.field import Hashid
+from hashid_field import Hashid
 from hashid_field.descriptor import HashidDescriptor
+from hashid_field.hashid import StrType
 
 
 class TestClass(object):
-    hashid = HashidDescriptor('hashid')
+    a = HashidDescriptor(field_name='a', hashids=Hashids())
+    b = HashidDescriptor(field_name='b', hashids=Hashids(), enable_hashid_object=False)
 
 
 class DescriptorTests(TestCase):
     def test_no_value(self):
         t = TestClass()
-        self.assertIsNone(t.hashid)
+        self.assertIsNone(t.a)
 
     def test_set_none(self):
         t = TestClass()
-        t.hashid = None
-        self.assertIsNone(t.hashid)
+        t.a = None
+        self.assertIsNone(t.a)
 
     def test_set_int(self):
         t = TestClass()
-        t.hashid = 123
-        self.assertIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid.id, 123)
+        t.a = 123
+        self.assertIsInstance(t.a, Hashid)
+        self.assertEqual(t.a.id, 123)
+        t.b = 123
+        self.assertIsInstance(t.b, StrType)
+        self.assertEqual(t.b, Hashids().encode(123))
 
     def test_set_hashid(self):
         t = TestClass()
         h = Hashid(234)
-        t.hashid = h
-        self.assertIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid.id, 234)
+        t.a = h
+        self.assertIsInstance(t.a, Hashid)
+        self.assertEqual(t.a.id, 234)
+        t.b = h
+        self.assertIsInstance(t.b, StrType)
+        self.assertEqual(t.b, h.hashid)
 
     def test_set_invalid_int(self):
         t = TestClass()
-        t.hashid = -345
-        self.assertNotIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid, -345)
+        t.a = -345
+        self.assertNotIsInstance(t.a, Hashid)
+        self.assertEqual(t.a, -345)
+        t.b = -345
+        self.assertIsInstance(t.b, int)
+        self.assertEqual(t.b, -345)
 
     def test_set_invalid_hashid(self):
         t = TestClass()
-        t.hashid = "asdfqwer"
-        self.assertNotIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid, "asdfqwer")
+        t.a = "asdfqwer"
+        self.assertNotIsInstance(t.a, Hashid)
+        self.assertEqual(t.a, "asdfqwer")
+        t.b = "asdfqwer"
+        self.assertIsInstance(t.a, StrType)
+        self.assertEqual(t.b, "asdfqwer")
 
     def test_set_valid_hashid_string(self):
         t = TestClass()
         h = Hashid(456)
-        t.hashid = h.hashid
-        self.assertIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid.id, 456)
-
-    def test_custom_salt(self):
-        class SaltTest(object):
-            hashid = HashidDescriptor('_hashid', salt='a test salt')
-        t = TestClass()
-        t.hashid = 5
-        s = SaltTest()
-        s.hashid = 5
-        self.assertEqual(t.hashid.id, s.hashid.id)
-        self.assertNotEqual(t, s)
-        self.assertNotEqual(t.hashid, s.hashid)
-
-    def test_min_length(self):
-        class LengthTest(object):
-            hashid = HashidDescriptor('_hashid', min_length=10)
-        l = LengthTest()
-        l.hashid = 1
-        self.assertGreaterEqual(len(l.hashid.hashid), 10)
-
-    def test_alphabet(self):
-        class AlphaTest(object):
-            hashid = HashidDescriptor('_hashid', alphabet="0123456789abcdef")
-        a = AlphaTest()
-        a.hashid = 2489734928374923874
-        for char in "ghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ":
-            self.assertNotIn(char, a.hashid.hashid)
+        t.a = h.hashid
+        self.assertIsInstance(t.a, Hashid)
+        self.assertEqual(t.a.id, 456)
+        t.b = h.hashid
+        self.assertIsInstance(t.b, StrType)
+        self.assertEqual(t.b, h.hashid)
 
     def test_reset_after_invalid_set(self):
         t = TestClass()
-        t.hashid = "asdf"  # First set it to something invalid, so the descriptor will just set it to this string
-        self.assertIsInstance(t.hashid, str)
-        self.assertEqual(t.hashid, "asdf")
-        t.hashid = 123  # Now set it to a valid value for a Hashid, so it should create a new Hashid()
-        self.assertIsInstance(t.hashid, Hashid)
-        self.assertEqual(t.hashid.id, 123)
+        t.a = "asdf"  # First set it to something invalid, so the descriptor will just set it to this string
+        self.assertIsInstance(t.a, StrType)
+        self.assertEqual(t.a, "asdf")
+        t.a = 123  # Now set it to a valid value for a Hashid, so it should create a new Hashid()
+        self.assertIsInstance(t.a, Hashid)
+        self.assertEqual(t.a.id, 123)
+        t.b = "asdf"  # First set it to something invalid, so the descriptor will just set it to this string
+        self.assertIsInstance(t.b, StrType)
+        self.assertEqual(t.b, "asdf")
+        t.b = 123  # Now set it to a valid value for a Hashid, so it should create a new Hashid()
+        self.assertIsInstance(t.b, StrType)
+        self.assertEqual(t.b, Hashids().encode(123))

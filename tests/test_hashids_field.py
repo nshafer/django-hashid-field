@@ -9,11 +9,18 @@ from tests.forms import RecordForm, AlternateRecordForm
 from tests.models import Record, Artist, Track, RecordLabel
 
 
+try:
+    StrType = basestring
+except NameError:
+    StrType = str
+
+
 class HashidsTests(TestCase):
     def setUp(self):
-        self.record = Record.objects.create(name="Test Record", reference_id=123, key=456, prefixed_id=789)
+        self.record = Record.objects.create(name="Test Record", reference_id=123, prefixed_id=234,
+                                            string_id=345, plain_hashid=456, plain_id=567, key=234)
+        self.record.refresh_from_db()
         self.hashids = self.record.reference_id.hashids
-        self.prefixed_hashids = self.record.prefixed_id.hashids
 
     def test_record_create(self):
         self.assertIsInstance(self.record, Record)
@@ -28,81 +35,129 @@ class HashidsTests(TestCase):
         self.assertEqual(new_record.reference_id.id, 667373)
         Record._meta.get_field('reference_id').allow_int_lookup = False
 
-    def test_record_reference_is_hashid(self):
+    def test_record_fields_are_correct_type_and_value(self):
         self.assertIsInstance(self.record.reference_id, Hashid)
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(123))
-
-    def test_record_prefix_is_hashid(self):
         self.assertIsInstance(self.record.prefixed_id, Hashid)
-        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.prefixed_hashids.encode(789))
+        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(234))
+        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertEqual(self.record.string_id, self.hashids.encode(345))
+        self.assertIsInstance(self.record.plain_hashid, Hashid)
+        self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(456))
+        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertEqual(str(self.record.plain_id), self.hashids.encode(567))
 
     def test_record_load_from_db(self):
         record = Record.objects.get(pk=self.record.pk)
         self.assertIsInstance(record, Record)
-
-    def test_record_reference_from_db_is_hashid(self):
-        record = Record.objects.get(pk=self.record.pk)
-        self.assertIsInstance(self.record.reference_id, Hashid)
-        self.assertEqual(record.reference_id.hashid, self.hashids.encode(123))
+        self.assertEqual(record.id, self.record.id)
+        record = Record.objects.get(reference_id=self.record.reference_id)
+        self.assertIsInstance(record, Record)
+        self.assertEqual(record.id, self.record.id)
+        record = Record.objects.get(prefixed_id=self.record.prefixed_id)
+        self.assertIsInstance(record, Record)
+        self.assertEqual(record.id, self.record.id)
+        record = Record.objects.get(string_id=self.record.string_id)
+        self.assertIsInstance(record, Record)
+        self.assertEqual(record.id, self.record.id)
+        record = Record.objects.get(plain_hashid=self.record.plain_hashid)
+        self.assertIsInstance(record, Record)
+        self.assertEqual(record.id, self.record.id)
+        record = Record.objects.get(plain_id=self.record.plain_id)
+        self.assertIsInstance(record, Record)
+        self.assertEqual(record.id, self.record.id)
 
     def test_set_int(self):
-        self.record.reference_id = 456
+        self.record.reference_id = 51
+        self.record.prefixed_id = 52
+        self.record.string_id = 53
+        self.record.plain_hashid = 54
+        self.record.plain_id = 55
         self.record.save()
-        self.assertEqual(self.record.reference_id.hashid, self.hashids.encode(456))
+        # No descriptor, so they should be set to exactly what I set them to
+        self.assertIsInstance(self.record.plain_hashid, int)
+        self.assertIsInstance(self.record.plain_id, int)
+        self.assertEqual(self.record.plain_hashid, 54)
+        self.assertEqual(self.record.plain_id, 55)
+        # Refreshing from database will transform them based on settings due to from_db_value()
+        self.record.refresh_from_db()
+        self.assertIsInstance(self.record.reference_id, Hashid)
+        self.assertEqual(str(self.record.reference_id), self.hashids.encode(51))
+        self.assertIsInstance(self.record.prefixed_id, Hashid)
+        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(52))
+        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertEqual(self.record.string_id, self.hashids.encode(53))
+        self.assertIsInstance(self.record.plain_hashid, Hashid)
+        self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(54))
+        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertEqual(self.record.plain_id, self.hashids.encode(55))
 
     def test_set_hashid(self):
-        self.record.reference_id = self.hashids.encode(789)
+        self.record.reference_id = self.hashids.encode(61)
+        self.record.prefixed_id = "prefix_" + self.hashids.encode(62)
+        self.record.string_id = self.hashids.encode(63)
+        self.record.plain_hashid = self.hashids.encode(64)
+        self.record.plain_id = self.hashids.encode(65)
         self.record.save()
-        self.assertEqual(str(self.record.reference_id), self.hashids.encode(789))
+        # No descriptor, so they should be set to exactly what I set them to
+        self.assertIsInstance(self.record.plain_hashid, StrType)
+        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertEqual(self.record.plain_hashid, self.hashids.encode(64))
+        self.assertEqual(self.record.plain_id, self.hashids.encode(65))
+        # Refreshing from database will transform them based on settings due to from_db_value()
+        self.record.refresh_from_db()
+        self.assertIsInstance(self.record.reference_id, Hashid)
+        self.assertEqual(str(self.record.reference_id), self.hashids.encode(61))
+        self.assertIsInstance(self.record.prefixed_id, Hashid)
+        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(62))
+        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertEqual(self.record.string_id, self.hashids.encode(63))
+        self.assertIsInstance(self.record.plain_hashid, Hashid)
+        self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(64))
+        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertEqual(self.record.plain_id, self.hashids.encode(65))
 
-    def test_set_prefixed_hashid(self):
-        self.record.prefixed_id = "prefix_" + self.prefixed_hashids.encode(321)
-        self.record.save()
-        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.prefixed_hashids.encode(321))
+    def assert_lookups_match(self, field_name, value, expected, allow_int_lookup=False):
+        original_allow_int_lookup_setting = Record._meta.get_field(field_name).allow_int_lookup
+        if allow_int_lookup:
+            Record._meta.get_field(field_name).allow_int_lookup = True
+        self.assertEqual(Record.objects.filter(**{field_name: value}).exists(), expected)
+        self.assertEqual(Record.objects.filter(**{field_name + "__exact": value}).exists(), expected)
+        self.assertEqual(Record.objects.filter(**{field_name + "__iexact": value}).exists(), expected)
+        self.assertEqual(Record.objects.filter(**{field_name + "__contains": value}).exists(), expected)
+        self.assertEqual(Record.objects.filter(**{field_name + "__icontains": value}).exists(), expected)
+        self.assertEqual(Record.objects.filter(**{field_name + "__in": [value]}).exists(), expected)
+        if original_allow_int_lookup_setting is not True:
+            Record._meta.get_field(field_name).allow_int_lookup = False
 
     def test_filter_by_int(self):
         # These should not return anything when integer lookups are not allowed
-        self.assertFalse(Record.objects.filter(reference_id=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__exact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__iexact=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__contains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__icontains=123).exists())
-        self.assertFalse(Record.objects.filter(reference_id__in=[123]).exists())
+        self.assert_lookups_match("reference_id", 123, False, allow_int_lookup=False)
+        self.assert_lookups_match("prefixed_id", 234, False, allow_int_lookup=False)
+        self.assert_lookups_match("string_id", 345, False, allow_int_lookup=False)
+        self.assert_lookups_match("plain_hashid", 456, False, allow_int_lookup=False)
+        self.assert_lookups_match("plain_id", 567, False, allow_int_lookup=False)
 
         # Tests when integer lookups are allowed
-        Record._meta.get_field('reference_id').allow_int_lookup = True
-        self.assertTrue(Record.objects.filter(reference_id=123).exists())
-        self.assertTrue(Record.objects.filter(reference_id__exact=123).exists())
-        self.assertTrue(Record.objects.filter(reference_id__iexact=123).exists())
-        self.assertTrue(Record.objects.filter(reference_id__contains=123).exists())
-        self.assertTrue(Record.objects.filter(reference_id__icontains=123).exists())
-        self.assertTrue(Record.objects.filter(reference_id__in=[123]).exists())
-        Record._meta.get_field('reference_id').allow_int_lookup = False
+        self.assert_lookups_match("reference_id", 123, True, allow_int_lookup=True)
+        self.assert_lookups_match("prefixed_id", 234, True, allow_int_lookup=True)
+        self.assert_lookups_match("string_id", 345, True, allow_int_lookup=True)
+        self.assert_lookups_match("plain_hashid", 456, True, allow_int_lookup=True)
+        self.assert_lookups_match("plain_id", 567, True, allow_int_lookup=True)
 
     def test_filter_by_string(self):
-        self.assertTrue(Record.objects.filter(reference_id=str(self.record.reference_id)).exists())
-        self.assertTrue(Record.objects.filter(reference_id__exact=str(self.record.reference_id)).exists())
-        self.assertTrue(Record.objects.filter(reference_id__iexact=str(self.record.reference_id)).exists())
-        self.assertTrue(Record.objects.filter(reference_id__contains=str(self.record.reference_id)).exists())
-        self.assertTrue(Record.objects.filter(reference_id__icontains=str(self.record.reference_id)).exists())
-        self.assertTrue(Record.objects.filter(reference_id__in=[str(self.record.reference_id)]).exists())
+        self.assert_lookups_match("reference_id", str(self.record.reference_id), True)
+        self.assert_lookups_match("prefixed_id", str(self.record.prefixed_id), True)
+        self.assert_lookups_match("string_id", str(self.record.string_id), True)
+        self.assert_lookups_match("plain_hashid", str(self.record.plain_hashid), True)
+        self.assert_lookups_match("plain_id", str(self.record.plain_id), True)
 
     def test_filter_by_hashid(self):
-        ref_id = self.hashids.encode(123)
-        self.assertTrue(Record.objects.filter(reference_id=ref_id).exists())
-        self.assertTrue(Record.objects.filter(reference_id__exact=ref_id).exists())
-        self.assertTrue(Record.objects.filter(reference_id__iexact=ref_id).exists())
-        self.assertTrue(Record.objects.filter(reference_id__contains=ref_id).exists())
-        self.assertTrue(Record.objects.filter(reference_id__icontains=ref_id).exists())
-        self.assertTrue(Record.objects.filter(reference_id__in=[ref_id]).exists())
-
-    def test_filter_by_prefixed_string(self):
-        self.assertTrue(Record.objects.filter(prefixed_id=str(self.record.prefixed_id)).exists())
-        self.assertTrue(Record.objects.filter(prefixed_id__exact=str(self.record.prefixed_id)).exists())
-        self.assertTrue(Record.objects.filter(prefixed_id__iexact=str(self.record.prefixed_id)).exists())
-        self.assertTrue(Record.objects.filter(prefixed_id__contains=str(self.record.prefixed_id)).exists())
-        self.assertTrue(Record.objects.filter(prefixed_id__icontains=str(self.record.prefixed_id)).exists())
-        self.assertTrue(Record.objects.filter(prefixed_id__in=[str(self.record.prefixed_id)]).exists())
+        self.assert_lookups_match("reference_id", self.hashids.encode(123), True)
+        self.assert_lookups_match("prefixed_id", "prefix_" + self.hashids.encode(234), True)
+        self.assert_lookups_match("string_id", self.hashids.encode(345), True)
+        self.assert_lookups_match("plain_hashid", self.hashids.encode(456), True)
+        self.assert_lookups_match("plain_id", self.hashids.encode(567), True)
 
     def test_iterable_lookup(self):
         r1 = Record.objects.create(name="Red Album", reference_id=456)
@@ -231,7 +286,7 @@ class HashidsTests(TestCase):
         instance = form.save()
         self.assertEqual(self.record, instance)
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(987))
-        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.prefixed_hashids.encode(987))
+        self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(987))
 
     def test_invalid_id_in_form(self):
         form = RecordForm({'name': "A new name", 'reference_id': "asdfqwer"})
@@ -290,7 +345,41 @@ class HashidsTests(TestCase):
         self.assertJSONEqual(out.getvalue(), '[{"pk": "bMrZ5lYd3axGxpW72Vo0", "fields": {"name": "John Doe"}, "model": "tests.artist"}]')
         out = StringIO()
         call_command("dumpdata", "tests.Record", stdout=out)
-        self.assertJSONEqual(out.getvalue(), '[{"model": "tests.record", "pk": 1, "fields": {"name": "Test Record", "key": "82x1vxv21o", "alternate_id": null, "reference_id": "M3Ka6wW", "prefixed_id": "prefix_d3aBNPx", "artist": null}}, {"model": "tests.record", "pk": 2, "fields": {"name": "Blue Album", "key": null, "alternate_id": null, "reference_id": "9wXZ03N", "prefixed_id": null, "artist": "bMrZ5lYd3axGxpW72Vo0"}}]')
+        # print("dumpdata out", out.getvalue())
+        self.assertJSONEqual(out.getvalue(), """
+            [
+                {
+                    "model": "tests.record",    
+                    "pk": "Yd3axGx",
+                    "fields": {
+                        "name": "Test Record",
+                        "artist": null,
+                        "reference_id": "M3Ka6wW",
+                        "prefixed_id": "prefix_2PEK0G5",
+                        "string_id": "d3aqj3x",
+                        "plain_hashid": "9wXZ03N",
+                        "plain_id": "M3K9XwW",
+                        "alternate_id": null,
+                        "key": "8wx9yyv39o"
+                    }
+                },
+                {
+                    "model": "tests.record",
+                    "pk": "gVGO031",
+                    "fields": {
+                        "name": "Blue Album",
+                        "artist": "bMrZ5lYd3axGxpW72Vo0",
+                        "reference_id": "9wXZ03N",
+                        "prefixed_id": null,
+                        "string_id": null,
+                        "plain_hashid": null,
+                        "plain_id": null,
+                        "alternate_id": null,
+                        "key": null
+                    }
+                }
+            ]
+        """)
 
     def test_loaddata(self):
         out = StringIO()

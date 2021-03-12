@@ -12,10 +12,14 @@ class Artist(models.Model):
 
 
 class Record(models.Model):
+    id = HashidAutoField(primary_key=True)
     name = models.CharField(max_length=40)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True, blank=True, related_name="records")
     reference_id = HashidField()
     prefixed_id = HashidField(null=True, blank=True, prefix="prefix_")
+    string_id = HashidField(null=True, blank=True, enable_hashid_object=False)
+    plain_hashid = HashidField(null=True, blank=True, enable_descriptor=False)
+    plain_id = HashidField(null=True, blank=True, enable_descriptor=False, enable_hashid_object=False)
     alternate_id = HashidField(salt="a different salt", null=True, blank=True)
     key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz123789", null=True, blank=True)
 
