@@ -4,7 +4,7 @@ from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, Le
 from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
 
-from .hashid import Hashid
+from .hashid import Hashid, _is_int
 from .conf import settings
 
 
@@ -15,14 +15,8 @@ def get_id_for_hashid_field(field, value):
         hashid = field.encode_id(value)
     except ValueError:
         raise ValueError(field.error_messages['invalid'] % {'value': value})
-    if not field.allow_int_lookup:
-        # Check the given value to see if it's an integer lookup, and disallow it.
-        # It is possible for real Hashids to resemble integers, especially if the alphabet == "0123456789", so we
-        # can't just check if `int(value)` succeeds.
-        # Instead, we'll encode the value with the given Hashid*Field, and if resulting Hashids string
-        # doesn't match the given value, then we know that something fishy is going on (an integer lookup)
-        if value != hashid.hashid and value != str(hashid):
-            raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
+    if not field.allow_int_lookup and _is_int(value):
+        raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
     return hashid.id
 
 
