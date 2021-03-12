@@ -32,7 +32,7 @@ def _is_str(candidate):
 
 @total_ordering
 class Hashid(object):
-    def __init__(self, value, salt="", min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=""):
+    def __init__(self, value, salt="", min_length=0, alphabet=Hashids.ALPHABET, prefix="", hashids=None):
         if hashids is None:
             self._salt = salt
             self._min_length = min_length
@@ -149,4 +149,4 @@ class Hashid(object):
         return hash(str(self))
 
     def __reduce__(self):
-        return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet, None, self._prefix))
+        return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet, self._prefix, None))

@@ -45,7 +45,7 @@ class HashidSerializerMixin(object):
     def to_internal_value(self, data):
         try:
             value = super().to_internal_value(data)
-            return Hashid(value, hashids=self._hashids, prefix=self.prefix)
+            return Hashid(value, prefix=self.prefix, hashids=self._hashids)
         except ValueError:
             raise serializers.ValidationError("Invalid int or Hashid string")
 
