@@ -1,12 +1,38 @@
 import sys
 from functools import total_ordering
 
-from hashids import Hashids, _is_uint, _is_str
+from hashids import Hashids
+
+try:
+    StrType = basestring
+except NameError:
+    StrType = str
+
+
+def _is_int(number):
+    """Returns whether a value is an integer."""
+    try:
+        return number == int(number)
+    except ValueError:
+        return False
+
+
+def _is_uint(number):
+    """Returns whether a value is an unsigned integer."""
+    try:
+        return number == int(number) and number >= 0
+    except ValueError:
+        return False
+
+
+def _is_str(candidate):
+    """Returns whether a value is a string."""
+    return isinstance(candidate, StrType)
 
 
 @total_ordering
 class Hashid(object):
-    def __init__(self, value, salt='', min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=""):
+    def __init__(self, value, salt="", min_length=0, alphabet=Hashids.ALPHABET, hashids=None, prefix=""):
         if hashids is None:
             self._salt = salt
             self._min_length = min_length
