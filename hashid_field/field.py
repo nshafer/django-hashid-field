@@ -1,6 +1,7 @@
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
+from django.db.models import Field
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import widgets as admin_widgets
 from hashids import Hashids
@@ -149,19 +150,45 @@ class HashidFieldMixin(object):
             setattr(cls, self.attname, descriptor)
 
 
-class HashidField(HashidFieldMixin, models.IntegerField):
-    description = "A Hashids obscured IntegerField"
-
+class HashidCharFieldMixin:
     def formfield(self, **kwargs):
         defaults = {'form_class': forms.CharField}
         defaults.update(kwargs)
         if defaults.get('widget') == admin_widgets.AdminIntegerFieldWidget:
             defaults['widget'] = admin_widgets.AdminTextInputWidget
-        return super().formfield(**defaults)
+        if defaults.get('widget') == admin_widgets.AdminBigIntegerFieldWidget:
+            defaults['widget'] = admin_widgets.AdminTextInputWidget
+        # noinspection PyCallByClass,PyTypeChecker
+        return Field.formfield(self, **defaults)
+
+
+class HashidField(HashidFieldMixin, HashidCharFieldMixin, models.IntegerField):
+    description = "A Hashids obscured IntegerField"
+
+
+class BigHashidField(HashidFieldMixin, HashidCharFieldMixin, models.BigIntegerField):
+    description = "A Hashids obscured BigIntegerField"
+
+    def __init__(self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs):
+        super().__init__(min_length=min_length, *args, **kwargs)
 
 
 class HashidAutoField(HashidFieldMixin, models.AutoField):
     description = "A Hashids obscured AutoField"
+
+
+class BigHashidAutoField(HashidFieldMixin, models.AutoField):
+    # This inherits from AutoField instead of BigAutoField so that DEFAULT_AUTO_FIELD doesn't throw an error
+    description = "A Hashids obscured BigAutoField"
+
+    def get_internal_type(self):
+        return 'BigAutoField'
+
+    def rel_db_type(self, connection):
+        return models.BigIntegerField().db_type(connection=connection)
+
+    def __init__(self, min_length=settings.HASHID_FIELD_BIG_MIN_LENGTH, *args, **kwargs):
+        super().__init__(min_length=min_length, *args, **kwargs)
 
 
 # Monkey patch Django REST Framework, if it's installed, to throw exceptions if fields aren't explicitly defined in
@@ -171,6 +198,8 @@ try:
     from hashid_field.rest import UnconfiguredHashidSerialField
 
     ModelSerializer.serializer_field_mapping[HashidField] = UnconfiguredHashidSerialField
+    ModelSerializer.serializer_field_mapping[BigHashidField] = UnconfiguredHashidSerialField
     ModelSerializer.serializer_field_mapping[HashidAutoField] = UnconfiguredHashidSerialField
+    ModelSerializer.serializer_field_mapping[BigHashidAutoField] = UnconfiguredHashidSerialField
 except ImportError:
     pass

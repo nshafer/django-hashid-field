@@ -1,4 +1,4 @@
-from .field import HashidField, HashidAutoField
+from .field import HashidField, BigHashidField, HashidAutoField, BigHashidAutoField
 from .hashid import Hashid
 
 __title__ = 'Django Hashid Field'

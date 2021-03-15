@@ -19,6 +19,7 @@ Features
 * Can enable integer lookups globally or per-field
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
+* Supports "Big" variants for large integers: BigHashidField, BigHashidAutoField
 * Allows specifying a salt, min_length and alphabet globally
 * Supports custom *salt*, *min_length*, *alphabet*, *prefix* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
@@ -222,17 +223,30 @@ Field Parameters below.
 HASHID_FIELD_MIN_LENGTH
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Default minimum length for all Hashid*Fields.
-It is suggested to use 7 for HashidField and AutoField, so that all possible values (up to 2147483647) are the same
-length.
-Use 13 (for values up to 9223372036854775807) for BigHashidField and BigHashidAutoField.
+Default minimum length for (non-Big) HashidField and AutoHashidField.
+It is suggested to use 7 for HashidField and HashidAutoField, so that all possible values
+(up to 2147483647) are the same length.
 
 :Type:    integer
 :Default: 7
 :Example:
     .. code-block:: python
 
-        HASHID_FIELD_MIN_LENGTH = 7
+        HASHID_FIELD_MIN_LENGTH = 20
+
+HASHID_FIELD_BIG_MIN_LENGTH
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default minimum length for BigHashidField and BigHashidAutoField.
+It is suggested to use 13 for BigHashidField and BigHashidAutoField, so that all possible values
+(up to 9223372036854775807) are the same length.
+
+:Type:    integer
+:Default: 13
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_BIG_MIN_LENGTH = 30
 
 HASHID_FIELD_ALPHABET
 ~~~~~~~~~~~~~~~~~~~~~~~

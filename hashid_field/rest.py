@@ -27,7 +27,7 @@ class HashidSerializerMixin(object):
 
         source_field = kwargs.pop('source_field', None)
         if source_field:
-            from hashid_field import HashidField, HashidAutoField
+            from hashid_field import HashidField, BigHashidField, HashidAutoField, BigHashidAutoField
             if isinstance(source_field, str):
                 try:
                     app_label, model_name, field_name = source_field.split(".")
@@ -35,7 +35,7 @@ class HashidSerializerMixin(object):
                     raise ValueError(self.usage_text)
                 model = apps.get_model(app_label, model_name)
                 source_field = model._meta.get_field(field_name)
-            elif not isinstance(source_field, (HashidField, HashidAutoField)):
+            elif not isinstance(source_field, (HashidField, BigHashidField, HashidAutoField, BigHashidAutoField)):
                 raise TypeError(self.usage_text)
             self.hashid_salt, self.hashid_min_length, self.hashid_alphabet, self.prefix = \
                 source_field.salt, source_field.min_length, source_field.alphabet, source_field.prefix
