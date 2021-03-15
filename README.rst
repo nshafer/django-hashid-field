@@ -398,20 +398,13 @@ prefix
 An optional string prefix that will be prepended to all generated hashids. Also affects validation, so only hashids
 that have this prefix will be considered correct.
 
-:Type:    String or callable object.
+:Type:    String
 :Default: ""
-:Callable args: mycallable(field_instance, model_class, field_name, **kwargs)
 :Example:
     .. code-block:: python
 
         # Including the type of id in the id itself:
         reference_id = HashidField(prefix="order_")
-
-        # Using a callable that inserts the model_class and field_name
-        def get_prefix(field_instance, model_class, field_name, **kwargs):
-            return '{}:{}:'.format(model_class.__name__, field_name)
-        reference_id = HashidField(prefix=get_prefix)
-
 
 allow_int_lookup
 ~~~~~~~~~~~~~~~~

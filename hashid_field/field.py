@@ -142,8 +142,8 @@ class HashidFieldMixin(object):
 
     def contribute_to_class(self, cls, name, **kwargs):
         super().contribute_to_class(cls, name, **kwargs)
-        if callable(self.prefix):
-            self.prefix = self.prefix(field_instance=self, model_class=cls, field_name=name, **kwargs)
+        # if callable(self.prefix):
+        #     self.prefix = self.prefix(field_instance=self, model_class=cls, field_name=name, **kwargs)
         if self.enable_descriptor:
             descriptor = HashidDescriptor(field_name=self.attname, hashids=self._hashids, prefix=self.prefix,
                                           enable_hashid_object=self.enable_hashid_object)
