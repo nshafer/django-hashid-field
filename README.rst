@@ -22,6 +22,7 @@ Features
 * Supports "Big" variants for large integers: BigHashidField, BigHashidAutoField
 * Allows specifying a salt, min_length and alphabet globally
 * Supports custom *salt*, *min_length*, *alphabet*, *prefix* and *allow_int_lookup* settings per field
+* Supports Django 3.2 setting `DEFAULT_AUTO_FIELD = 'hashid_field.BigHashidAutoField'`
 * Supports Django REST Framework Serializers
 * Supports exact ID searches in Django Admin when field is specified in search_fields.
 * Supports common filtering lookups, such as ``__iexact``, ``__contains``, ``__icontains``, though matching is the same as ``__exact``.
@@ -35,9 +36,9 @@ Requirements
 This module is tested and known to work with:
 
 * Python 3.6, 3.7, 3.8
-* Django 1.11, 2.2, 3.0
-* Hashids 1.2
-* Django REST Framework 3.10
+* Django 2.2, 3.0, 3.1, 3.2 (beta)
+* Hashids 1.3
+* Django REST Framework 3.12
 
 *Please Note*: Python 2.x is at its end of life and is no longer supported.
 
@@ -199,6 +200,18 @@ And now you can use the 'id' or 'pk' attributes on your model instances:
     Hashid(60): N8VNa8z
     >>> Author.objects.get(pk='N8VNa8z')
     <Author: Author object>
+
+In Django 3.2 a new setting, "DEFAULT_AUTO_FIELD" was added to change all auto-generated AutoFields to a specific class.
+This is fully supported with django-hashid-field, and can be enabled with:
+
+.. code-block:: python
+
+    DEFAULT_AUTO_FIELD = 'hashid_field.HashidAutoField'
+    DEFAULT_AUTO_FIELD = 'hashid_field.BigHashidAutoField'
+
+Care must be given, as this will alter ALL models in your project. Usually you would only set this in a new project.
+Also, since this changes the auto-generated field, only global settings will be used for that field. If you desire
+specific settings for different models, then using this setting is not advised.
 
 Global Settings
 ---------------

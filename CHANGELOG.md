@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.0] - 2021-03-12
+### Added
+- Added optional string prefixes to generated hashids. e.g. "rec_8ghK0LM"
+- Added BigHashidField and AutoBigHashidField
+- Added new global and per-field option to disable the Hashid object, and instead return plain hashid strings for
+  increased compatibility.
+- Added new global and per-field option to disable the descriptor for increased compatibility.
+- Support for Django 3.1
+- Global HASHID_FIELD_MIN_LENGTH and HASHID_FIELD_ALPHABET settings.
+- (BETA) support for Django 3.2, which is currently in Beta.
+### Changes
+- Documented per-field salt usage for unique hashids.
+- Optimized Hashid instantiation by testing for integer before hashid decode.
+- Optimized lookups by testing for integer instead of hashid decode.
+### Removed
+- Removed deprecation warnings for HASHID_FIELD_ALLOW_INT and `allow_int`
+- Removed support for Django 1.11 which is EOL
+
 ## [3.1.3] - 2020-06-05
 ### Changes
 - Check passed alphabet for length and that the characters are unique.
