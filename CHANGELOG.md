@@ -4,16 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [3.2.0] - 2021-03-12
+## [3.2.0] - 2021-03-15
 ### Added
-- Added optional string prefixes to generated hashids. e.g. "rec_8ghK0LM"
+- Added optional string prefixes to generated hashids. e.g. "rec_8ghK0LM".
+  (Thanks [Brendan McCollam](https://github.com/bjmc))
 - Added BigHashidField and AutoBigHashidField
 - Added new global and per-field option to disable the Hashid object, and instead return plain hashid strings for
   increased compatibility.
 - Added new global and per-field option to disable the descriptor for increased compatibility.
-- Support for Django 3.1
-- Global HASHID_FIELD_MIN_LENGTH and HASHID_FIELD_ALPHABET settings.
-- (BETA) support for Django 3.2, which is currently in Beta.
+- Added Global HASHID_FIELD_MIN_LENGTH and HASHID_FIELD_ALPHABET settings.
+- Added Support for Django 3.1
+- Added (BETA) support for Django 3.2, which is currently in Beta.
+- Added a note per [Issue #51](https://github.com/nshafer/django-hashid-field/issues/51) about the hashids-python
+  library only caring about the first 43 characters. Thanks [Ralph Bolton](https://github.com/coofercat).
 ### Changes
 - Documented per-field salt usage for unique hashids.
 - Optimized Hashid instantiation by testing for integer before hashid decode.
@@ -194,6 +197,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/nshafer/django-hashid-field/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/nshafer/django-hashid-field/compare/3.1.0...3.1.1

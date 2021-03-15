@@ -15,13 +15,13 @@ Features
 
 * Stores IDs as integers in the database
 * Allows lookups and filtering by hashid string or Hashid object and (optionally) integer.
-* Allows prefixing hashids with custom string, e.g. `prefix="user_"` for hashids like "user_h6ks82g"
 * Can enable integer lookups globally or per-field
 * Can be used as sort key
-* Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
-* Supports "Big" variants for large integers: BigHashidField, BigHashidAutoField
 * Allows specifying a salt, min_length and alphabet globally
 * Supports custom *salt*, *min_length*, *alphabet*, *prefix* and *allow_int_lookup* settings per field
+* Allows prefixing hashids with custom string, e.g. `prefix="user_"` for hashids like "user_h6ks82g"
+* Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
+* Supports "Big" variants for large integers: BigHashidField, BigHashidAutoField
 * Supports Django 3.2 setting `DEFAULT_AUTO_FIELD = 'hashid_field.BigHashidAutoField'`
 * Supports Django REST Framework Serializers
 * Supports exact ID searches in Django Admin when field is specified in search_fields.
@@ -77,13 +77,6 @@ Migrate your database
     $ ./manage.py makemigrations
     $ ./manage.py migrate
 
-Upgrading
-------------
-**Potentially breaking changes in 2.0.0** depending on your usage and configuration, specifically if you rely on
-integer lookups (now off by default) or exceptions for invalid lookup values.
-
-Please see the `Change Log <https://github.com/nshafer/django-hashid-field/blob/master/CHANGELOG.md>`_
-
 Basic Usage
 -----------
 
@@ -134,8 +127,8 @@ lookups with older integers.
     >>> Book.objects.filter(reference_id=123)
     <QuerySet [<Book:  (OwLxW8D)>]>
 
-By default, the objects returned from a HashidField are an instance of the class Hashid (this can be disabled globally or per-field),
-and allow basic access to the original integer or the hashid:
+By default, the objects returned from a HashidField are an instance of the class Hashid (this can be disabled globally
+or per-field), and allow basic access to the original integer or the hashid:
 
 .. code-block:: python
 
@@ -462,14 +455,14 @@ Methods
 ~~~~~~~
 
 \__init__(value, salt="", min_length=0, alphabet=Hashids.ALPHABET, prefix="", hashids=None):
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :value: **REQUIRED** Integer you wish to *encode* or hashid you wish to *decode*
 :salt: Salt to use. **Default**: "" (empty string)
 :min_length: Minimum length of encoded hashid string. **Default**: 0
 :alphabet: The characters to use in the encoded hashid string. **Default**: Hashids.ALPHABET
 :prefix: String prefix prepended to hashid strings. **Default**: "" (empty string)
-:hashids: Instance of hashids.Hashids to use for encoding/decoding. Provide for optimization.
+:hashids: Instance of hashids.Hashids to use for encoding/decoding instead of instantiating another.
 
 Read-Only Properties
 ~~~~~~~~~~~~~~~~~~~~
