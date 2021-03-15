@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django_extensions',
 ]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,10 +54,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-if django.VERSION >= (1, 10):
-    MIDDLEWARE = MIDDLEWARE_CLASSES
-    del MIDDLEWARE_CLASSES
 
 ROOT_URLCONF = 'sandbox.urls'
 

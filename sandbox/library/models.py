@@ -2,10 +2,7 @@ from django.db import models
 
 from hashid_field import HashidAutoField, HashidField
 
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse  # Django <= 1.8
+from django.urls import reverse
 
 
 class Author(models.Model):

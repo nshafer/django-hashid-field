@@ -45,10 +45,6 @@ class HashidFieldMixin(object):
         if _alphabet_unique_len(self.alphabet) < 16:
             raise exceptions.ImproperlyConfigured("'alphabet' must contain a minimum of 16 unique characters")
         self._hashids = Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
-        if 'allow_int' in kwargs:
-            warnings.warn("The 'allow_int' parameter was renamed to 'allow_int_lookup'.", DeprecationWarning, stacklevel=2)
-            allow_int_lookup = kwargs['allow_int']
-            del kwargs['allow_int']
         self.allow_int_lookup = allow_int_lookup
         self.enable_hashid_object = enable_hashid_object
         self.enable_descriptor = enable_descriptor
@@ -102,16 +98,10 @@ class HashidFieldMixin(object):
     def get_hashid(self, id):
         return Hashid(id, prefix=self.prefix, hashids=self._hashids)
 
-    if django.VERSION < (2, 0):
-        def from_db_value(self, value, expression, connection, context):
-            if value is None:
-                return value
-            return self.encode_id(value)
-    else:
-        def from_db_value(self, value, expression, connection):
-            if value is None:
-                return value
-            return self.encode_id(value)
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return value
+        return self.encode_id(value)
 
     def get_lookup(self, lookup_name):
         if lookup_name in self.exact_lookups:
