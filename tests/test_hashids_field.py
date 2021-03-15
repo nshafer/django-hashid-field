@@ -384,14 +384,24 @@ class HashidsTests(TestCase):
 
     @override_settings(HASHID_FIELD_LOOKUP_EXCEPTION=True)
     def test_exceptions(self):
-        self.assertTrue(Record.objects.filter(key=str(self.record.key)).exists())
-        self.assertTrue(Record.objects.filter(key__in=[str(self.record.key)]).exists())
+        a = Artist.objects.create(name="John Doe")
+        r = Record.objects.create(name="Blue Album", reference_id=123, artist=a, key=456)
+        self.assertTrue(Record.objects.filter(key=str(r.key)).exists())
+        self.assertTrue(Record.objects.filter(key__in=[str(r.key)]).exists())
         with self.assertRaises(ValueError):
-            self.assertTrue(Record.objects.filter(key=456).exists())
+            self.assertFalse(Record.objects.filter(key=404).exists())
         with self.assertRaises(ValueError):
-            self.assertTrue(Record.objects.filter(key="asdf").exists())
+            self.assertFalse(Record.objects.filter(key="invalid").exists())
         with self.assertRaises(ValueError):
-            self.assertTrue(Record.objects.filter(key__in=[456]).exists())
+            self.assertFalse(Record.objects.filter(key__in=[404]).exists())
+        self.assertTrue(Record.objects.filter(artist=a).exists())
+        self.assertTrue(Record.objects.filter(artist_id=a.id).exists())
+        self.assertTrue(Record.objects.filter(artist__in=[a]).exists())
+        self.assertTrue(Record.objects.filter(artist_id__in=[a.id]).exists())
+        self.assertFalse(Record.objects.filter(artist_id=404).exists())
+        with self.assertRaises(ValueError):
+            self.assertFalse(Record.objects.filter(artist_id="invalid").exists())
+        self.assertFalse(Record.objects.filter(artist_id__in=[404]).exists())
 
     def test_custom_hashids_settings(self):
         SALT="abcd"
@@ -435,6 +445,6 @@ class HashidsTests(TestCase):
         instance = Track.objects.create()
         self.assertEqual(1, Track.objects.filter(id=1).count())
 
-    def test_dynamic_prefix(self):
-        instance = RecordLabel.objects.create()
-        self.assertEqual(instance.id, "record_label/" + instance.id.hashids.encode(instance.id.id))
+    # def test_dynamic_prefix(self):
+    #     instance = RecordLabel.objects.create()
+    #     self.assertEqual(instance.id, "record_label/" + instance.id.hashids.encode(instance.id.id))
