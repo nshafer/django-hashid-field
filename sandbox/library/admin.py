@@ -23,8 +23,9 @@ class EditorAdmin(admin.ModelAdmin):
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'reference_id', 'int_reference_id', 'key', 'author')
+    list_filter = ('author',)
     search_fields = ('name', 'reference_id')
     ordering = ('reference_id', 'id')
 
     def int_reference_id(self, obj):
-        return obj.reference_id.id
+        return obj.reference_id_hashid.id
