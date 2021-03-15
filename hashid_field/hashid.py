@@ -1,12 +1,6 @@
-import sys
 from functools import total_ordering
 
 from hashids import Hashids
-
-try:
-    StrType = basestring
-except NameError:
-    StrType = str
 
 
 def _is_int(number):
@@ -27,7 +21,7 @@ def _is_uint(number):
 
 def _is_str(candidate):
     """Returns whether a value is a string."""
-    return isinstance(candidate, StrType)
+    return isinstance(candidate, str)
 
 
 @total_ordering

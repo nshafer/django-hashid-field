@@ -9,12 +9,6 @@ from tests.forms import RecordForm, AlternateRecordForm
 from tests.models import Record, Artist, Track, RecordLabel
 
 
-try:
-    StrType = basestring
-except NameError:
-    StrType = str
-
-
 class HashidsTests(TestCase):
     def setUp(self):
         self.record = Record.objects.create(name="Test Record", reference_id=123, prefixed_id=234,
@@ -40,11 +34,11 @@ class HashidsTests(TestCase):
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(123))
         self.assertIsInstance(self.record.prefixed_id, Hashid)
         self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(234))
-        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertIsInstance(self.record.string_id, str)
         self.assertEqual(self.record.string_id, self.hashids.encode(345))
         self.assertIsInstance(self.record.plain_hashid, Hashid)
         self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(456))
-        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertIsInstance(self.record.plain_id, str)
         self.assertEqual(str(self.record.plain_id), self.hashids.encode(567))
 
     def test_record_load_from_db(self):
@@ -85,11 +79,11 @@ class HashidsTests(TestCase):
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(51))
         self.assertIsInstance(self.record.prefixed_id, Hashid)
         self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(52))
-        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertIsInstance(self.record.string_id, str)
         self.assertEqual(self.record.string_id, self.hashids.encode(53))
         self.assertIsInstance(self.record.plain_hashid, Hashid)
         self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(54))
-        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertIsInstance(self.record.plain_id, str)
         self.assertEqual(self.record.plain_id, self.hashids.encode(55))
 
     def test_set_hashid(self):
@@ -100,8 +94,8 @@ class HashidsTests(TestCase):
         self.record.plain_id = self.hashids.encode(65)
         self.record.save()
         # No descriptor, so they should be set to exactly what I set them to
-        self.assertIsInstance(self.record.plain_hashid, StrType)
-        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertIsInstance(self.record.plain_hashid, str)
+        self.assertIsInstance(self.record.plain_id, str)
         self.assertEqual(self.record.plain_hashid, self.hashids.encode(64))
         self.assertEqual(self.record.plain_id, self.hashids.encode(65))
         # Refreshing from database will transform them based on settings due to from_db_value()
@@ -110,11 +104,11 @@ class HashidsTests(TestCase):
         self.assertEqual(str(self.record.reference_id), self.hashids.encode(61))
         self.assertIsInstance(self.record.prefixed_id, Hashid)
         self.assertEqual(str(self.record.prefixed_id), "prefix_" + self.hashids.encode(62))
-        self.assertIsInstance(self.record.string_id, StrType)
+        self.assertIsInstance(self.record.string_id, str)
         self.assertEqual(self.record.string_id, self.hashids.encode(63))
         self.assertIsInstance(self.record.plain_hashid, Hashid)
         self.assertEqual(str(self.record.plain_hashid), self.hashids.encode(64))
-        self.assertIsInstance(self.record.plain_id, StrType)
+        self.assertIsInstance(self.record.plain_id, str)
         self.assertEqual(self.record.plain_id, self.hashids.encode(65))
 
     def assert_lookups_match(self, field_name, value, expected, allow_int_lookup=False):
