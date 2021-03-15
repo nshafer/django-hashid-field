@@ -33,10 +33,10 @@ class BookUpdateView(generic.UpdateView):
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
-    queryset = Author.objects.all()
+    queryset = Author.objects.order_by('id')
     serializer_class = AuthorSerializer
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.order_by('id')
     serializer_class = BookSerializer
