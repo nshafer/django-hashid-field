@@ -228,6 +228,7 @@ Field Parameters below.
 
 :Type:    string
 :Default: ""
+:Note:    The upstream hashids-python library [only considers the first 43 characters of the salt](https://github.com/davidaurelio/hashids-python/issues/43).
 :Example:
     .. code-block:: python
 
@@ -355,11 +356,12 @@ salt
 Local overridable salt for hashids generated specifically for this field.
 Set this to a unique value for each field if you want the IDs for that field to be different to the same IDs
 on another field. e.g. so that `book.id = Hashid(5): 0Q8Kg9r` and `author.id = Hashid(5): kp0eq0V`.
-Suggestion: `fieldname = HashIdField(salt=settings.HASHID_FIELD_SALT + "_modelname_fieldname")`
+Suggestion: `fieldname = HashIdField(salt="modelname_fieldname_" + settings.HASHID_FIELD_SALT)`
 See HASHID_FIELD_SALT above.
 
 :Type:    string
 :Default: settings.HASHID_FIELD_SALT, ""
+:Note:    The upstream hashids-python library [only considers the first 43 characters of the salt](https://github.com/davidaurelio/hashids-python/issues/43).
 :Example:
     .. code-block:: python
 
