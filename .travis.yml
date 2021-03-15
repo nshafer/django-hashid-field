@@ -1,23 +1,17 @@
 language: python
 cache: pip
-dist: xenial
+dist: bionic
 python:
   - 3.6
   - 3.7
   - 3.8
 env:
-  - DJANGO_VERSION=1.11.27
-  - DJANGO_VERSION=2.2.9
-  - DJANGO_VERSION=3.0.2
-  - DJANGO_VERSION=1.11.27 DRF_VERSION=3.11.0
-  - DJANGO_VERSION=2.2.9   DRF_VERSION=3.11.0
-  - DJANGO_VERSION=3.0.2   DRF_VERSION=3.11.0
-matrix:
-  exclude:
-    - python: 3.8
-      env: DJANGO_VERSION=1.11.27
-    - python: 3.8
-      env: DJANGO_VERSION=1.11.27 DRF_VERSION=3.11.0
+  - DJANGO_VERSION=2.2.19
+  - DJANGO_VERSION=3.0.13
+  - DJANGO_VERSION=3.1.7
+  - DJANGO_VERSION=2.2.19   DRF_VERSION=3.12.2
+  - DJANGO_VERSION=3.0.13   DRF_VERSION=3.12.2
+  - DJANGO_VERSION=3.1.7   DRF_VERSION=3.12.2
 install:
   - pip install -r .travis/requirements.txt
   - pip install --upgrade "Django==${DJANGO_VERSION}"
