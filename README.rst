@@ -19,7 +19,7 @@ Features
 * Can enable integer lookups globally or per-field
 * Can be used as sort key
 * Can drop-in replace an existing IntegerField (HashidField) or AutoField (HashidAutoField)
-* Allows specifying a salt globally
+* Allows specifying a salt, min_length and alphabet globally
 * Supports custom *salt*, *min_length*, *alphabet*, *prefix* and *allow_int_lookup* settings per field
 * Supports Django REST Framework Serializers
 * Supports exact ID searches in Django Admin when field is specified in search_fields.
@@ -219,13 +219,40 @@ Field Parameters below.
 
         HASHID_FIELD_SALT = "a long and secure salt value that is not the same as SECRET_KEY"
 
+HASHID_FIELD_MIN_LENGTH
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Default minimum length for all Hashid*Fields.
+It is suggested to use 7 for HashidField and AutoField, so that all possible values (up to 2147483647) are the same
+length.
+Use 13 (for values up to 9223372036854775807) for BigHashidField and BigHashidAutoField.
+
+:Type:    integer
+:Default: 7
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_MIN_LENGTH = 7
+
+HASHID_FIELD_ALPHABET
+~~~~~~~~~~~~~~~~~~~~~~~
+
+The default alphabet to use for characters in generated Hashids strings. Must be at least 16 unique characters.
+
+:Type:    string
+:Default: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+:Example:
+    .. code-block:: python
+
+        HASHID_FIELD_ALPHABET = "0123456789abcdef"
+
 HASHID_FIELD_ALLOW_INT_LOOKUP
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Allow lookups or fetches of fields using the underlying integer that's stored in the database.
 Disabled by default to prevent users from being to do a sequential scan of objects by pulling objects by
 integers (1, 2, 3) instead of Hashid strings ("Ba9p1AG", "7V9gk9Z", "wro12zm").
-Can be overriden by the field definition.
+Can be overridden by the field definition.
 
 :Type:    boolean
 :Default: False

@@ -1,6 +1,3 @@
-import warnings
-
-import django
 from django import forms
 from django.core import exceptions, checks
 from django.db import models
@@ -34,7 +31,9 @@ class HashidFieldMixin(object):
         'lte': HashidLessThanOrEqual,
     }
 
-    def __init__(self, salt=settings.HASHID_FIELD_SALT, min_length=7, alphabet=Hashids.ALPHABET,
+    def __init__(self, salt=settings.HASHID_FIELD_SALT,
+                 min_length=settings.HASHID_FIELD_MIN_LENGTH,
+                 alphabet=settings.HASHID_FIELD_ALPHABET,
                  allow_int_lookup=settings.HASHID_FIELD_ALLOW_INT_LOOKUP,
                  enable_hashid_object=settings.HASHID_FIELD_ENABLE_HASHID_OBJECT,
                  enable_descriptor=settings.HASHID_FIELD_ENABLE_DESCRIPTOR,
