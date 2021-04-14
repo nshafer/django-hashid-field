@@ -4,7 +4,7 @@ from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, Le
 from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
 
-from .hashid import Hashid, _is_int
+from .hashid import Hashid, _is_int_representation
 from .conf import settings
 
 
@@ -15,7 +15,7 @@ def get_id_for_hashid_field(field, value):
         hashid = field.get_hashid(value)
     except ValueError:
         raise ValueError(field.error_messages['invalid'] % {'value': value})
-    if not field.allow_int_lookup and _is_int(value):
+    if not field.allow_int_lookup and _is_int_representation(value):
         raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
     return hashid.id
 

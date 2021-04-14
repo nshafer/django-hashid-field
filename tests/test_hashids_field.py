@@ -245,9 +245,11 @@ class HashidsTests(TestCase):
         with self.assertRaises(Http404):
             get_object_or_404(Artist, pk="asdf")
 
-        # int lookups should fail
+        # int lookups or str representing int should fail
         with self.assertRaises(Http404):
             self.assertEqual(get_object_or_404(Artist, pk=int(a.id)), a)
+        with self.assertRaises(Http404):
+            self.assertEqual(get_object_or_404(Artist, pk=str(int(a.id))), a)
 
     def test_invalid_int(self):
         with self.assertRaises(ValueError):

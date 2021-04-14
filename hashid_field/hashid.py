@@ -3,12 +3,14 @@ from functools import total_ordering
 from hashids import Hashids
 
 
-def _is_int(number):
+def _is_int_representation(number):
     """Returns whether a value is an integer."""
     try:
-        return number == int(number)
+        int(number)
     except ValueError:
         return False
+    else:
+        return True
 
 
 def _is_uint(number):
