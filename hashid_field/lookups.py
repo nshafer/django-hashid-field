@@ -4,8 +4,18 @@ from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, Le
 from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
 
-from .hashid import Hashid, _is_int_representation
+from .hashid import Hashid
 from .conf import settings
+
+
+def _is_int_representation(number):
+    """Returns whether a value is an integer or a string representation of an integer."""
+    try:
+        int(number)
+    except ValueError:
+        return False
+    else:
+        return True
 
 
 def get_id_for_hashid_field(field, value):
