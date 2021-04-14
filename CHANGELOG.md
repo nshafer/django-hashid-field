@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.1] - 2021-04-14
+### Changes
+- [#58]: Fixed regression in ALLOW_INT_LOOKUP allowing integer lookups with string representation of an int, e.g. "123"
+  (Thanks [François Rossigneux](https://github.com/frossigneux))
+- Add official support for Django 3.2.
+- Dropped official support for Django 3.0 as it is past EOL, though it will probably still work.
+
 ## [3.2.0] - 2021-03-15
 ### Added
 - Added optional string prefixes to generated hashids. e.g. "rec_8ghK0LM".
@@ -197,7 +204,8 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
-[3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.3...3.2.0
+[3.2.1]: https://github.com/nshafer/django-hashid-field/compare/3.2.0...3.2.1
+[3.2.0]: https://github.com/nshafer/django-hashid-field/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.2...3.1.3
 [3.1.2]: https://github.com/nshafer/django-hashid-field/compare/3.1.1...3.1.2
 [3.1.1]: https://github.com/nshafer/django-hashid-field/compare/3.1.0...3.1.1
@@ -227,3 +235,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#30]: https://github.com/nshafer/django-hashid-field/pull/30
 [#38]: https://github.com/nshafer/django-hashid-field/issues/38
 [#40]: https://github.com/nshafer/django-hashid-field/pull/40
+[#58]: https://github.com/nshafer/django-hashid-field/pull/58
