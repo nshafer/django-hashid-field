@@ -47,15 +47,15 @@ class BookForm(forms.ModelForm):
 
 class BookTests(TestCase):
     def setUp(self):
-        self.book = Book.objects.create(name="Test Book", reference_id=123, key=456)
-        self.hashids = self.book.reference_id.hashids
+        self.book = Book.objects.create(name="Test Book", reference_id=123, key=456, alt=789)
+        self.ref_hashids = self.book.reference_id._hashids
 
     def test_book_create(self):
         self.assertIsInstance(self.book, Book)
 
     def test_book_reference_is_hashid(self):
         self.assertIsInstance(self.book.reference_id, Hashid)
-        self.assertEqual(str(self.book.reference_id), self.hashids.encode(123))
+        self.assertEqual(str(self.book.reference_id), "ref_" + self.ref_hashids.encode(123))
 
     def test_book_load_from_db(self):
         book = Book.objects.get(pk=self.book.pk)
@@ -64,23 +64,24 @@ class BookTests(TestCase):
     def test_book_reference_from_db_is_hashid(self):
         book = Book.objects.get(pk=self.book.pk)
         self.assertIsInstance(self.book.reference_id, Hashid)
-        self.assertEqual(book.reference_id.hashid, self.hashids.encode(123))
+        self.assertEqual(book.reference_id.hashid, self.ref_hashids.encode(123))
 
     def test_set_int(self):
         self.book.reference_id = 456
         self.book.save()
-        self.assertEqual(self.book.reference_id.hashid, self.hashids.encode(456))
+        self.assertEqual(self.book.reference_id.hashid, self.ref_hashids.encode(456))
 
     def test_set_hashid(self):
-        self.book.reference_id = self.hashids.encode(789)
+        self.book.reference_id = "ref_" + self.ref_hashids.encode(789)
         self.book.save()
-        self.assertEqual(str(self.book.reference_id), self.hashids.encode(789))
+        self.assertEqual(str(self.book.reference_id), "ref_" + self.ref_hashids.encode(789))
 
     def test_filter_by_int(self):
         self.assertTrue(Book.objects.filter(reference_id=123).exists())
 
     def test_filter_by_hashid(self):
-        self.assertTrue(Book.objects.filter(reference_id=self.hashids.encode(123)).exists())
+        ref_id = "ref_" + self.ref_hashids.encode(123)
+        self.assertTrue(Book.objects.filter(reference_id=ref_id).exists())
 
     def test_invalid_int(self):
         with self.assertRaises(ValueError):
@@ -101,12 +102,12 @@ class BookTests(TestCase):
 
     def test_book_form(self):
         form = BookForm(instance=self.book)
-        self.assertEqual(form.initial['reference_id'].hashid, self.hashids.encode(123))
+        self.assertEqual(form.initial['reference_id'].hashid, self.ref_hashids.encode(123))
         form = BookForm({'name': "A new name", 'reference_id': 987}, instance=self.book)
         self.assertTrue(form.is_valid())
         instance = form.save()
         self.assertEqual(self.book, instance)
-        self.assertEqual(str(self.book.reference_id), self.hashids.encode(987))
+        self.assertEqual(str(self.book.reference_id), "ref_" + self.ref_hashids.encode(987))
 
     def test_invalid_id_in_form(self):
         form = BookForm({'name': "A new name", 'reference_id': "asdfqwer"})

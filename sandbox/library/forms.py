@@ -6,7 +6,7 @@ from library.models import Book
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
-        fields = ('name', 'author', 'reference_id', 'key', 'some_number', 'editors')
+        fields = ('name', 'author', 'reference_id', 'key', 'alt', 'some_number', 'editors')
         # widgets = {
         #     'author': forms.TextInput()
         # }
