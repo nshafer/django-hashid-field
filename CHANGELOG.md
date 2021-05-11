@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.0] - 2021-05-11
+### Changes
+- [#60]: Fixed regression (from 3.1.2) that caused a `Hashid` instance to not be reversible, such as for pickling. This
+  requires a change in the interface for the `Hashid` class, in that salt, min_length and alphabet are no longer
+  derived from a given `hashids.Hashids` class (as it's impossible, due to hashids.Hashids pulling characters out of
+  the provided alphabet to populate separators and guards, and randomizing the lists based on the salt.) The given
+  `hashids` argument is for optimization only, so if it is given without also giving a salt, min_length and
+  alphabet that match, the behavior of the class is incorrect and will now throw an exception.
+  (Thanks [sgex](https://github.com/sgex))
+- This may also fix issues with url `reverse` as reported in [#44], however I have been unable to duplicate the problem
+  myself, so this is just a guess.
+- Fixed sandbox tests.
+
 ## [3.2.1] - 2021-04-14
 ### Changes
 - [#58]: Fixed regression in ALLOW_INT_LOOKUP allowing integer lookups with string representation of an int, e.g. "123"
@@ -204,6 +217,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.0]: https://github.com/nshafer/django-hashid-field/compare/3.2.1...3.3.0
 [3.2.1]: https://github.com/nshafer/django-hashid-field/compare/3.2.0...3.2.1
 [3.2.0]: https://github.com/nshafer/django-hashid-field/compare/3.1.3...3.2.0
 [3.1.3]: https://github.com/nshafer/django-hashid-field/compare/3.1.2...3.1.3
@@ -235,4 +249,6 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#30]: https://github.com/nshafer/django-hashid-field/pull/30
 [#38]: https://github.com/nshafer/django-hashid-field/issues/38
 [#40]: https://github.com/nshafer/django-hashid-field/pull/40
+[#44]: https://github.com/nshafer/django-hashid-field/issues/44
 [#58]: https://github.com/nshafer/django-hashid-field/pull/58
+[#60]: https://github.com/nshafer/django-hashid-field/issues/60
