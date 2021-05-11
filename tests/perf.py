@@ -15,7 +15,7 @@ def no_cache():
         Hashid(123, salt="asdf", min_length=7)
     ''')
     timer = Timer(stmt, setup)
-    time = timer.timeit(10_000)
+    time = timer.timeit(100_000)
     print("No pre-generated Hashids instance: {}".format(time))
 
 
@@ -26,10 +26,10 @@ def with_cache():
         hashids=Hashids(salt="asdf", min_length=7)
     ''')
     stmt = dedent('''
-        Hashid(123, hashids=hashids)
+        Hashid(123, salt="asdf", min_length=7, hashids=hashids)
     ''')
     timer = Timer(stmt, setup)
-    time = timer.timeit(10_000)
+    time = timer.timeit(100_000)
     print("With pre-generated Hashids instance: {}".format(time))
 
 

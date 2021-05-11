@@ -4,10 +4,16 @@ from hashids import Hashids
 from hashid_field import Hashid
 from hashid_field.descriptor import HashidDescriptor
 
+salt = "abcd"
+min_length = 1
+alphabet = "0123456789abcdef"
+hashids = Hashids(salt=salt, min_length=min_length, alphabet=alphabet)
+
 
 class TestClass(object):
-    a = HashidDescriptor(field_name='a', hashids=Hashids())
-    b = HashidDescriptor(field_name='b', hashids=Hashids(), enable_hashid_object=False)
+    a = HashidDescriptor(field_name='a', salt=salt, min_length=min_length, alphabet=alphabet, hashids=hashids)
+    b = HashidDescriptor(field_name='b', salt=salt, min_length=min_length, alphabet=alphabet, hashids=hashids,
+                         enable_hashid_object=False)
 
 
 class DescriptorTests(TestCase):
@@ -27,7 +33,7 @@ class DescriptorTests(TestCase):
         self.assertEqual(t.a.id, 123)
         t.b = 123
         self.assertIsInstance(t.b, str)
-        self.assertEqual(t.b, Hashids().encode(123))
+        self.assertEqual(t.b, hashids.encode(123))
 
     def test_set_hashid(self):
         t = TestClass()
@@ -59,7 +65,7 @@ class DescriptorTests(TestCase):
 
     def test_set_valid_hashid_string(self):
         t = TestClass()
-        h = Hashid(456)
+        h = Hashid(456, salt=salt, min_length=min_length, alphabet=alphabet)
         t.a = h.hashid
         self.assertIsInstance(t.a, Hashid)
         self.assertEqual(t.a.id, 456)
@@ -80,4 +86,4 @@ class DescriptorTests(TestCase):
         self.assertEqual(t.b, "asdf")
         t.b = 123  # Now set it to a valid value for a Hashid, so it should create a new Hashid()
         self.assertIsInstance(t.b, str)
-        self.assertEqual(t.b, Hashids().encode(123))
+        self.assertEqual(t.b, hashids.encode(123))

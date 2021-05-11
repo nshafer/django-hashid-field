@@ -1,5 +1,6 @@
 import pickle
 
+import hashids
 from django.test import TestCase
 from django.utils.encoding import force_str
 
@@ -134,8 +135,24 @@ class HashidTests(TestCase):
         self.assertFalse(a == d)
         self.assertFalse(hash(a) == hash(d))
 
+    def test_hashid_override_with_minimum_alphabet(self):
+        alphabet = "0123456789abcdef"
+        h = hashids.Hashids(alphabet=alphabet)
+        a = Hashid(5, alphabet=alphabet, hashids=h)
+        self.assertIsInstance(a, Hashid)
+        self.assertEqual(a.id, 5)
+        self.assertEqual(a.hashid, h.encode(5))
+        self.assertEqual(a._alphabet, alphabet)
+
     def test_pickle(self):
         a = Hashid(123)
+        pickled = pickle.loads(pickle.dumps(a))
+        self.assertTrue(a == pickled)
+
+    def test_pickle_with_minimum_alphabet(self):
+        alphabet = "0123456789abcdef"
+        h = hashids.Hashids(alphabet=alphabet)
+        a = Hashid(123, alphabet=alphabet, hashids=h)
         pickled = pickle.loads(pickle.dumps(a))
         self.assertTrue(a == pickled)
 

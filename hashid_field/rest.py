@@ -21,9 +21,10 @@ class HashidSerializerMixin(object):
 
     def __init__(self, **kwargs):
         self.hashid_salt = kwargs.pop('salt', settings.HASHID_FIELD_SALT)
-        self.hashid_min_length = kwargs.pop('min_length', 7)
-        self.hashid_alphabet = kwargs.pop('alphabet', Hashids.ALPHABET)
-        self.prefix = kwargs.pop('alphabet', "")
+        self.hashid_min_length = kwargs.pop('min_length', settings.HASHID_FIELD_MIN_LENGTH)
+        self.hashid_alphabet = kwargs.pop('alphabet', settings.HASHID_FIELD_ALPHABET)
+        self.prefix = kwargs.pop('prefix', "")
+        self._hashids = kwargs.pop('hashids', None)
 
         source_field = kwargs.pop('source_field', None)
         if source_field:
@@ -37,15 +38,21 @@ class HashidSerializerMixin(object):
                 source_field = model._meta.get_field(field_name)
             elif not isinstance(source_field, (HashidField, BigHashidField, HashidAutoField, BigHashidAutoField)):
                 raise TypeError(self.usage_text)
-            self.hashid_salt, self.hashid_min_length, self.hashid_alphabet, self.prefix = \
-                source_field.salt, source_field.min_length, source_field.alphabet, source_field.prefix
-        self._hashids = Hashids(salt=self.hashid_salt, min_length=self.hashid_min_length, alphabet=self.hashid_alphabet)
+            self.hashid_salt = source_field.salt
+            self.hashid_min_length = source_field.min_length
+            self.hashid_alphabet = source_field.alphabet
+            self.prefix = source_field.prefix
+            self._hashids =source_field._hashids
+        if not self._hashids:
+            self._hashids = Hashids(salt=self.hashid_salt, min_length=self.hashid_min_length,
+                                    alphabet=self.hashid_alphabet)
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         try:
             value = super().to_internal_value(data)
-            return Hashid(value, prefix=self.prefix, hashids=self._hashids)
+            return Hashid(value, salt=self.hashid_salt, min_length=self.hashid_min_length,
+                          alphabet=self.hashid_alphabet, prefix=self.prefix, hashids=self._hashids)
         except ValueError:
             raise serializers.ValidationError("Invalid int or Hashid string")
 

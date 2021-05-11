@@ -19,18 +19,16 @@ def _is_str(candidate):
 @total_ordering
 class Hashid(object):
     def __init__(self, value, salt="", min_length=0, alphabet=Hashids.ALPHABET, prefix="", hashids=None):
-        if hashids is None:
-            self._salt = salt
-            self._min_length = min_length
-            self._alphabet = alphabet
-            self._hashids = Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
-        else:
-            self._hashids = hashids
-            self._salt = hashids._salt
-            self._min_length = hashids._min_length
-            self._alphabet = hashids._alphabet
-
+        self._salt = salt
+        self._min_length = min_length
+        self._alphabet = alphabet
         self._prefix = str(prefix)
+
+        # If hashids is provided, it's for optimization only, and should be initialized with the same salt, min_length
+        # and alphabet, or else we will run into problems
+        self._hashids = hashids or Hashids(salt=self._salt, min_length=self._min_length, alphabet=self._alphabet)
+        if not self._valid_hashids_object():
+            raise Exception("Invalid hashids.Hashids object")
 
         if value is None:
             raise ValueError("id must be a positive integer or a valid Hashid string")
@@ -95,6 +93,15 @@ class Hashid(object):
             return ret[0]
         else:
             return None
+
+    def _valid_hashids_object(self):
+        # The hashids.Hashids class randomizes the alphabet and pulls out separators and guards, thus not being
+        # reversible. So all we can test is that the length of the alphabet, separators and guards are equal to the
+        # original alphabet we gave it. We could also check that all of the characters we gave it are present, but that
+        # seems excessive... this test will catch most errors.
+        return self._salt == self._hashids._salt \
+            and self._min_length == self._hashids._min_length \
+            and len(self._alphabet) == len(self._hashids._alphabet + self._hashids._separators + self._hashids._guards)
 
     def __repr__(self):
         return "Hashid({}): {}".format(self._id, str(self))

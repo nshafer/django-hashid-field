@@ -96,7 +96,8 @@ class HashidFieldMixin(object):
             return str(hashid)
 
     def get_hashid(self, id):
-        return Hashid(id, prefix=self.prefix, hashids=self._hashids)
+        return Hashid(id, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet,
+                      prefix=self.prefix, hashids=self._hashids)
 
     def from_db_value(self, value, expression, connection):
         if value is None:
@@ -145,7 +146,8 @@ class HashidFieldMixin(object):
         # if callable(self.prefix):
         #     self.prefix = self.prefix(field_instance=self, model_class=cls, field_name=name, **kwargs)
         if self.enable_descriptor:
-            descriptor = HashidDescriptor(field_name=self.attname, hashids=self._hashids, prefix=self.prefix,
+            descriptor = HashidDescriptor(field_name=self.attname, salt=self.salt, min_length=self.min_length,
+                                          alphabet=self.alphabet, prefix=self.prefix, hashids=self._hashids,
                                           enable_hashid_object=self.enable_hashid_object)
             setattr(cls, self.attname, descriptor)
 

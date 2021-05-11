@@ -4,10 +4,13 @@ from .hashid import Hashid
 
 
 class HashidDescriptor(object):
-    def __init__(self, field_name, hashids, prefix="", enable_hashid_object=True):
+    def __init__(self, field_name, salt, min_length, alphabet, prefix="", hashids=None, enable_hashid_object=True):
         self.field_name = field_name
-        self.hashids = hashids
+        self.salt = salt
+        self.min_length = min_length
+        self.alphabet = alphabet
         self.prefix = prefix
+        self.hashids = hashids or Hashids(salt=self.salt, min_length=self.min_length, alphabet=self.alphabet)
         self.enable_hashid_object = enable_hashid_object
 
     def __get__(self, instance, owner=None):
@@ -31,7 +34,8 @@ class HashidDescriptor(object):
                 instance.__dict__[name] = str(value)
         else:
             try:
-                h = Hashid(value, prefix=self.prefix, hashids=self.hashids)
+                h = Hashid(value, salt=self.salt, min_length=self.min_length, alphabet=self.alphabet,
+                           prefix=self.prefix, hashids=self.hashids)
                 if enable_hashid_object:
                     instance.__dict__[name] = h
                 else:
