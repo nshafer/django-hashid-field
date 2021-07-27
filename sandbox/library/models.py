@@ -9,9 +9,14 @@ class Author(models.Model):
     id = BigHashidAutoField(primary_key=True, prefix="a_", alphabet="0123456789abcdef")
     name = models.CharField(max_length=40)
     uid = models.UUIDField(null=True, blank=True)
+    id_str = models.CharField(max_length=15, blank=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.id_str = str(self.id)
+        super().save(*args, **kwargs)
 
 
 class Editor(models.Model):
