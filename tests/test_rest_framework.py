@@ -3,7 +3,7 @@ from unittest import skipUnless
 from django.core import exceptions
 from django.test import TestCase
 
-from tests.models import Artist, Track
+from tests.models import Artist, Record, Track
 import hashids
 
 try:
@@ -41,7 +41,7 @@ class TestRestFramework(TestCase):
         self.assertEqual(Artist._meta.get_field('id').salt, s.fields['id'].hashid_salt)
         self.assertTrue(isinstance(s.data['id'], str))
         self.assertEqual(artist.id.hashid, s.data['id'])
-        s2 = ArtistSerializer(artist, data={'id': 128, 'name': "Test Artist Changed"})
+        s2 = ArtistSerializer(artist, data={'id': artist.id.hashid, 'name': "Test Artist Changed"})
         self.assertTrue(s2.is_valid())
         artist = s2.save()
         self.assertEqual(artist.id, orig_id)
@@ -65,6 +65,71 @@ class TestRestFramework(TestCase):
         artist = s2.save()
         self.assertEqual(artist.id, orig_id)
         self.assertEqual(artist.name, "Test Artist Changed")
+
+    def test_int_lookups_on_char_field(self):
+        class RecordSerializer(serializers.ModelSerializer):
+            id = HashidSerializerCharField(source_field='tests.Record.id')
+            artist = serializers.PrimaryKeyRelatedField(
+                pk_field=HashidSerializerCharField(source_field='tests.Artist.id'),
+                queryset=Artist.objects.all(),
+                required=False)
+            reference_id = HashidSerializerCharField(source_field='tests.Record.reference_id')
+
+            class Meta:
+                model = Record
+                fields = ('id', 'name', 'artist', 'reference_id')
+
+        artist = Artist.objects.create(id=512, name="Test Artist 512")
+
+        # Make sure int lookups are not allowed on HashidSerializerCharField
+        record_id = Record._meta.get_field('id').get_hashid(512)
+
+        s = RecordSerializer(data={'id': record_id.hashid, 'name': "Test Record 512", 'artist': 512})
+        self.assertFalse(s.is_valid())
+
+        # Make sure lookups are allowed with hashid string and saving a new instance works
+        reference_id = Record._meta.get_field('reference_id').get_hashid(1111111)
+        data = {
+            'id': record_id.hashid,
+            'name': "Test Record 512",
+            'artist': artist.id.hashid,
+            'reference_id': reference_id.hashid,
+        }
+        s = RecordSerializer(data=data)
+        self.assertTrue(s.is_valid())
+        r512 = s.save()
+        self.assertEqual(r512.id.hashid, record_id.hashid)
+        self.assertEqual(r512.name, "Test Record 512")
+        self.assertEqual(r512.artist, artist)
+
+    def test_int_lookups_on_int_field(self):
+        class RecordSerializer(serializers.ModelSerializer):
+            id = HashidSerializerIntegerField(source_field='tests.Record.id')
+            artist = serializers.PrimaryKeyRelatedField(
+                pk_field=HashidSerializerIntegerField(source_field='tests.Artist.id'),
+                queryset=Artist.objects.all(),
+                required=False)
+            reference_id = HashidSerializerIntegerField(source_field='tests.Record.reference_id')
+
+            class Meta:
+                model = Record
+                fields = ('id', 'name', 'artist', 'reference_id')
+
+        artist = Artist.objects.create(id=1024, name="Test Artist 1024")
+
+        # HashidSerializerIntegerField allows int lookups regardless of allow_int_lookup settings
+        data = {
+            'id': 1024,
+            'name': "Test Record 1024",
+            'artist': 1024,
+            'reference_id': 2222222222,
+        }
+        s = RecordSerializer(data=data)
+        self.assertTrue(s.is_valid())
+        r512 = s.save()
+        self.assertEqual(r512.id, 1024)
+        self.assertEqual(r512.name, "Test Record 1024")
+        self.assertEqual(r512.artist, artist)
 
     def test_invalid_source_field_strings(self):
         with self.assertRaises(ValueError):

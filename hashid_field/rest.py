@@ -1,11 +1,13 @@
 from django.apps import apps
 from django.core import exceptions
+from django.utils.translation import gettext_lazy as _
 
 from hashids import Hashids
 from rest_framework import fields, serializers
 
 from hashid_field.conf import settings
 from hashid_field.hashid import Hashid
+from hashid_field.lookups import _is_int_representation
 
 
 class UnconfiguredHashidSerialField(fields.Field):
@@ -18,11 +20,16 @@ class UnconfiguredHashidSerialField(fields.Field):
 
 class HashidSerializerMixin(object):
     usage_text = "Must pass a HashidField, HashidAutoField or 'app_label.model.field'"
+    default_error_messages = {
+        'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
+        'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
+    }
 
     def __init__(self, **kwargs):
         self.hashid_salt = kwargs.pop('salt', settings.HASHID_FIELD_SALT)
         self.hashid_min_length = kwargs.pop('min_length', settings.HASHID_FIELD_MIN_LENGTH)
         self.hashid_alphabet = kwargs.pop('alphabet', settings.HASHID_FIELD_ALPHABET)
+        self.allow_int_lookup = kwargs.pop('allow_int_lookup', settings.HASHID_FIELD_ALLOW_INT_LOOKUP)
         self.prefix = kwargs.pop('prefix', "")
         self._hashids = kwargs.pop('hashids', None)
 
@@ -41,6 +48,7 @@ class HashidSerializerMixin(object):
             self.hashid_salt = source_field.salt
             self.hashid_min_length = source_field.min_length
             self.hashid_alphabet = source_field.alphabet
+            self.allow_int_lookup = source_field.allow_int_lookup
             self.prefix = source_field.prefix
             self._hashids =source_field._hashids
         if not self._hashids:
@@ -49,17 +57,22 @@ class HashidSerializerMixin(object):
         super().__init__(**kwargs)
 
     def to_internal_value(self, data):
+        value = super().to_internal_value(data)
         try:
-            value = super().to_internal_value(data)
             return Hashid(value, salt=self.hashid_salt, min_length=self.hashid_min_length,
                           alphabet=self.hashid_alphabet, prefix=self.prefix, hashids=self._hashids)
         except ValueError:
-            raise serializers.ValidationError("Invalid int or Hashid string")
+            self.fail('invalid', value=data)
 
 
 class HashidSerializerCharField(HashidSerializerMixin, fields.CharField):
     def to_representation(self, value):
         return str(value)
+
+    def to_internal_value(self, data):
+        if not self.allow_int_lookup and _is_int_representation(data):
+            self.fail('invalid_hashid', value=data)
+        return super().to_internal_value(data)
 
 
 class HashidSerializerIntegerField(HashidSerializerMixin, fields.IntegerField):
