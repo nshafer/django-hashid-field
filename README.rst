@@ -583,7 +583,7 @@ HashidSerializerCharField
 -------------------------
 
 Serialize a Hashid\*Field to a Hashids string, de-serialize either a valid Hashids string or integer into a
-Hashid\*Field.
+Hashid\*Field (if allow_int_lookup is enabled.)
 
 Parameters
 ~~~~~~~~~~
@@ -594,8 +594,8 @@ source_field
 A 3-field dotted notation of the source field to load matching 'salt', 'min_length' and 'alphabet' settings from. Must
 be in the format of "app_name.model_name.field_name". Example: "library.Book.reference_id".
 
-salt, min_length, alphabet, prefix
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+salt, min_length, alphabet, prefix, allow_int_lookup
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 See `Field Parameters`_
 
@@ -605,6 +605,9 @@ HashidSerializerIntegerField
 
 Serialize a Hashid\*Field to an integer, de-serialize either a valid Hashids string or integer into a
 Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
+
+*Please Note*: This field will always serialize to an integer and thus will also de-serialize integers into valid
+objects, regardless of the `allow_int_lookup` setting.
 
 Development
 ===========

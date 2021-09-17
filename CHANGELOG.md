@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.1] - 2021-05-11
+### Fixes
+- [#65]: Fixed HashidSerializerCharField to not allow deserializing from integers if `allow_int_lookup` is disabled.
+  (Thanks [frossigneux](https://github.com/frossigneux))
+
 ## [3.3.0] - 2021-05-11
 ### Changes
 - [#60]: Fixed regression (from 3.1.2) that caused a `Hashid` instance to not be reversible, such as for pickling. This
@@ -217,6 +222,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.1]: https://github.com/nshafer/django-hashid-field/compare/3.3.0...3.3.1
 [3.3.0]: https://github.com/nshafer/django-hashid-field/compare/3.2.1...3.3.0
 [3.2.1]: https://github.com/nshafer/django-hashid-field/compare/3.2.0...3.2.1
 [3.2.0]: https://github.com/nshafer/django-hashid-field/compare/3.1.3...3.2.0
@@ -252,3 +258,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#44]: https://github.com/nshafer/django-hashid-field/issues/44
 [#58]: https://github.com/nshafer/django-hashid-field/pull/58
 [#60]: https://github.com/nshafer/django-hashid-field/issues/60
+[#65]: https://github.com/nshafer/django-hashid-field/issues/65
