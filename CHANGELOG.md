@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.2] - 2021-10-08
+### Fixes
+- [#66]: Fixed issues for hashids that happen to encode to all-numbers, ie. int(428697) encodes to str("3557953").
+  There was a false assumption that this wasn't possible with alphabets including letters. Depending on the salt, this
+  happens about 22 times per million IDs with default min_length and alphabet. It's more likely to happen with smaller
+  alphabets that include a higher ratio of numbers to letters. This was a regression when prefix support was added in
+  version 3.2.0.
+  (Thanks [Adrian Shelley](https://github.com/afshelley))
+
 ## [3.3.1] - 2021-05-11
 ### Fixes
 - [#65]: Fixed HashidSerializerCharField to not allow deserializing from integers if `allow_int_lookup` is disabled.
@@ -222,6 +231,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.2]: https://github.com/nshafer/django-hashid-field/compare/3.3.1...3.3.2
 [3.3.1]: https://github.com/nshafer/django-hashid-field/compare/3.3.0...3.3.1
 [3.3.0]: https://github.com/nshafer/django-hashid-field/compare/3.2.1...3.3.0
 [3.2.1]: https://github.com/nshafer/django-hashid-field/compare/3.2.0...3.2.1
@@ -259,3 +269,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#58]: https://github.com/nshafer/django-hashid-field/pull/58
 [#60]: https://github.com/nshafer/django-hashid-field/issues/60
 [#65]: https://github.com/nshafer/django-hashid-field/issues/65
+[#66]: https://github.com/nshafer/django-hashid-field/issues/66
