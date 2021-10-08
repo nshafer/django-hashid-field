@@ -25,8 +25,14 @@ def get_id_for_hashid_field(field, value):
         hashid = field.get_hashid(value)
     except ValueError:
         raise ValueError(field.error_messages['invalid'] % {'value': value})
-    if not field.allow_int_lookup and _is_int_representation(value):
+    if isinstance(value, int) and not field.allow_int_lookup:
         raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
+    if isinstance(value, str) and not field.allow_int_lookup:
+        # Make sure int lookups are not allowed, even if prefixed, unless the
+        # given value is actually a hashid made up entirely of numbers.
+        without_prefix = value[len(field.prefix):]
+        if _is_int_representation(without_prefix) and without_prefix != hashid.hashid:
+            raise ValueError(field.error_messages['invalid_hashid'] % {'value': value})
     return hashid.id
 
 

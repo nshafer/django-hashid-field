@@ -15,6 +15,8 @@ class HashidsTests(TestCase):
                                             string_id=345, plain_hashid=456, plain_id=567, key=234)
         self.record.refresh_from_db()
         self.ref_hashids = self.record.reference_id._hashids
+        self.ref_field = Record._meta.get_field('reference_id')
+        self.pref_field = Record._meta.get_field('prefixed_id')
 
     def test_record_create(self):
         self.assertIsInstance(self.record, Record)
@@ -230,6 +232,17 @@ class HashidsTests(TestCase):
         Artist._meta.get_field('id').allow_int_lookup = False
         Record._meta.get_field('reference_id').allow_int_lookup = False
 
+    def test_int_lookup_with_made_entirely_of_numbers(self):
+        # The integer id 428697 encodes to the hashids string "3557953" which looks like an integer.
+        # Make sure we can still look up this record with ALLOW_INT_LOOKUPS off.
+        r = Record.objects.create(reference_id=428697)
+        a = Record.objects.get(reference_id=r.reference_id.hashid)
+        self.assertEqual(r, a)
+
+    def test_int_lookup_fails_with_prefix(self):
+        with self.assertRaises(Record.DoesNotExist):
+            Record.objects.get(prefixed_id="prefix_234")
+
     def test_get_object_or_404(self):
         a = Artist.objects.create(name="Artist A")
 
@@ -277,6 +290,12 @@ class HashidsTests(TestCase):
     def test_record_form(self):
         form = RecordForm(instance=self.record)
         self.assertEqual(form.initial['reference_id'].hashid, self.ref_hashids.encode(123))
+        form = RecordForm({
+            'name': "A new name",
+            'reference_id': str(self.ref_field.encode_id(987)),
+            'prefixed_id': str(self.pref_field.encode_id(987)),
+        }, instance=self.record)
+        self.assertTrue(form.is_valid())
         form = RecordForm({'name': "A new name", 'reference_id': 987, 'prefixed_id': 987}, instance=self.record)
         self.assertTrue(form.is_valid())
         instance = form.save()

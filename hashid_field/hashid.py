@@ -3,12 +3,9 @@ from functools import total_ordering
 from hashids import Hashids
 
 
-def _is_uint(number):
+def _is_uint(candidate):
     """Returns whether a value is an unsigned integer."""
-    try:
-        return number == int(number) and number >= 0
-    except ValueError:
-        return False
+    return isinstance(candidate, int) and candidate >= 0
 
 
 def _is_str(candidate):
@@ -33,36 +30,45 @@ class Hashid(object):
         if value is None:
             raise ValueError("id must be a positive integer or a valid Hashid string")
 
-        # Check if `value` is an integer first as it is much faster than checking if a string is a valid hashid
+        # Check if `value` is an integer and encode it.
+        # This presumes hashids will only ever be strings, even if they are made up entirely of numbers
         if _is_uint(value):
             self._id = value
             self._hashid = self.encode(value)
         elif _is_str(value):
-            # `value` could be a string representation of an integer and not a hashid, but since the Hashids algorithm
-            # requires a minimum of 16 characters in the alphabet, `int(value, base=10)` will always throw a ValueError
-            # for a hashids string, as it's impossible to represent a hashids string with only chars [0-9].
-            try:
-                value = int(value, base=10)
-            except (TypeError, ValueError):
-                # We must assume that this string is a hashids representation.
-                # Verify that it begins with the prefix, which could be the default ""
-                if not value.startswith(self._prefix):
+            # Verify that it begins with the prefix, which could be the default ""
+            if value.startswith(self._prefix):
+                value = value[len(self._prefix):]
+            else:
+                # Check if the given string is all numbers, and encode without requiring the prefix.
+                # This is to maintain backwards compatibility, specifically being able to enter numbers in an admin.
+                # If a hashid is typed in that happens to be all numbers, without the prefix, then it will be
+                # interpreted as an integer and encoded (again).
+                try:
+                    value = int(value)
+                except (TypeError, ValueError):
                     raise ValueError("value must begin with prefix {}".format(self._prefix))
 
-                without_prefix = value[len(self._prefix):]
-                _id = self.decode(without_prefix)
-                if _id is None:
-                    raise ValueError("id must be a positive integer or a valid Hashid string")
-                else:
-                    self._id = _id
-                    self._hashid = without_prefix
-            else:
+            # Check if this string is a valid hashid, even if it's made up entirely of numbers
+            _id = self.decode(value)
+            if _id is None:
+                # The given value is not a hashids string, so see if it's a valid string representation of an integer
+                try:
+                    value = int(value)
+                except (TypeError, ValueError):
+                    raise ValueError("value must be a positive integer or a valid Hashid string")
+
+                # Make sure it's positive
                 if not _is_uint(value):
                     raise ValueError("value must be a positive integer")
 
-                # Finally, set our internal values
+                # We can use it as-is
                 self._id = value
                 self._hashid = self.encode(value)
+            else:
+                # This is a valid hashid
+                self._id = _id
+                self._hashid = value
         elif isinstance(value, int) and value < 0:
             raise ValueError("value must be a positive integer")
         else:

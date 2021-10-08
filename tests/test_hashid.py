@@ -36,6 +36,13 @@ class HashidTests(TestCase):
         self.assertEqual(h.hashid, b.hashid)
         self.assertEqual(h.prefix, b.prefix)
 
+    def test_hashid_with_only_numbers(self):
+        # Make sure that the hashids representation of an integer that happens to be a string of all numbers
+        # is still properly interpreted as a hashid, not an integer
+        a = Hashid(5, salt="salt", alphabet="0123456789abcdef")
+        b = Hashid(a.hashid, salt="salt", alphabet="0123456789abcdef")
+        self.assertEqual(a.id, b.id)
+
     def test_negative_integer(self):
         with self.assertRaises(Exception):
             h = Hashid(-5)
