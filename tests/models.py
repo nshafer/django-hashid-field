@@ -4,7 +4,7 @@ from hashid_field import HashidField, BigHashidField, HashidAutoField, BigHashid
 
 
 class Artist(models.Model):
-    id = BigHashidAutoField(primary_key=True, min_length=20)
+    id = HashidAutoField(primary_key=True, alphabet="1234567890abcdef")
     name = models.CharField(max_length=40)
 
     def __str__(self):
@@ -12,7 +12,7 @@ class Artist(models.Model):
 
 
 class Record(models.Model):
-    id = HashidAutoField(primary_key=True)
+    id = BigHashidAutoField(primary_key=True)
     name = models.CharField(max_length=40)
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE, null=True, blank=True, related_name="records")
     reference_id = HashidField()

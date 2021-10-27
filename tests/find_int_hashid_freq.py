@@ -26,9 +26,9 @@ def find_frequency(i):
 
     return count
 
-
-with Pool(procs) as p:
-    frequencies = p.map(find_frequency, range(0, num_tests))
-    # print("Frequencies: {}".format(frequencies))
-    print("Average frequency: {:2f}".format(sum(frequencies) / len(frequencies)))
+if __name__ == '__main__':
+    with Pool(procs) as p:
+        frequencies = p.map(find_frequency, range(0, num_tests))
+        # print("Frequencies: {}".format(frequencies))
+        print("Average frequency: {:2f}".format(sum(frequencies) / len(frequencies)))
 

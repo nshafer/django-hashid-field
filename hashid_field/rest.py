@@ -3,7 +3,7 @@ from django.core import exceptions
 from django.utils.translation import gettext_lazy as _
 
 from hashids import Hashids
-from rest_framework import fields, serializers
+from rest_framework import fields
 
 from hashid_field.conf import settings
 from hashid_field.hashid import Hashid
@@ -70,9 +70,16 @@ class HashidSerializerCharField(HashidSerializerMixin, fields.CharField):
         return str(value)
 
     def to_internal_value(self, data):
-        if not self.allow_int_lookup and _is_int_representation(data):
+        hashid = super().to_internal_value(data)
+        if isinstance(data, int) and not self.allow_int_lookup:
             self.fail('invalid_hashid', value=data)
-        return super().to_internal_value(data)
+        if isinstance(data, str) and not self.allow_int_lookup:
+            # Make sure int lookups are not allowed, even if prefixed, unless the
+            # given value is actually a hashid made up entirely of numbers.
+            without_prefix = data[len(self.prefix):]
+            if _is_int_representation(without_prefix) and without_prefix != hashid.hashid:
+                self.fail('invalid_hashid', value=data)
+        return hashid
 
 
 class HashidSerializerIntegerField(HashidSerializerMixin, fields.IntegerField):

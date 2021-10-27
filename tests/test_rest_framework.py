@@ -2,6 +2,7 @@ from unittest import skipUnless
 
 from django.core import exceptions
 from django.test import TestCase
+from rest_framework.exceptions import ErrorDetail
 
 from tests.models import Artist, Record, Track
 import hashids
@@ -18,6 +19,31 @@ except ImportError:
 
 @skipUnless(have_drf, "Requires Django REST Framework to be installed")
 class TestRestFramework(TestCase):
+    def assertSerializerError(self, serializer, field, code):
+        serializer_name = serializer.__class__.__name__
+        self.assertFalse(serializer.is_valid(),
+                         msg="The serializer {} does not contain any errors".format(serializer_name))
+
+        def assertCodeInErrors(errors):
+            found_error = False
+            for error_detail in errors:
+                if error_detail.code == code:
+                    found_error = True
+            self.assertTrue(found_error,
+                            msg="The field '{} in serializer '{}' does not contain the error code {}".format(
+                                field, serializer_name, code))
+
+        if field:
+            if field in serializer.errors:
+                assertCodeInErrors(serializer.errors[field])
+            else:
+                self.fail("The field '{}' in serializer '{}' contains no errors".format(field, serializer_name))
+        else:
+            if 'non_field_errors' in serializer.errors:
+                assertCodeInErrors(serializer.errors['non_field_errors'])
+            else:
+                self.fail("The serializer '{}' does not contain the non-field error {}".format(serializer_name, code))
+
     def test_default_modelserializer_field(self):
         class ArtistSerializer(serializers.ModelSerializer):
             class Meta:
@@ -80,15 +106,21 @@ class TestRestFramework(TestCase):
                 fields = ('id', 'name', 'artist', 'reference_id')
 
         artist = Artist.objects.create(id=512, name="Test Artist 512")
-
-        # Make sure int lookups are not allowed on HashidSerializerCharField
-        record_id = Record._meta.get_field('id').get_hashid(512)
-
-        s = RecordSerializer(data={'id': record_id.hashid, 'name': "Test Record 512", 'artist': 512})
-        self.assertFalse(s.is_valid())
-
-        # Make sure lookups are allowed with hashid string and saving a new instance works
         reference_id = Record._meta.get_field('reference_id').get_hashid(1111111)
+
+        # Make sure int lookups of a related field are not allowed on HashidSerializerCharField
+        record_id = Record._meta.get_field('id').get_hashid(512)
+        data = {
+            'id': record_id.hashid,
+            'name': "Test Record 512",
+            'artist': 512,
+            'reference_id': reference_id.hashid,
+        }
+        s = RecordSerializer(data=data)
+        self.assertFalse(s.is_valid())
+        self.assertSerializerError(s, 'artist', 'invalid_hashid')
+
+        # Make sure lookups of a related field are allowed with hashid string and saving a new instance works
         data = {
             'id': record_id.hashid,
             'name': "Test Record 512",
@@ -101,6 +133,25 @@ class TestRestFramework(TestCase):
         self.assertEqual(r512.id.hashid, record_id.hashid)
         self.assertEqual(r512.name, "Test Record 512")
         self.assertEqual(r512.artist, artist)
+
+        # Make sure lookups of a related field are allowed even if the hashid looks like an integer
+        # With the id 161051 on Artist.id, we get the hashid "6966666" which is all numerics
+        artist = Artist.objects.create(id=161051, name="Test Artist 161051")
+        self.assertEqual(artist.id.hashid, "6966666")
+        record_id = Record._meta.get_field('id').get_hashid(768)
+        data = {
+            'id': record_id.hashid,
+            'name': "Test Record 768",
+            'artist': "6966666",
+            'reference_id': reference_id.hashid,
+        }
+        s = RecordSerializer(data=data)
+        s.is_valid()
+        self.assertTrue(s.is_valid())
+        r768 = s.save()
+        self.assertEqual(r768.id.hashid, record_id.hashid)
+        self.assertEqual(r768.name, "Test Record 768")
+        self.assertEqual(r768.artist, artist)
 
     def test_int_lookups_on_int_field(self):
         class RecordSerializer(serializers.ModelSerializer):

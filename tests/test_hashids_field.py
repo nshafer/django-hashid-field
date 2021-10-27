@@ -357,7 +357,7 @@ class HashidsTests(TestCase):
         r = Record.objects.create(name="Blue Album", reference_id=456, artist=a)
         out = StringIO()
         call_command("dumpdata", "tests.Artist", stdout=out)
-        self.assertJSONEqual(out.getvalue(), '[{"pk": "bMrZ5lYd3axGxpW72Vo0", "fields": {"name": "John Doe"}, "model": "tests.artist"}]')
+        self.assertJSONEqual(out.getvalue(), '[{"pk": "94edaeb", "fields": {"name": "John Doe"}, "model": "tests.artist"}]')
         out = StringIO()
         call_command("dumpdata", "tests.Record", stdout=out)
         # print("dumpdata out", out.getvalue())
@@ -365,7 +365,7 @@ class HashidsTests(TestCase):
             [
                 {
                     "model": "tests.record",    
-                    "pk": "Yd3axGx",
+                    "pk": "Z5lYd3axGxpW7",
                     "fields": {
                         "name": "Test Record",
                         "artist": null,
@@ -380,10 +380,10 @@ class HashidsTests(TestCase):
                 },
                 {
                     "model": "tests.record",
-                    "pk": "gVGO031",
+                    "pk": "MzjgVGO031r5y",
                     "fields": {
                         "name": "Blue Album",
-                        "artist": "bMrZ5lYd3axGxpW72Vo0",
+                        "artist": "94edaeb",
                         "reference_id": "9wXZ03N",
                         "prefixed_id": null,
                         "string_id": null,
@@ -399,9 +399,10 @@ class HashidsTests(TestCase):
     def test_loaddata(self):
         out = StringIO()
         call_command("loaddata", "artists", stdout=out)
+        # print("artists", Artist.objects.all())
         self.assertEqual(out.getvalue().strip(), "Installed 2 object(s) from 1 fixture(s)")
-        self.assertEqual(Artist.objects.get(pk='bMrZ5lYd3axGxpW72Vo0').name, "John Doe")
-        self.assertEqual(Artist.objects.get(pk="Ka0MzjgVGO031r5ybWkJ").name, "Jane Doe")
+        self.assertEqual(Artist.objects.get(pk='94edaeb').name, "John Doe")
+        self.assertEqual(Artist.objects.get(pk="39e7aeb").name, "Jane Doe")
 
     @override_settings(HASHID_FIELD_LOOKUP_EXCEPTION=True)
     def test_exceptions(self):
