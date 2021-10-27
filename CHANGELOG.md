@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.3] - 2021-10-27
+### Fixes
+- [#66]: Allow lookups for related fields in DRF Serializers when the related field's value is a hashid with all
+  numeric characters and allow_int_lookups is off. Related to previous fix in 3.3.2.
+  (Thanks (again!) [Adrian Shelley](https://github.com/afshelley))
+
 ## [3.3.2] - 2021-10-08
 ### Fixes
 - [#66]: Fixed issues for hashids that happen to encode to all-numbers, ie. int(428697) encodes to str("3557953").
@@ -231,6 +237,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.3]: https://github.com/nshafer/django-hashid-field/compare/3.3.2...3.3.3
 [3.3.2]: https://github.com/nshafer/django-hashid-field/compare/3.3.1...3.3.2
 [3.3.1]: https://github.com/nshafer/django-hashid-field/compare/3.3.0...3.3.1
 [3.3.0]: https://github.com/nshafer/django-hashid-field/compare/3.2.1...3.3.0
