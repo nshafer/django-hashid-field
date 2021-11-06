@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/nshafer/django-hashid-field.svg?branch=master
-    :target: https://travis-ci.org/nshafer/django-hashid-field
+.. image:: https://github.com/nshafer/django-hashid-field/actions/workflows/tests.yml/badge.svg?branch=master
+    :target: https://github.com/nshafer/django-hashid-field/actions/workflows/tests.yml?query=branch%3Amaster
 .. image:: https://badge.fury.io/py/django-hashid-field.svg
     :target: https://badge.fury.io/py/django-hashid-field
 
