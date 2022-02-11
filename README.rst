@@ -35,10 +35,10 @@ Requirements
 
 This module is tested and known to work with:
 
-* Python 3.6, 3.7, 3.8
-* Django 2.2, 3.1, 3.2
+* Python 3.7, 3.8, 3.9, 3.10
+* Django 2.2, 3.2, 4.0
 * Hashids 1.3
-* Django REST Framework 3.12
+* Django REST Framework 3.13
 
 *Please Note*: Python 2.x is at its end of life and is no longer supported.
 
