@@ -1,5 +1,8 @@
+from functools import cached_property
+
 from django import forms
 from django.core import exceptions, checks
+from django.core import validators as django_validators
 from django.db import models
 from django.db.models import Field
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +14,7 @@ from .lookups import HashidGreaterThan, HashidGreaterThanOrEqual, HashidLessThan
 from .descriptor import HashidDescriptor
 from .hashid import Hashid
 from .conf import settings
+from .validators import HashidMaxValueValidator, HashidMinValueValidator
 
 
 def _alphabet_unique_len(alphabet):
@@ -87,6 +91,24 @@ class HashidFieldMixin(object):
                 )
             ]
         return []
+
+    @cached_property
+    def validators(self):
+        if self.enable_hashid_object:
+            return super().validators
+        else:
+            # IntegerField will add min and max validators depending on the database we're connecting to, so we need
+            # to override them with our own validator that knows how to `clean` the value before doing the check.
+            validators_ = super().validators
+            validators = []
+            for validator_ in validators_:
+                if isinstance(validator_, django_validators.MaxValueValidator):
+                    validators.append(HashidMaxValueValidator(self, validator_.limit_value, validator_.message))
+                elif isinstance(validator_, django_validators.MinValueValidator):
+                    validators.append(HashidMinValueValidator(self, validator_.limit_value, validator_.message))
+                else:
+                    validators.append(validator_)
+            return validators
 
     def encode_id(self, id):
         hashid = self.get_hashid(id)
