@@ -2,12 +2,12 @@ from unittest import skipUnless
 
 from django.core import exceptions
 from django.test import TestCase
-from rest_framework.exceptions import ErrorDetail
 
 from tests.models import Artist, Record, Track
 import hashids
 
 try:
+    from rest_framework.exceptions import ErrorDetail
     from rest_framework import serializers
     from rest_framework.renderers import JSONRenderer
     from hashid_field.rest import UnconfiguredHashidSerialField, HashidSerializerCharField, HashidSerializerIntegerField
