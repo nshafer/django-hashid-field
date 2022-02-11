@@ -31,7 +31,7 @@ class Book(models.Model):
     name = models.CharField(max_length=40)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True, blank=True, related_name='books')
     reference_id = HashidField(salt="alternative salt", allow_int_lookup=True, prefix="ref_")
-    key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz0123789", null=True, blank=True)
+    key = HashidField(min_length=10, alphabet="abcdlmnotuvwxyz0123789", null=True, blank=True, enable_hashid_object=False, default=1)
     alt = HashidField(min_length=10, enable_hashid_object=False, null=True, blank=True)
     some_number = models.IntegerField(null=True, blank=True)
     editors = models.ManyToManyField(Editor, blank=True)
