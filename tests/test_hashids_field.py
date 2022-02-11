@@ -1,4 +1,5 @@
 from django.core import exceptions
+from django.core import validators as django_validators
 from django.core.management import call_command
 from django.shortcuts import get_object_or_404
 from django.test import TestCase, override_settings
@@ -470,3 +471,19 @@ class HashidsTests(TestCase):
     # def test_dynamic_prefix(self):
     #     instance = RecordLabel.objects.create()
     #     self.assertEqual(instance.id, "record_label/" + instance.id.hashids.encode(instance.id.id))
+
+    def test_min_max_validators_with_hashid_object_disabled(self):
+        # Make sure we have min/max validators on `plain_id`
+        plain_id = self.record._meta.get_field('plain_id')
+        has_min = False
+        has_max = False
+        for validator in plain_id.validators:
+            if isinstance(validator, django_validators.MinValueValidator):
+                has_min = True
+            if isinstance(validator, django_validators.MaxValueValidator):
+                has_max = True
+        self.assertTrue(has_min)
+        self.assertTrue(has_max)
+
+        # Test that a full clean works
+        self.record.full_clean()

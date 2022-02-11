@@ -1,4 +1,5 @@
 from django.db import models
+from django.core import validators
 
 from hashid_field import HashidField, BigHashidField, HashidAutoField, BigHashidAutoField
 
@@ -19,7 +20,8 @@ class Record(models.Model):
     prefixed_id = HashidField(null=True, blank=True, prefix="prefix_")
     string_id = HashidField(null=True, blank=True, enable_hashid_object=False)
     plain_hashid = HashidField(null=True, blank=True, enable_descriptor=False)
-    plain_id = HashidField(null=True, blank=True, enable_descriptor=False, enable_hashid_object=False)
+    plain_id = HashidField(null=True, blank=True, enable_descriptor=False, enable_hashid_object=False, validators=[
+        validators.MinValueValidator(-2**32//2), validators.MaxValueValidator(2**32//2)])
     alternate_id = HashidField(salt="a different salt", null=True, blank=True)
     key = BigHashidField(min_length=10, alphabet="abcdlmnotuvwxyz123789", null=True, blank=True)
 
