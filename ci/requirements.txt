@@ -1,2 +1,2 @@
-# Requirements for Travis CI builds. Django and DRF are installed based on the Travis build matrix, so not listed here.
-hashids>=1.2.0
+# Requirements for Github Actions CI builds. Django and DRF are installed based on the actions build matrix, so not listed here.
+hashids>=1.3.0

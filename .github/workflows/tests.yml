@@ -10,16 +10,17 @@ jobs:
       fail-fast: false
       matrix:
         python:
-          - "3.6"
           - "3.7"
           - "3.8"
+          - "3.9"
+          - "3.10"
         django:
-          - "2.2.20"
-          - "3.1.8"
-          - "3.2"
+          - "2.2.27"
+          - "3.2.12"
+          - "4.0.2"
         drf:
           - "no"
-          - "3.12.4"
+          - "3.13.1"
 
     name: "Python ${{ matrix.python }} - Django ${{ matrix.django }} - DRF ${{ matrix.drf }}"
     runs-on: ubuntu-latest
