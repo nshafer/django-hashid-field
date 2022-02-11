@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.4] - 2022-02-11
+### Fixes
+- [#69]: Override IntegerField's min/max validators to clean the hashid before validating
+  when `enable_hashid_object==False`.
+  (Thanks [Eric Carmichael](https://github.com/ckcollab))
+### Changes
+- [#68]: Migrate to Github Actions for CI.
+  (Thanks a ton! [Bruno Alla](https://github.com/browniebroke))
+
 ## [3.3.3] - 2021-10-27
 ### Fixes
 - [#66]: Allow lookups for related fields in DRF Serializers when the related field's value is a hashid with all
@@ -277,3 +286,5 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#60]: https://github.com/nshafer/django-hashid-field/issues/60
 [#65]: https://github.com/nshafer/django-hashid-field/issues/65
 [#66]: https://github.com/nshafer/django-hashid-field/issues/66
+[#68]: https://github.com/nshafer/django-hashid-field/pull/68
+[#69]: https://github.com/nshafer/django-hashid-field/issues/69
