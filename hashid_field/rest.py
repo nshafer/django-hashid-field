@@ -21,8 +21,8 @@ class UnconfiguredHashidSerialField(fields.Field):
 class HashidSerializerMixin(object):
     usage_text = "Must pass a HashidField, HashidAutoField or 'app_label.model.field'"
     default_error_messages = {
-        'invalid': _("'%(value)s' value must be a positive integer or a valid Hashids string."),
-        'invalid_hashid': _("'%(value)s' value must be a valid Hashids string."),
+        'invalid': _("value must be a positive integer or a valid Hashids string."),
+        'invalid_hashid': _("'{value}' value must be a valid Hashids string."),
     }
 
     def __init__(self, **kwargs):
@@ -62,7 +62,7 @@ class HashidSerializerMixin(object):
             return Hashid(value, salt=self.hashid_salt, min_length=self.hashid_min_length,
                           alphabet=self.hashid_alphabet, prefix=self.prefix, hashids=self._hashids)
         except ValueError:
-            self.fail('invalid', value=data)
+            self.fail('invalid_hashid', value=data)
 
 
 class HashidSerializerCharField(HashidSerializerMixin, fields.CharField):
