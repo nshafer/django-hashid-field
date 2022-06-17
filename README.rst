@@ -36,7 +36,7 @@ Requirements
 This module is tested and known to work with:
 
 * Python 3.7, 3.8, 3.9, 3.10
-* Django 2.2, 3.2, 4.0
+* Django 3.2, 4.0
 * Hashids 1.3
 * Django REST Framework 3.13
 
