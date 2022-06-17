@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.5] - 2022-06-17
+### Fixes
+- [#70]: Fix error messages in DRF serializers.
+  (Thanks [Yuu Eguci](https://github.com/yuu-eguci))
+
 ## [3.3.4] - 2022-02-11
 ### Fixes
 - [#69]: Override IntegerField's min/max validators to clean the hashid before validating
@@ -246,6 +251,8 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.5]: https://github.com/nshafer/django-hashid-field/compare/3.3.4...3.3.5
+[3.3.4]: https://github.com/nshafer/django-hashid-field/compare/3.3.3...3.3.4
 [3.3.3]: https://github.com/nshafer/django-hashid-field/compare/3.3.2...3.3.3
 [3.3.2]: https://github.com/nshafer/django-hashid-field/compare/3.3.1...3.3.2
 [3.3.1]: https://github.com/nshafer/django-hashid-field/compare/3.3.0...3.3.1
@@ -288,3 +295,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#66]: https://github.com/nshafer/django-hashid-field/issues/66
 [#68]: https://github.com/nshafer/django-hashid-field/pull/68
 [#69]: https://github.com/nshafer/django-hashid-field/issues/69
+[#70]: https://github.com/nshafer/django-hashid-field/issues/70
