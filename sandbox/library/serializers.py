@@ -13,7 +13,7 @@ class AuthorSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
-    reference_id = HashidSerializerCharField(salt="alternative salt")
+    reference_id = HashidSerializerCharField(salt="alternative salt", prefix="ref_")
     key = HashidSerializerIntegerField(source_field="library.Book.key")
     author_char = serializers.PrimaryKeyRelatedField(
         pk_field=HashidSerializerCharField(source_field='library.Author.id'),
