@@ -149,3 +149,9 @@ class Hashid(object):
 
     def __reduce__(self):
         return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet, self._prefix, None))
+
+    def __getstate__(self):
+        return (self._id, self._salt, self._min_length, self._alphabet, self._prefix, self._hashid)
+
+    def __setstate__(self, state):
+        self._id, self._salt, self._min_length, self._alphabet, self._prefix, self._hashid = state
