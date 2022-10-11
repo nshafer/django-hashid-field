@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.6] - 2022-10-11
+### Changes
+- [#73]: Hashid object now implements arithmetic operators: +, -, *, /, //, %, divmod(), pow(), **, <<, >>, &, ^, |
+  (Thanks [Kenneth Lim ](https://github.com/Klim314))
+- [#55] and [#71]: Hashid object will now include the computed hashid string when being pickled, so that it doesn't need
+  to compute it again when being unpickled. Care has been taken to ensure that unpickling old pickled Hashid objects
+  should still work, and this should be backwards compatible.
+  (Thanks [svartalf](https://github.com/svartalf) for PR and [Akbar Rifai](https://github.com/aztecrabbit) for reporting
+  the issue)
+
 ## [3.3.5] - 2022-06-17
 ### Fixes
 - [#70]: Fix error messages in DRF serializers.
@@ -251,6 +261,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.6]: https://github.com/nshafer/django-hashid-field/compare/3.3.5...3.3.6
 [3.3.5]: https://github.com/nshafer/django-hashid-field/compare/3.3.4...3.3.5
 [3.3.4]: https://github.com/nshafer/django-hashid-field/compare/3.3.3...3.3.4
 [3.3.3]: https://github.com/nshafer/django-hashid-field/compare/3.3.2...3.3.3
@@ -289,6 +300,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#38]: https://github.com/nshafer/django-hashid-field/issues/38
 [#40]: https://github.com/nshafer/django-hashid-field/pull/40
 [#44]: https://github.com/nshafer/django-hashid-field/issues/44
+[#55]: https://github.com/nshafer/django-hashid-field/issues/55
 [#58]: https://github.com/nshafer/django-hashid-field/pull/58
 [#60]: https://github.com/nshafer/django-hashid-field/issues/60
 [#65]: https://github.com/nshafer/django-hashid-field/issues/65
@@ -296,3 +308,5 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#68]: https://github.com/nshafer/django-hashid-field/pull/68
 [#69]: https://github.com/nshafer/django-hashid-field/issues/69
 [#70]: https://github.com/nshafer/django-hashid-field/issues/70
+[#71]: https://github.com/nshafer/django-hashid-field/pull/71
+[#73]: https://github.com/nshafer/django-hashid-field/issues/73
