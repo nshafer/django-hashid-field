@@ -149,3 +149,45 @@ class Hashid(object):
 
     def __reduce__(self):
         return (self.__class__, (self._id, self._salt, self._min_length, self._alphabet, self._prefix, None))
+
+    def __add__(self, other):
+        return self._id + other
+
+    def __sub__(self, other):
+        return self._id - other
+
+    def __mul__(self, other):
+        return self._id * other
+
+    def __matmul__(self, other):
+        raise NotImplementedError("Hashid does not support matrix multiplication")
+
+    def __truediv__(self, other):
+        return self._id / other
+
+    def __floordiv__(self, other):
+        return self._id // other
+
+    def __mod__(self, other):
+        return self._id % other
+
+    def __divmod__(self, other):
+        return self.__floordiv__(other), self.__mod__(other)
+
+    def __pow__(self, other, *args):
+        return pow(self._id, other, *args)
+
+    def __lshift__(self, other):
+        return self._id << other
+
+    def __rshift__(self, other):
+        return self._id >> other
+
+    def __and__(self, other):
+        return self._id & other
+
+    def __xor__(self, other):
+        return self._id ^ other
+
+    def __or__(self, other):
+        return self._id | other
