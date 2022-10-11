@@ -148,7 +148,7 @@ class Hashid(object):
         return hash(str(self))
 
     def __getstate__(self):
-        return (self._id, self._salt, self._min_length, self._alphabet, self._prefix, self._hashid)
+        return self._id, self._salt, self._min_length, self._alphabet, self._prefix, self._hashid
 
     def __setstate__(self, state):
         self._id, self._salt, self._min_length, self._alphabet, self._prefix, self._hashid = state
