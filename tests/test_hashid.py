@@ -168,3 +168,10 @@ class HashidTests(TestCase):
         pickled = pickle.loads(pickle.dumps(a))
         self.assertTrue(a == pickled)
 
+    def test_unpickle_old_reduce_value(self):
+        # This test is to make sure that we can still unpickle values that were pickled with the old reduce
+        # value.  This is to ensure backwards compatibility.
+        pickled_a = b'\x80\x04\x95r\x00\x00\x00\x00\x00\x00\x00\x8c\x13hashid_field.hashid\x94\x8c\x06Hashid\x94\x93\x94(K{\x8c\x00\x94K\x00\x8c>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\x94h\x03Nt\x94R\x94.'
+        a1 = Hashid(123)
+        a2 = pickle.loads(pickled_a)
+        self.assertTrue(a1 == a2)
