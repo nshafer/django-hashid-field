@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.7] - 2022-10-18
+- [#74]: Fix regression introduced in 3.3.2 that allowed integer lookups even when allow_int_lookups was set to False,
+  in the specific case that the integer being looked up was equal to or fewer characters than the prefix for the field.
+  This does not affect cases where no prefix was used, or if the prefix was fewer characters than the base-10 string
+  representations of any valid IDs in the database. But if you DID have a Hashid*Field where you had a prefix specified
+  and set allow_int_lookups=False (default), then lookups for base-10 integers that were equal or shorter in length than
+  the prefix would succeed. For example, if the prefix was "o_", then lookups for integers 0-99 would succeed.
+  (Thanks [Tomáš Daniš](https://github.com/AgiNetz) for the Issue)
+
 ## [3.3.6] - 2022-10-11
 ### Changes
 - [#73]: Hashid object now implements arithmetic operators: +, -, *, /, //, %, divmod(), pow(), **, <<, >>, &, ^, |
@@ -261,6 +270,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.3.7]: https://github.com/nshafer/django-hashid-field/compare/3.3.6...3.3.7
 [3.3.6]: https://github.com/nshafer/django-hashid-field/compare/3.3.5...3.3.6
 [3.3.5]: https://github.com/nshafer/django-hashid-field/compare/3.3.4...3.3.5
 [3.3.4]: https://github.com/nshafer/django-hashid-field/compare/3.3.3...3.3.4
@@ -310,3 +320,4 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 [#70]: https://github.com/nshafer/django-hashid-field/issues/70
 [#71]: https://github.com/nshafer/django-hashid-field/pull/71
 [#73]: https://github.com/nshafer/django-hashid-field/issues/73
+[#74]: https://github.com/nshafer/django-hashid-field/issues/74
