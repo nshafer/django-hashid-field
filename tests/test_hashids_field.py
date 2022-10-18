@@ -135,12 +135,27 @@ class HashidsTests(TestCase):
         self.assert_lookups_match("plain_hashid", 456, False, allow_int_lookup=False)
         self.assert_lookups_match("plain_id", 567, False, allow_int_lookup=False)
 
+        # These should not return anything when integer lookups are not allowed, even though they are string ints
+        self.assert_lookups_match("reference_id", "123", False, allow_int_lookup=False)
+        self.assert_lookups_match("prefixed_id", "234", False, allow_int_lookup=False)
+        self.assert_lookups_match("prefixed_id", "prefixed_234", False, allow_int_lookup=False)
+        self.assert_lookups_match("string_id", "345", False, allow_int_lookup=False)
+        self.assert_lookups_match("plain_hashid", "456", False, allow_int_lookup=False)
+        self.assert_lookups_match("plain_id", "567", False, allow_int_lookup=False)
+
         # Tests when integer lookups are allowed
         self.assert_lookups_match("reference_id", 123, True, allow_int_lookup=True)
         self.assert_lookups_match("prefixed_id", 234, True, allow_int_lookup=True)
         self.assert_lookups_match("string_id", 345, True, allow_int_lookup=True)
         self.assert_lookups_match("plain_hashid", 456, True, allow_int_lookup=True)
         self.assert_lookups_match("plain_id", 567, True, allow_int_lookup=True)
+
+        # Tests when integer lookups are allowed with string ints
+        self.assert_lookups_match("reference_id", "123", True, allow_int_lookup=True)
+        self.assert_lookups_match("prefixed_id", "234", True, allow_int_lookup=True)
+        self.assert_lookups_match("string_id", "345", True, allow_int_lookup=True)
+        self.assert_lookups_match("plain_hashid", "456", True, allow_int_lookup=True)
+        self.assert_lookups_match("plain_id", "567", True, allow_int_lookup=True)
 
     def test_filter_by_string(self):
         self.assert_lookups_match("reference_id", str(self.record.reference_id), True)
@@ -223,6 +238,11 @@ class HashidsTests(TestCase):
         self.assertEqual(Record.objects.filter(reference_id__gte=r1.reference_id.id).count(), 0)
         self.assertEqual(Artist.objects.filter(id__lt=999_999_999).count(), 0)
         self.assertEqual(Record.objects.filter(reference_id__lte=r3.reference_id.id).count(), 0)
+        # Make sure integer lookups are not allowed even if string ints are passed
+        self.assertEqual(Artist.objects.filter(id__gt=str(a.id.id)).count(), 0)
+        self.assertEqual(Record.objects.filter(reference_id__gte=str(r1.reference_id.id)).count(), 0)
+        self.assertEqual(Artist.objects.filter(id__lt=str(999_999_999)).count(), 0)
+        self.assertEqual(Record.objects.filter(reference_id__lte=str(r3.reference_id.id)).count(), 0)
         # Unless we turn them on
         Artist._meta.get_field('id').allow_int_lookup = True
         Record._meta.get_field('reference_id').allow_int_lookup = True
@@ -238,6 +258,10 @@ class HashidsTests(TestCase):
         # Make sure we can still look up this record with ALLOW_INT_LOOKUPS off.
         r = Record.objects.create(reference_id=428697)
         a = Record.objects.get(reference_id=r.reference_id.hashid)
+        self.assertEqual(r, a)
+
+        r = Record.objects.create(reference_id=1, prefixed_id=428697)
+        a = Record.objects.get(prefixed_id=f"prefix_{r.prefixed_id.hashid}")
         self.assertEqual(r, a)
 
     def test_int_lookup_fails_with_prefix(self):

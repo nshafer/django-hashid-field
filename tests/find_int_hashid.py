@@ -9,6 +9,8 @@ chunk = 10_000_000
 # Find first integer for tests.models.Record.id
 # h = hashids.Hashids(salt="gg ez", min_length=7)
 # Found int: encode(428697) == 3557953
+# Found int: encode(20020397) == 3554757
+# Found int: encode(90043009) == 3517767
 
 # Find first integer for tests.models.Artist.id
 h = hashids.Hashids(salt="gg ez", min_length=7, alphabet="1234567890abcdef")
