@@ -96,6 +96,7 @@ class HashidIterableLookup(HashidExactLookup):
     # This is an amalgamation of Django's FieldGetDbPrepValueIterableMixin and In lookup to allow support of both
     # iterables (lists, tuples) and subqueries.
     get_db_prep_lookup_value_is_iterable = True
+    lookup_name = 'in'
 
     def get_prep_lookup(self):
         if hasattr(self.rhs, 'resolve_expression'):
