@@ -80,6 +80,7 @@ class HashidFieldGetDbPrepValueMixin:
 
 class HashidExactLookup(HashidFieldGetDbPrepValueMixin, Lookup):
     prepare_rhs = False
+    lookup_name = 'exact'
 
     def as_sql(self, compiler, connection):
         lhs_sql, params = self.process_lhs(compiler, connection)
