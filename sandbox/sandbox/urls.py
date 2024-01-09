@@ -25,8 +25,8 @@ router.register('authors', library_views.AuthorViewSet)
 router.register('books', library_views.BookViewSet)
 
 urlpatterns = [
-
     path('', include('library.urls')),
     path('api/', include(router.urls)),
     path('admin/', admin.site.urls),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
