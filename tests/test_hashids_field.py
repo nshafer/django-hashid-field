@@ -205,6 +205,14 @@ class HashidsTests(TestCase):
         self.assertEqual(len(queryset), 2)
         self.assertEqual(len(Artist.objects.filter(id__in=queryset.values('id'))), 2)
 
+    def test_subquery_lookup_without_specified_values(self):
+        a = Artist.objects.create(name="Artist A")
+        b = Artist.objects.create(name="Artist B")
+        c = Artist.objects.create(name="Artist C")
+        queryset = Artist.objects.all()[:2]
+        self.assertEqual(len(queryset), 2)
+        self.assertEqual(len(Artist.objects.filter(id__in=queryset)), 2)
+
     def test_passthrough_lookups(self):
         # Test null lookups
         self.assertTrue(Record.objects.filter(alternate_id__isnull=True).exists())

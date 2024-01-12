@@ -1,5 +1,6 @@
 import itertools
 
+import django
 from django.db.models.lookups import Lookup, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual
 from django.utils.datastructures import OrderedSet
 from django.core.exceptions import EmptyResultSet
@@ -98,6 +99,14 @@ class HashidIterableLookup(HashidExactLookup):
     get_db_prep_lookup_value_is_iterable = True
 
     def get_prep_lookup(self):
+        from django.db.models.sql.query import Query  # avoid circular import
+        if isinstance(self.rhs, Query):
+            if django.VERSION > (4, 0):
+                self.rhs.clear_ordering(clear_default=True)
+            if not self.rhs.has_select_fields:
+                self.rhs.clear_select_clause()
+                self.rhs.add_fields(['pk'])
+
         if hasattr(self.rhs, 'resolve_expression'):
             return self.rhs
         prepared_values = []
