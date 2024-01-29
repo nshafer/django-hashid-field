@@ -1,6 +1,7 @@
 from django.core import exceptions
 from django.core import validators as django_validators
 from django.core.management import call_command
+from django.db.models import Expression
 from django.shortcuts import get_object_or_404
 from django.test import TestCase, override_settings
 from io import StringIO
@@ -260,6 +261,26 @@ class HashidsTests(TestCase):
         self.assertEqual(Record.objects.filter(reference_id__lte=r3.reference_id.id).count(), 3)
         Artist._meta.get_field('id').allow_int_lookup = False
         Record._meta.get_field('reference_id').allow_int_lookup = False
+
+    def assert_lookup_name(self, model_field, lookup_val, expected_lookup_name):
+        # The below lookup is based on how django-filter FilterSet class implements `filter_for_field`
+        # using the utility `resolve_field` function.
+        lhs = Expression(model_field)
+        lookup = lhs.get_lookup(lookup_val)
+        self.assertEqual(lookup.lookup_name if lookup else None, expected_lookup_name)
+
+    def test_lookup_names(self):
+        # None will generally will use default behaviors. For example, in django-filter, if the lookup name cannot be
+        # determined the `DEFAULT_LOOKUP_EXPR` will be used.
+        self.assert_lookup_name(Artist._meta.get_field('id'), '', None)
+        self.assert_lookup_name(Artist._meta.get_field('id'), None, None)
+        # All other named types should match exactly.
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'in', 'in')
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'exact', 'exact')
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'gt', 'gt')
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'gte', 'gte')
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'lt', 'lt')
+        self.assert_lookup_name(Artist._meta.get_field('id'), 'lte', 'lte')
 
     def test_int_lookup_with_made_entirely_of_numbers(self):
         # The integer id 428697 encodes to the hashids string "3557953" which looks like an integer.

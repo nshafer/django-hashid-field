@@ -35,10 +35,10 @@ Requirements
 
 This module is tested and known to work with:
 
-* Python 3.7, 3.8, 3.9, 3.10
-* Django 3.2, 4.0
+* Python 3.7, 3.8, 3.9, 3.10, 3.11, 3.12
+* Django 3.2, 4.2, 5.0
 * Hashids 1.3
-* Django REST Framework 3.13
+* Django REST Framework 3.14
 
 *Please Note*: Python 2.x is at its end of life and is no longer supported.
 
@@ -608,6 +608,13 @@ Hashid\*Field. See `HashidSerializerCharField`_ for parameters.
 
 *Please Note*: This field will always serialize to an integer and thus will also de-serialize integers into valid
 objects, regardless of the `allow_int_lookup` setting.
+
+Known Issues
+============
+
+With Django 5.0, attempting to filter on a field that is a ForeignKey to another model that uses a Hashid*Field as its
+primary key will result in an error such as "'Hashid' object is not iterable". The workaround is to specify the exact
+field of the related model to filter on. e.g. instead of `list_filter = ['author']` use `list_filter = ['author__name']`.
 
 Development
 ===========

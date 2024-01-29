@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.4.0] - 2024-01-09
+- Add support for Django 5.0
+- Drop support for Django < 3.2, 4.0, 4.1
+
 ## [3.3.7] - 2022-10-18
 - [#74]: Fix regression introduced in 3.3.2 that allowed integer lookups even when allow_int_lookups was set to False,
   in the specific case that the integer being looked up was equal to or fewer characters than the prefix for the field.
@@ -270,6 +274,7 @@ with 1.11 and DRF 3.7.3, so we are supporting (and testing) DRF 3.6.4 for Django
 ### Added
 - Initial release
 
+[3.4.0]: https://github.com/nshafer/django-hashid-field/compare/3.3.7...3.4.0
 [3.3.7]: https://github.com/nshafer/django-hashid-field/compare/3.3.6...3.3.7
 [3.3.6]: https://github.com/nshafer/django-hashid-field/compare/3.3.5...3.3.6
 [3.3.5]: https://github.com/nshafer/django-hashid-field/compare/3.3.4...3.3.5

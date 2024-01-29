@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import django
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,7 +29,7 @@ HASHID_FIELD_SALT = "j283wirlkajdf9823rlakdflashdf28y3klrjahskjfuzxcbvu"
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
 
@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_extensions',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,18 +82,18 @@ WSGI_APPLICATION = 'sandbox.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "dhf_sandbox",
-        'USER': "dhf",
-        'PASSWORD': "dhf",
-        'HOST': "localhost",
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': "dhf_sandbox",
+    #     'USER': "dhf",
+    #     'PASSWORD': "dhf",
+    #     'HOST': "localhost",
+    #     'PORT': 5432,
+    # }
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 # DEFAULT_AUTO_FIELD = 'hashid_field.BigHashidAutoField'

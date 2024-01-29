@@ -23,7 +23,8 @@ class EditorAdmin(admin.ModelAdmin):
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'reference_id', 'int_reference_id', 'key', 'alt', 'author')
-    list_filter = ('author',)
+    list_select_related = ('author',)
+    list_filter = ('author__name',)
     search_fields = ('name', 'reference_id')
     ordering = ('reference_id', 'id')
 
