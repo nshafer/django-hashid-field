@@ -211,6 +211,7 @@ from taking affect. If you are attempting to use the global setting, you should 
 `project/app_name/apps.py` to ensure they don't interfere.
 
 .. code-block:: python
+
     from django.apps import AppConfig
 
 
