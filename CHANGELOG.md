@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.4.1] - 2024-01-29
+### Changes
+- Add `lookup_name` hints to Lookups for some third party tools, such as DRF Spectacular, django-filter, etc.
+  (Thanks [Chris Muthig](https://github.com/camuthig))
+- Add logic in subqueries to only use the PK.
+  (Thanks [Chris Muthig](https://github.com/camuthig))
+- Retirement of the module.
+
 ## [3.4.0] - 2024-01-09
 - Add support for Django 5.0
 - Drop support for Django < 3.2, 4.0, 4.1
