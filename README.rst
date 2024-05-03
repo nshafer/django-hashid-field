@@ -12,7 +12,7 @@ WARNING! This module is retired!
 **document for more information.**
 
 Django Hashid Field
-====================
+===================
 
 A custom Model Field that uses the `Hashids <http://hashids.org/>`_ `library <https://pypi.python.org/pypi/hashids/>`_
 to obfuscate an IntegerField or AutoField. It can be used in new models or dropped in place of an existing IntegerField,
@@ -638,20 +638,21 @@ Known Issues
 ============
 
 'Hashid' object is not iterable
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------
 
 With Django 5.0, attempting to filter on a field that is a ForeignKey to another model that uses a Hashid*Field as its
 primary key will result in an error such as "'Hashid' object is not iterable". The workaround is to specify the exact
 field of the related model to filter on. e.g. instead of `list_filter = ['author']` use `list_filter = ['author__name']`.
 
-Admin Object with id 'prefix*2345678' doesn't exist. Perhaps it was deleted?" with prefixes ending in underscore.
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Admin can't find objects with a prefix that ends in an underscore
+-----------------------------------------------------------------
 
 The Django admin has a `quote` and `unquote` function that attempts to encode non-alphanumeric characters in primary
 keys using the format of `_xx` where `xx` is the hex value of the character. This can be a problem if you are using
 a prefix that ends in an underscore, as there's a chance that your Hashid primary key will be something like,
 "user_3Ej8Kjm". The Django admin will attempt to `unquote` that to "user>j8Kjm" by swapping the "_3E" with a ">"
-character, but that isn't valid and so it can't find the object.
+character, but that isn't valid and so it can't find the object. It will throw an error like, "Admin Object with id
+'prefix<2345678' doesn't exist. Perhaps it was deleted?"
 
 The workaround is to not use a prefix that ends in an underscore. You can end it with a character right after the
 underscore that can't be used in hexidecimal, though, so it still looks right. e.g. `prefix="user_g"` so that the above
