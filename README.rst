@@ -211,6 +211,20 @@ Care must be given, as this will alter ALL models in your project. Usually you w
 Also, since this changes the auto-generated field, only global settings will be used for that field. If you desire
 specific settings for different models, then using this setting is not advised.
 
+Django may configure the per-app `default_auto_field` when a new app is created. This will prevent the global setting
+from taking affect. If you are attempting to use the global setting, you should check your app configs in
+`project/app_name/apps.py` to ensure they don't interfere.
+
+.. code-block:: python
+
+    from django.apps import AppConfig
+
+
+    class ScheduleConfig(AppConfig):
+        default_auto_field = 'django.db.models.BigAutoField'
+        name = 'schedule'
+
+
 Global Settings
 ---------------
 
