@@ -7,6 +7,7 @@ Django Hashid Field
 ====================
 
 .. warning::
+
     This library has been retired. It is no longer recommended for new projects. Existing projects do not require
     changes, but should consider migrating to a different library. See the [RETIRED](RETIRED.md) document for more
     information.
