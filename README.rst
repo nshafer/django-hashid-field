@@ -8,7 +8,7 @@ WARNING! This module is retired!
 
 **This library has been retired. It is no longer recommended for new projects. Existing projects do not require**
 **changes, but should consider migrating to a different library. See the**
-`RETIRED <https://github.com/nshafer/django-hashid-field/blob/master/RETIRED>`_
+`RETIRED <https://github.com/nshafer/django-hashid-field/blob/master/RETIRED.md>`_
 **document for more information.**
 
 Django Hashid Field
