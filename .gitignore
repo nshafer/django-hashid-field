@@ -95,3 +95,5 @@ ENV/
 .idea/workspace.xml
 .idea/shelf
 .idea/dataSources*
+
+local/

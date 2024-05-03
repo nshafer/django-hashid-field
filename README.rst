@@ -6,6 +6,11 @@
 Django Hashid Field
 ====================
 
+> [!CAUTION]
+> This library has been retired. It is no longer recommended for new projects. Existing projects do not require
+> changes, but should consider migrating to a different library. See the [RETIRED](RETIRED.md) document for more
+> information.
+
 A custom Model Field that uses the `Hashids <http://hashids.org/>`_ `library <https://pypi.python.org/pypi/hashids/>`_
 to obfuscate an IntegerField or AutoField. It can be used in new models or dropped in place of an existing IntegerField,
 explicit AutoField, or an automatically generated AutoField.
