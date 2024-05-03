@@ -393,13 +393,16 @@ prefix
 An optional string prefix that will be prepended to all generated hashids. Also affects validation, so only hashids
 that have this prefix will be considered correct.
 
+IMPORTANT: Do not end your prefix with an underscore, as this can cause issues with the Django admin. See Known Issues
+below.
+
 :Type:    String
 :Default: ""
 :Example:
     .. code-block:: python
 
         # Including the type of id in the id itself:
-        reference_id = HashidField(prefix="order_")
+        reference_id = HashidField(prefix="order-")
 
 allow_int_lookup
 ~~~~~~~~~~~~~~~~
@@ -612,9 +615,26 @@ objects, regardless of the `allow_int_lookup` setting.
 Known Issues
 ============
 
+'Hashid' object is not iterable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 With Django 5.0, attempting to filter on a field that is a ForeignKey to another model that uses a Hashid*Field as its
 primary key will result in an error such as "'Hashid' object is not iterable". The workaround is to specify the exact
 field of the related model to filter on. e.g. instead of `list_filter = ['author']` use `list_filter = ['author__name']`.
+
+Admin Object with id 'prefix*2345678' doesn't exist. Perhaps it was deleted?" with prefixes ending in underscore.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The Django admin has a `quote` and `unquote` function that attempts to encode non-alphanumeric characters in primary
+keys using the format of `_xx` where `xx` is the hex value of the character. This can be a problem if you are using
+a prefix that ends in an underscore, as there's a chance that your Hashid primary key will be something like,
+"user_3Ej8Kjm". The Django admin will attempt to `unquote` that to "user>j8Kjm" by swapping the "_3E" with a ">"
+character, but that isn't valid and so it can't find the object.
+
+The workaround is to not use a prefix that ends in an underscore. You can end it with a character right after the
+underscore that can't be used in hexidecimal, though, so it still looks right. e.g. `prefix="user_g"` so that the above
+example would actually be "user_g3Ej8Kjm", and "_3E" can't be matched. Or you can use any other character, such as
+a hyphen, .e.g `prefix="user-"`.
 
 Development
 ===========
